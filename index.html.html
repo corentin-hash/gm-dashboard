@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gross Margin Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#ffffff;--bg2:#f7f7f5;--bg3:#f0efec;
+    --text:#1a1a1a;--text2:#666;--text3:#999;
+    --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
+    --green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;--green-text:#085041;
+    --red:#E24B4A;--red-light:#FCEBEB;--red-text:#791F1F;
+    --amber:#EF9F27;--amber-light:#FAEEDA;--amber-text:#633806;
+    --radius:8px;--radius-lg:12px;
+  }
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg:#1e1e1e;--bg2:#262626;--bg3:#2e2e2e;
+      --text:#e8e8e8;--text2:#aaa;--text3:#666;
+      --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+      --green-light:#04342C;--green-text:#9FE1CB;
+      --red-light:#501313;--red-text:#F09595;
+      --amber-light:#412402;--amber-text:#FAC775;
+    }
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:15px;line-height:1.5}
+  code{font-family:ui-monospace,monospace;font-size:0.85em;background:var(--bg3);padding:1px 5px;border-radius:4px}
+
+  /* HEADER */
+  .app-header{padding:1.25rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+  .header-left .title{font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .header-left .subtitle{font-size:12px;color:var(--text2);margin-top:2px}
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  select,input[type=text]{font-size:13px;padding:6px 10px;border-radius:var(--radius);border:0.5px solid var(--border2);background:var(--bg);color:var(--text);outline:none}
+  select:focus,input[type=text]:focus{border-color:var(--green)}
+  .btn{font-size:13px;padding:6px 14px;border-radius:var(--radius);border:0.5px solid var(--border2);background:transparent;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .btn:hover{background:var(--bg2)}
+  .btn.primary{background:var(--green);color:#fff;border-color:var(--green-dark)}
+  .btn.primary:hover{background:var(--green-dark)}
+
+  /* CONFIG PANEL */
+  .config-panel{background:var(--bg2);border-bottom:0.5px solid var(--border);padding:1rem 2rem;display:none;gap:12px;align-items:flex-end;flex-wrap:wrap}
+  .config-panel.open{display:flex}
+  .field{display:flex;flex-direction:column;gap:4px;min-width:220px;flex:1}
+  .field label{font-size:12px;color:var(--text2)}
+  .field input{width:100%}
+  .config-note{width:100%;font-size:12px;color:var(--text2);padding:8px 12px;background:var(--bg3);border-radius:var(--radius);border:0.5px solid var(--border)}
+
+  /* SEARCH */
+  .search-bar{padding:0.75rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border)}
+  .search-bar input{width:100%;border:none;font-size:14px;background:transparent;color:var(--text);outline:none;border-bottom:1.5px solid transparent;padding:4px 0}
+  .search-bar input:focus{border-bottom-color:var(--green)}
+  .search-bar input::placeholder{color:var(--text3)}
+
+  /* SUMMARY */
+  .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:1.25rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border)}
+  .metric{background:var(--bg2);border-radius:var(--radius);padding:0.75rem 1rem}
+  .metric-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+  .metric-value{font-size:20px;font-weight:600}
+  .metric-value.green{color:var(--green)}
+  .metric-value.red{color:var(--red)}
+
+  /* GRID */
+  .grid{padding:1.5rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+
+  /* CARD */
+  .card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+  .card:hover{border-color:var(--border2)}
+  .card.expanded{border-color:var(--green);border-width:1px}
+  .card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:14px}
+  .card-id{font-size:11px;color:var(--text2);font-family:ui-monospace,monospace;margin-bottom:2px}
+  .card-name{font-size:15px;font-weight:600;word-break:break-all}
+  .badges{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+  .chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px}
+  .chip.pos{background:var(--green-light);color:var(--green-text)}
+  .chip.neg{background:var(--red-light);color:var(--red-text)}
+  .chip.warn{background:var(--amber-light);color:var(--amber-text)}
+  .period-tag{font-size:11px;background:var(--green-light);color:var(--green-text);padding:3px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:4px}
+
+  /* KPI ROW */
+  .kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px}
+  .kpi{background:var(--bg2);border-radius:var(--radius);padding:8px 10px}
+  .kpi-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:3px}
+  .kpi-val{font-size:14px;font-weight:600}
+
+  /* PROGRESS */
+  .progress-row{margin-bottom:2px}
+  .progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px}
+  .progress-track{height:5px;border-radius:3px;background:var(--bg2);overflow:hidden}
+  .progress-fill{height:100%;border-radius:3px;transition:width .4s}
+
+  /* DETAIL */
+  .detail{margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border)}
+  .detail-title{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;font-weight:600}
+  .detail-table{width:100%;font-size:12px;border-collapse:collapse}
+  .detail-table tr td{padding:3px 0}
+  .detail-table tr td:first-child{color:var(--text2)}
+  .detail-table tr td:last-child{text-align:right;font-family:ui-monospace,monospace;font-weight:500}
+  .detail-table tr.total td{font-weight:700;border-top:0.5px solid var(--border);padding-top:6px}
+  .detail-cols{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  .expand-hint{text-align:center;font-size:11px;color:var(--text3);margin-top:12px}
+
+  /* EMPTY / LOADING */
+  .empty{text-align:center;padding:4rem 2rem;color:var(--text2);grid-column:1/-1}
+  .empty i{font-size:36px;display:block;margin-bottom:12px;color:var(--text3)}
+  .loading{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .demo-note{grid-column:1/-1;font-size:12px;color:var(--text2);padding:4px 0;display:flex;align-items:center;gap:6px}
+  .error-msg{color:var(--red);font-size:13px}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-left">
+    <div class="title"><i class="ti ti-chart-bar" style="color:var(--green)"></i> Gross Margin Dashboard</div>
+    <div class="subtitle">Lecture de <code>Gross Margin - Data</code> via Apps Script</div>
+  </div>
+  <div class="controls">
+    <select id="sort-select">
+      <option value="margin_pct_desc">Marge % ↓</option>
+      <option value="margin_pct_asc">Marge % ↑</option>
+      <option value="revenue_desc">Revenue ↓</option>
+      <option value="period">Mois analytique</option>
+      <option value="id">ID projet</option>
+    </select>
+    <select id="period-filter"><option value="">Tous les mois</option></select>
+    <button class="btn" id="config-toggle"><i class="ti ti-settings"></i> Config</button>
+    <button class="btn primary" id="load-btn" onclick="loadData()"><i class="ti ti-refresh"></i> Charger</button>
+  </div>
+</header>
+
+<div class="config-panel" id="config-panel">
+  <div class="field">
+    <label>URL Apps Script (doGet)</label>
+    <input type="text" id="url-input" placeholder="https://script.google.com/macros/s/…/exec">
+  </div>
+  <div style="display:flex;gap:8px;align-items:flex-end">
+    <button class="btn primary" onclick="saveConfig()"><i class="ti ti-device-floppy"></i> Sauvegarder</button>
+    <button class="btn" onclick="loadDemoData()"><i class="ti ti-eye"></i> Démo</button>
+  </div>
+  <div class="config-note" id="config-note">
+    Colle l'URL de déploiement de ton Apps Script ci-dessus, puis clique <strong>Sauvegarder</strong>.<br>
+    L'URL est mémorisée dans le navigateur — tu n'auras pas à la recoller à chaque visite.
+  </div>
+</div>
+
+<div class="search-bar">
+  <input type="text" id="search" placeholder="Rechercher un projet par ID…" oninput="renderCards()">
+</div>
+
+<div class="summary">
+  <div class="metric"><div class="metric-label">Projets</div><div class="metric-value" id="s-count">—</div></div>
+  <div class="metric"><div class="metric-label">Revenue post-disc</div><div class="metric-value" id="s-rev">—</div></div>
+  <div class="metric"><div class="metric-label">COGS total</div><div class="metric-value" id="s-cogs">—</div></div>
+  <div class="metric"><div class="metric-label">Marge brute</div><div class="metric-value" id="s-margin">—</div></div>
+  <div class="metric"><div class="metric-label">Marge moyenne %</div><div class="metric-value" id="s-pct">—</div></div>
+</div>
+
+<div class="grid" id="cards-grid">
+  <div class="empty"><i class="ti ti-database-off"></i>Aucune donnée chargée.<br>Configure l'URL Apps Script via <strong>⚙️ Config</strong> puis clique <strong>Charger</strong>.</div>
+</div>
+
+<script>
+let allData = [];
+let expandedId = null;
+
+const PRODUCTS = ['PV','Wallbox','Batterie','Control equipment','Air-to-water heatpump','Air-to-air heatpump','Water heater','Additional works','Order validation','À taguer'];
+const COGS_CATS = ['COGS - Small equipment','COGS - Material','COGS - Car rental & leasing','COGS - Warehouse rental','COGS - Warehouse running costs','COGS - Customer support service','COGS - Technical visits (external)','COGS - Installation (external)','COGS - Material inventory in','COGS - Restaurant','COGS - Admin services','COGS - Admin Consuel Inventory in','COGS - Project consumables','COGS - Car maintenance','COGS - Temp Tech','COGS - Other installation costs','COGS - Fuel','COGS - Hotel','COGS - Travel','COGS - Tolls'];
+
+const DEMO_DATA = [
+  {id:'cm372bgj600ogw6v6mbgovmqh',period:'4-25',rev_pre:42000,rev_post:38500,rev_by_product:{'PV':{pre:28000,post:25000},'Wallbox':{pre:8500,post:8000},'Additional works':{pre:5500,post:5500}},cogs_total:18200,cogs_detail:{'COGS - Material':12000,'COGS - Installation (external)':4800,'COGS - Small equipment':1400},margin_val:20300,margin_pct:0.527},
+  {id:'cx8k1mz900abx2y3nbhpwrtuv',period:'3-25',rev_pre:15800,rev_post:14200,rev_by_product:{'PV':{pre:15800,post:14200}},cogs_total:9100,cogs_detail:{'COGS - Material':6500,'COGS - Installation (external)':2100,'COGS - Project consumables':500},margin_val:5100,margin_pct:0.359},
+  {id:'bd2p4qr300cdl7k8mcxvnsyza',period:'5-25',rev_pre:67000,rev_post:61000,rev_by_product:{'PV':{pre:45000,post:40000},'Wallbox':{pre:12000,post:12000},'Batterie':{pre:6000,post:5500},'Additional works':{pre:4000,post:3500}},cogs_total:39500,cogs_detail:{'COGS - Material':24000,'COGS - Installation (external)':12000,'COGS - Small equipment':2000,'COGS - Project consumables':1500},margin_val:21500,margin_pct:0.352},
+  {id:'af9z7ys500efq1r2stuavbwcx',period:'4-25',rev_pre:8500,rev_post:8200,rev_by_product:{'Wallbox':{pre:8500,post:8200}},cogs_total:6900,cogs_detail:{'COGS - Material':4800,'COGS - Installation (external)':1800,'COGS - Fuel':300},margin_val:1300,margin_pct:0.159},
+  {id:'jk3l2nm700ghd4e5fuvbgwchx',period:'5-25',rev_pre:29000,rev_post:26500,rev_by_product:{'PV':{pre:20000,post:18000},'Additional works':{pre:6000,post:6000},'Order validation':{pre:3000,post:2500}},cogs_total:20100,cogs_detail:{'COGS - Material':13000,'COGS - Installation (external)':5800,'COGS - Restaurant':800,'COGS - Travel':500},margin_val:6400,margin_pct:0.242},
+  {id:'qr5t8uv200iji9j0kvwcxydze',period:'6-25',rev_pre:54000,rev_post:49800,rev_by_product:{'PV':{pre:38000,post:34000},'Wallbox':{pre:9800,post:9800},'Control equipment':{pre:3200,post:3000},'Additional works':{pre:3000,post:3000}},cogs_total:28900,cogs_detail:{'COGS - Material':17000,'COGS - Installation (external)':9200,'COGS - Small equipment':1400,'COGS - Project consumables':1300},margin_val:20900,margin_pct:0.420},
+];
+
+function fmt(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0)}
+function pct(n){return ((n||0)*100).toFixed(1)+'%'}
+function chipClass(v){return v>=0.3?'pos':v>=0.1?'warn':'neg'}
+
+function getSortedFiltered(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const pf=document.getElementById('period-filter').value;
+  const sort=document.getElementById('sort-select').value;
+  let d=[...allData].filter(r=>{
+    return (!q||(r.id||'').toLowerCase().includes(q))&&(!pf||r.period===pf);
+  });
+  d.sort((a,b)=>{
+    if(sort==='margin_pct_desc')return b.margin_pct-a.margin_pct;
+    if(sort==='margin_pct_asc')return a.margin_pct-b.margin_pct;
+    if(sort==='revenue_desc')return b.rev_post-a.rev_post;
+    if(sort==='period')return (a.period||'').localeCompare(b.period||'');
+    return (a.id||'').localeCompare(b.id||'');
+  });
+  return d;
+}
+
+function updateSummary(data){
+  const rev=data.reduce((s,r)=>s+(r.rev_post||0),0);
+  const cogs=data.reduce((s,r)=>s+(r.cogs_total||0),0);
+  const margin=data.reduce((s,r)=>s+(r.margin_val||0),0);
+  const mp=rev>0?margin/rev:0;
+  document.getElementById('s-count').textContent=data.length;
+  document.getElementById('s-rev').textContent=fmt(rev);
+  document.getElementById('s-cogs').textContent=fmt(cogs);
+  const me=document.getElementById('s-margin');
+  me.textContent=fmt(margin); me.className='metric-value '+(margin>=0?'green':'red');
+  const pe=document.getElementById('s-pct');
+  pe.textContent=pct(mp); pe.className='metric-value '+(mp>=0.1?'green':'red');
+}
+
+function renderCards(){
+  const data=getSortedFiltered();
+  updateSummary(data);
+  const grid=document.getElementById('cards-grid');
+  if(!data.length){grid.innerHTML='<div class="empty"><i class="ti ti-search-off"></i>Aucun projet trouvé.</div>';return;}
+  grid.innerHTML=data.map(r=>cardHTML(r)).join('');
+}
+
+function cardHTML(r){
+  const isExp=expandedId===r.id;
+  const shortId=r.id.length>18?r.id.slice(0,6)+'…'+r.id.slice(-6):r.id;
+  const cogsRatio=r.rev_post>0?Math.min(100,(r.cogs_total/r.rev_post)*100):0;
+  const barColor=r.margin_pct>=0.3?'var(--green)':r.margin_pct>=0.1?'var(--amber)':'var(--red)';
+
+  let detail='';
+  if(isExp){
+    // Revenue by product (only non-zero)
+    const revRows=PRODUCTS.filter(p=>r.rev_by_product&&(r.rev_by_product[p]?.post||0)!==0).map(p=>{
+      const bp=r.rev_by_product[p];
+      const disc=(bp.pre||0)-(bp.post||0);
+      return `<tr><td>${p}</td><td>${fmt(bp.pre||0)}</td><td style="color:var(--red);font-size:11px">${disc>0?'-'+fmt(disc):''}</td><td>${fmt(bp.post||0)}</td></tr>`;
+    }).join('');
+
+    // COGS by category (only non-zero)
+    const cogsRows=COGS_CATS.filter(c=>r.cogs_detail&&(r.cogs_detail[c]||0)!==0).map(c=>{
+      return `<tr><td>${c.replace('COGS - ','')}</td><td>${fmt(r.cogs_detail[c])}</td></tr>`;
+    }).join('');
+
+    detail=`<div class="detail">
+      <div class="detail-title">Revenue par produit</div>
+      <table class="detail-table" style="font-size:11px">
+        <thead><tr><td style="color:var(--text2)">Produit</td><td style="text-align:right;color:var(--text2)">Brut</td><td style="text-align:right;color:var(--text2)">Remise</td><td style="text-align:right;color:var(--text2)">Net</td></tr></thead>
+        <tbody>${revRows}</tbody>
+        <tr class="total"><td>Total</td><td style="text-align:right">${fmt(r.rev_pre)}</td><td></td><td style="text-align:right">${fmt(r.rev_post)}</td></tr>
+      </table>
+      ${cogsRows?`<div class="detail-title" style="margin-top:14px">COGS détaillés</div>
+      <table class="detail-table">
+        <tbody>${cogsRows}</tbody>
+        <tr class="total"><td>Total</td><td>${fmt(r.cogs_total)}</td></tr>
+      </table>`:''}
+      <div class="detail-title" style="margin-top:14px">Marge brute</div>
+      <table class="detail-table">
+        <tr><td>Revenue post-discount</td><td>${fmt(r.rev_post)}</td></tr>
+        <tr><td>COGS total</td><td style="color:var(--red)">- ${fmt(r.cogs_total)}</td></tr>
+        <tr class="total"><td>Marge brute</td><td style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)} (${pct(r.margin_pct)})</td></tr>
+      </table>
+    </div>`;
+  }
+
+  return `<div class="card${isExp?' expanded':''}" onclick="toggle('${r.id}')">
+    <div class="card-header">
+      <div>
+        <div class="card-id">${shortId}</div>
+        <div class="card-name">${r.id}</div>
+      </div>
+      <div class="badges">
+        <span class="chip ${chipClass(r.margin_pct)}">${pct(r.margin_pct)}</span>
+        ${r.period?`<span class="period-tag"><i class="ti ti-calendar" style="font-size:10px"></i>${r.period}</span>`:''}
+      </div>
+    </div>
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-label">Revenue</div><div class="kpi-val">${fmt(r.rev_post)}</div></div>
+      <div class="kpi"><div class="kpi-label">COGS</div><div class="kpi-val">${fmt(r.cogs_total)}</div></div>
+      <div class="kpi"><div class="kpi-label">Marge</div><div class="kpi-val" style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)}</div></div>
+    </div>
+    <div class="progress-row">
+      <div class="progress-meta"><span>COGS / Revenue</span><span>${r.rev_post>0?pct(r.cogs_total/r.rev_post):'—'}</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${cogsRatio}%;background:${barColor}"></div></div>
+    </div>
+    ${detail}
+    <div class="expand-hint">${isExp?'▲ Réduire':'▼ Voir le détail'}</div>
+  </div>`;
+}
+
+function toggle(id){expandedId=expandedId===id?null:id;renderCards()}
+
+function populatePeriodFilter(){
+  const sel=document.getElementById('period-filter');
+  const periods=[...new Set(allData.map(r=>r.period).filter(Boolean))].sort();
+  sel.innerHTML='<option value="">Tous les mois</option>'+periods.map(p=>`<option value="${p}">${p}</option>`).join('');
+}
+
+function loadData(){
+  const url=localStorage.getItem('gm_url');
+  if(!url){alert('Configure d\'abord l\'URL Apps Script via ⚙️ Config');return;}
+  const btn=document.getElementById('load-btn');
+  btn.innerHTML='<span class="loading"></span> Chargement…';
+  btn.disabled=true;
+  fetch(url)
+    .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
+    .then(json=>{
+      if(json.data&&json.data.length){
+        allData=json.data;
+        populatePeriodFilter();
+        renderCards();
+      } else {
+        document.getElementById('cards-grid').innerHTML='<div class="empty"><i class="ti ti-alert-circle"></i>Réponse reçue mais aucune donnée.<br>Vérifier que l\'onglet "Gross Margin - Data" contient des lignes.</div>';
+      }
+    })
+    .catch(e=>{
+      document.getElementById('cards-grid').innerHTML=`<div class="empty"><i class="ti ti-wifi-off"></i>Erreur : ${e.message}<br><small>Vérifier l'URL et que le déploiement est bien "Accessible par tout le monde".</small></div>`;
+    })
+    .finally(()=>{btn.innerHTML='<i class="ti ti-refresh"></i> Charger';btn.disabled=false;});
+}
+
+function loadDemoData(){
+  allData=DEMO_DATA;
+  populatePeriodFilter();
+  renderCards();
+  const note=document.createElement('div');
+  note.className='demo-note';
+  note.innerHTML='<i class="ti ti-info-circle"></i> Données de démonstration. Configure l\'URL Apps Script pour tes vraies données.';
+  document.getElementById('cards-grid').prepend(note);
+}
+
+function saveConfig(){
+  const url=document.getElementById('url-input').value.trim();
+  if(!url)return;
+  localStorage.setItem('gm_url',url);
+  document.getElementById('config-note').innerHTML='<span style="color:var(--green)">✓ URL sauvegardée.</span> Clique sur <strong>Charger</strong> pour récupérer les données.';
+  document.getElementById('config-panel').classList.remove('open');
+}
+
+document.getElementById('config-toggle').addEventListener('click',()=>{
+  document.getElementById('config-panel').classList.toggle('open');
+  const saved=localStorage.getItem('gm_url');
+  if(saved)document.getElementById('url-input').value=saved;
+});
+document.getElementById('sort-select').addEventListener('change',renderCards);
+document.getElementById('period-filter').addEventListener('change',renderCards);
+
+// Auto-load si URL déjà sauvegardée
+if(localStorage.getItem('gm_url'))loadData();
+else loadDemoData();
+</script>
+</body>
+</html>
