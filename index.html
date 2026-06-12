@@ -47,21 +47,30 @@ select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--r);bo
 .tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:500}
 .tab-badge{font-size:11px;background:var(--red-light);color:var(--red-text);padding:1px 6px;border-radius:10px;font-weight:600}
 
-/* FILTERS BAR */
 .filter-bar{padding:.65rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .filter-bar input[type=text]{flex:1;min-width:160px}
-.filter-group{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .filter-label{font-size:12px;color:var(--text2);white-space:nowrap}
 .period-pills{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
-.pill{font-size:11px;padding:3px 9px;border-radius:20px;border:.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap}
+.pill{font-size:11px;padding:3px 9px;border-radius:20px;border:.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap;user-select:none}
 .pill:hover{background:var(--bg2)}
 .pill.active{background:var(--green);color:#fff;border-color:var(--green-dark)}
-.pill.remove{background:var(--red-light);color:var(--red-text);border-color:var(--red-text)}
+.pill.remove{background:var(--red-light);color:var(--red-text);border-color:transparent}
+/* margin filter pills */
+.pill.mf-all{background:var(--bg2);color:var(--text)}
+.pill.mf-all.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.pill.mf-high{border-color:var(--blue);color:var(--blue-text)}
+.pill.mf-high.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pill.mf-pos{border-color:var(--green);color:var(--green-text)}
+.pill.mf-pos.active{background:var(--green);color:#fff;border-color:var(--green)}
+.pill.mf-warn{border-color:var(--amber);color:var(--amber-text)}
+.pill.mf-warn.active{background:var(--amber);color:#fff;border-color:var(--amber)}
+.pill.mf-neg{border-color:var(--red);color:var(--red-text)}
+.pill.mf-neg.active{background:var(--red);color:#fff;border-color:var(--red)}
+
 .toggle-btns{display:flex;gap:3px}
 .toggle-btns button{font-size:12px;padding:4px 10px;border-radius:var(--r);border:.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer}
 .toggle-btns button.active{background:var(--green);color:#fff;border-color:var(--green-dark)}
 
-/* STATS BAR */
 .stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:.85rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border)}
 .stat{background:var(--bg2);border-radius:var(--r);padding:.6rem .9rem}
 .stat-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
@@ -69,7 +78,6 @@ select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--r);bo
 .stat-value.green{color:var(--green)}
 .stat-value.red{color:var(--red)}
 
-/* CHART */
 .chart-section{padding:1.25rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border)}
 .chart-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
 .chart-title{font-size:13px;font-weight:600}
@@ -77,14 +85,18 @@ select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--r);bo
 .legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
 canvas{max-height:220px}
 
-/* GRID */
+/* CARD */
 .grid{padding:1.25rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
-.card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:1.1rem;cursor:pointer;transition:border-color .15s}
+.card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:1.1rem;cursor:pointer;transition:border-color .15s;position:relative}
 .card:hover{border-color:var(--border2)}
 .card.expanded{border-color:var(--green);border-width:1px}
-.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px}
-.card-id{font-size:11px;color:var(--text2);font-family:ui-monospace,monospace;margin-bottom:2px}
-.card-name{font-size:14px;font-weight:600;word-break:break-all}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.card-pid{font-size:10px;color:var(--text3);font-family:ui-monospace,monospace;margin-bottom:3px;word-break:break-all;line-height:1.3}
+.card-name{font-size:15px;font-weight:600}
+.card-actions{display:flex;align-items:center;gap:6px;margin-bottom:10px}
+.ensol-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);text-decoration:none;padding:3px 8px;border-radius:20px;border:.5px solid var(--border2);background:var(--bg2);transition:background .15s}
+.ensol-link:hover{background:var(--bg3);color:var(--text)}
+.ensol-logo{width:14px;height:14px;border-radius:3px;flex-shrink:0}
 .badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
 .chip{font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px}
 .chip.pos{background:var(--green-light);color:var(--green-text)}
@@ -119,7 +131,7 @@ canvas{max-height:220px}
 .areason{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
 .areason.low{background:var(--red-light);color:var(--red-text)}
 .areason.high{background:var(--blue-light);color:var(--blue-text)}
-.mono{font-family:ui-monospace,monospace;font-size:12px}
+.mono{font-family:ui-monospace,monospace;font-size:11px}
 
 /* P&L */
 .pl-wrap{padding:1.25rem 2rem;overflow-x:auto}
@@ -200,6 +212,14 @@ canvas{max-height:220px}
   <div class="filter-bar">
     <i class="ti ti-search" style="font-size:14px;color:var(--text2)"></i>
     <input type="text" id="proj-search" placeholder="Rechercher par ID ou nom client…" oninput="renderCards()">
+    <span class="filter-label">Marge :</span>
+    <div class="period-pills" id="margin-filter-pills">
+      <span class="pill mf-all active" onclick="setMarginFilter('all')">Tous</span>
+      <span class="pill mf-high" onclick="setMarginFilter('high')">Élevée &gt;40%</span>
+      <span class="pill mf-pos" onclick="setMarginFilter('pos')">Normale 20–40%</span>
+      <span class="pill mf-warn" onclick="setMarginFilter('warn')">Basse 10–20%</span>
+      <span class="pill mf-neg" onclick="setMarginFilter('neg')">Très basse &lt;10%</span>
+    </div>
     <span class="filter-label">Période :</span>
     <div class="toggle-btns">
       <button class="active" id="proj-by-month" onclick="setProjPeriodMode('month')">Mois</button>
@@ -215,7 +235,7 @@ canvas{max-height:220px}
       <option value="id">ID projet</option>
     </select>
   </div>
-  <div class="stats-bar" id="proj-stats">
+  <div class="stats-bar">
     <div class="stat"><div class="stat-label">Projets filtrés</div><div class="stat-value" id="ps-count">—</div></div>
     <div class="stat"><div class="stat-label">CA total</div><div class="stat-value" id="ps-rev">—</div></div>
     <div class="stat"><div class="stat-label">COGS total</div><div class="stat-value" id="ps-cogs">—</div></div>
@@ -264,6 +284,7 @@ canvas{max-height:220px}
 
 <script>
 const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwTB9a_JL-GOti8REFDa2pIoL-9_CbcQWmdomJh6zVLqrCZnqQ6jXgPgdFp-y5AE3wK/exec';
+const ENTOOL_BASE='https://entool.goensol.com/projects/';
 let allData=[];
 let expandedId=null;
 let chartMode='month';
@@ -273,10 +294,12 @@ let projPeriodMode='month';
 let projSelectedPeriods=new Set();
 let anomPeriodMode='month';
 let anomSelectedPeriods=new Set();
+let marginFilter='all';
 
 const PRODUCTS=['PV','Wallbox','Batterie','Control equipment','Air-to-water heatpump','Air-to-air heatpump','Water heater','Additional works','Order validation','À taguer'];
 const COGS_CATS=['COGS - Small equipment','COGS - Material','COGS - Car rental & leasing','COGS - Warehouse rental','COGS - Warehouse running costs','COGS - Customer support service','COGS - Technical visits (external)','COGS - Installation (external)','COGS - Material inventory in','COGS - Restaurant','COGS - Admin services','COGS - Admin Consuel Inventory in','COGS - Project consumables','COGS - Car maintenance','COGS - Temp Tech','COGS - Other installation costs','COGS - Fuel','COGS - Hotel','COGS - Travel','COGS - Tolls'];
 
+/* ---- HELPERS ---- */
 function fmt(n){if(n===null||n===undefined||n==='')return'';return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0)}
 function fmtPct(n){if(n===null||n===undefined)return'';return((n||0)*100).toFixed(1)+'%'}
 function pp(p){
@@ -287,11 +310,39 @@ function pp(p){
   return{m,y,sort:y*100+m,label:p,quarter:'Q'+Math.ceil(m/3)+'-'+pts[1],year:'20'+pts[1]};
 }
 
+// Extract pure project ID (after last " - ") and client name (before last " - ")
+function parseId(rawId){
+  if(!rawId)return{pid:rawId,name:rawId};
+  const idx=rawId.lastIndexOf(' - ');
+  if(idx===-1)return{pid:rawId,name:rawId};
+  return{pid:rawId.slice(idx+3),name:rawId.slice(0,idx)};
+}
+
+function chipClass(v){return v>=0.4?'high':v>=0.2?'pos':v>=0.1?'warn':'neg'}
+function matchesMarginFilter(r){
+  if(marginFilter==='all')return true;
+  if(marginFilter==='high')return r.margin_pct>=0.4;
+  if(marginFilter==='pos')return r.margin_pct>=0.2&&r.margin_pct<0.4;
+  if(marginFilter==='warn')return r.margin_pct>=0.1&&r.margin_pct<0.2;
+  if(marginFilter==='neg')return r.margin_pct<0.1;
+  return true;
+}
+
+/* ---- TABS ---- */
 function switchTab(tab){
   ['overview','projects','pl','anomalies'].forEach(t=>{
     document.getElementById('tab-'+t).classList.toggle('active',t===tab);
     document.getElementById('panel-'+t).classList.toggle('active',t===tab);
   });
+}
+
+/* ---- MARGIN FILTER ---- */
+function setMarginFilter(f){
+  marginFilter=f;
+  document.querySelectorAll('#margin-filter-pills .pill').forEach(p=>{
+    p.classList.toggle('active',p.getAttribute('onclick').includes("'"+f+"'"));
+  });
+  renderCards();
 }
 
 /* ---- PERIOD PILLS ---- */
@@ -305,17 +356,15 @@ function getPeriodOptions(mode){
   });
   return Object.entries(set).sort((a,b)=>a[1]-b[1]).map(e=>e[0]);
 }
-
 function buildPills(containerId,selectedSet,mode,onToggle){
   const opts=getPeriodOptions(mode);
   const el=document.getElementById(containerId);
   if(!opts.length){el.innerHTML='';return;}
   el.innerHTML=opts.map(o=>`<span class="pill${selectedSet.has(o)?' active':''}" onclick="(${onToggle})('${o}')">${o}</span>`).join('')
-    +(selectedSet.size?`<span class="pill remove" onclick="(${onToggle})('__clear__')"><i class="ti ti-x" style="font-size:10px"></i> Tout effacer</span>`:'');
+    +(selectedSet.size?`<span class="pill remove" onclick="(${onToggle})('__clear__')"><i class="ti ti-x" style="font-size:10px"></i> Effacer</span>`:'');
 }
-
 function toggleProjPeriod(val){
-  if(val==='__clear__'){projSelectedPeriods.clear();}
+  if(val==='__clear__')projSelectedPeriods.clear();
   else{if(projSelectedPeriods.has(val))projSelectedPeriods.delete(val);else projSelectedPeriods.add(val);}
   buildPills('proj-period-pills',projSelectedPeriods,projPeriodMode,'toggleProjPeriod');
   renderCards();
@@ -327,7 +376,7 @@ function setProjPeriodMode(mode){
   renderCards();
 }
 function toggleAnomPeriod(val){
-  if(val==='__clear__'){anomSelectedPeriods.clear();}
+  if(val==='__clear__')anomSelectedPeriods.clear();
   else{if(anomSelectedPeriods.has(val))anomSelectedPeriods.delete(val);else anomSelectedPeriods.add(val);}
   buildPills('anom-period-pills',anomSelectedPeriods,anomPeriodMode,'toggleAnomPeriod');
   renderAnomalies();
@@ -338,7 +387,6 @@ function setAnomPeriodMode(mode){
   buildPills('anom-period-pills',anomSelectedPeriods,anomPeriodMode,'toggleAnomPeriod');
   renderAnomalies();
 }
-
 function matchesPeriodFilter(row,selectedSet,mode){
   if(!selectedSet.size)return true;
   const p=pp(row.period);if(!p)return false;
@@ -346,7 +394,7 @@ function matchesPeriodFilter(row,selectedSet,mode){
   return selectedSet.has(key);
 }
 
-/* ---- OVERVIEW STATS ---- */
+/* ---- OVERVIEW ---- */
 function updateOverviewStats(){
   const rev=allData.reduce((s,r)=>s+(r.rev_post||0),0);
   const cogs=allData.reduce((s,r)=>s+(r.cogs_total||0),0);
@@ -390,16 +438,12 @@ function buildChart(){
       {label:'Revenue post-discount',data:revVals,backgroundColor:'#1D9E75',borderRadius:3,order:2},
       {label:'Marge brute',data:marginVals,backgroundColor:'#378ADD',borderRadius:3,order:1}
     ]},
-    options:{
-      responsive:true,maintainAspectRatio:true,
-      plugins:{
-        legend:{display:false},
-        tooltip:{callbacks:{
-          title:ctx=>ctx[0].label,
-          afterTitle:ctx=>`${counts[ctx[0].dataIndex]} projet${counts[ctx[0].dataIndex]>1?'s':''}`,
-          label:c=>c.dataset.label+' : '+new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(c.raw)
-        }}
-      },
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{
+        title:c=>c[0].label,
+        afterTitle:c=>`${counts[c[0].dataIndex]} projet${counts[c[0].dataIndex]>1?'s':''}`,
+        label:c=>c.dataset.label+' : '+new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(c.raw)
+      }}},
       scales:{
         x:{grid:{color:gc},ticks:{color:tc,font:{size:11}}},
         y:{grid:{color:gc},ticks:{color:tc,font:{size:11},callback:v=>new Intl.NumberFormat('fr-FR',{notation:'compact',currency:'EUR',style:'currency'}).format(v)}}
@@ -458,13 +502,12 @@ function buildPL(){
     const cls=isNeg&&v>0?'neg':(!isNeg&&v<0?'neg':'');
     return`<td${cls?` class="${cls}"`:''}">${fmt(isNeg?-Math.abs(v):v)}</td>`;
   }
-  function ec(){return'<td style="color:var(--text3)"></td>';}
+  function ec(){return'<td></td>';}
   function row(label,f,o={}){
     const{isNeg=false,isPct=false,ind=false,empty=false,sub=false,tot=false,sec=false}=o;
     const cls=sec?'pl-sec':tot?'pl-tot':sub?'pl-sub':'';
-    const lc=ind?'pl-ind':'';
     const dc=empty?cols.map(()=>ec()).join(''):cols.map(c=>cell(c.key,f,isNeg,isPct)).join('');
-    return`<tr class="${cls}"><td class="${lc}">${label}</td>${dc}</tr>`;
+    return`<tr class="${cls}"><td${ind?' class="pl-ind"':''}>${label}</td>${dc}</tr>`;
   }
   const hdr='<tr><th>Ligne</th>'+cols.map(c=>`<th>${c.label}</th>`).join('')+'</tr>';
   wrap.innerHTML=`<table class="pl-table"><thead>${hdr}</thead><tbody>
@@ -533,7 +576,8 @@ function getAnomFiltered(){
   const q=(document.getElementById('anom-search').value||'').toLowerCase();
   return allData.filter(r=>{
     const isAnom=r.margin_pct<0.20||r.margin_pct>0.40;
-    const matchQ=!q||(r.id||'').toLowerCase().includes(q);
+    const{pid,name}=parseId(r.id);
+    const matchQ=!q||pid.toLowerCase().includes(q)||name.toLowerCase().includes(q);
     const matchP=matchesPeriodFilter(r,anomSelectedPeriods,anomPeriodMode);
     return isAnom&&matchQ&&matchP;
   });
@@ -553,10 +597,23 @@ function renderAnomalies(){
   const sorted=[...data].sort((a,b)=>a.margin_pct-b.margin_pct);
   const rows=sorted.map(r=>{
     const isLow=r.margin_pct<0.20;
-    const shortId=r.id.length>20?r.id.slice(0,8)+'…'+r.id.slice(-6):r.id;
-    return`<tr><td class="mono">${shortId}</td><td>${r.period||'—'}</td><td>${fmt(r.rev_post)}</td><td>${fmt(r.cogs_total)}</td><td style="font-weight:600;color:${isLow?'var(--red)':'var(--blue)'}">${fmt(r.margin_val)}</td><td style="font-weight:600;color:${isLow?'var(--red)':'var(--blue)'}">${fmtPct(r.margin_pct)}</td><td><span class="areason ${isLow?'low':'high'}">${isLow?'< 20%':'> 40%'}</span></td></tr>`;
+    const{pid,name}=parseId(r.id);
+    const ensolUrl=ENTOOL_BASE+pid+'?tab=overview';
+    return`<tr>
+      <td><div style="font-size:12px;font-weight:600">${name}</div><div class="mono" style="margin-top:2px">${pid}</div></td>
+      <td>${r.period||'—'}</td>
+      <td>${fmt(r.rev_post)}</td>
+      <td>${fmt(r.cogs_total)}</td>
+      <td style="font-weight:600;color:${isLow?'var(--red)':'var(--blue)'}">${fmt(r.margin_val)}</td>
+      <td style="font-weight:600;color:${isLow?'var(--red)':'var(--blue)'}">${fmtPct(r.margin_pct)}</td>
+      <td><span class="areason ${isLow?'low':'high'}">${isLow?'< 20%':'> 40%'}</span></td>
+      <td><a href="${ensolUrl}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--blue);text-decoration:none">
+        <svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius:3px"><rect width="32" height="32" fill="#1DA462"/><path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Entool
+      </a></td>
+    </tr>`;
   }).join('');
-  wrap.innerHTML=`<table class="atable"><thead><tr><th>Project ID</th><th>Mois</th><th>Revenue</th><th>COGS</th><th>Marge €</th><th>Marge %</th><th>Raison</th></tr></thead><tbody>${rows}</tbody></table>`;
+  wrap.innerHTML=`<table class="atable"><thead><tr><th>Projet</th><th>Mois</th><th>Revenue</th><th>COGS</th><th>Marge €</th><th>Marge %</th><th>Raison</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 /* ---- CARDS ---- */
@@ -564,9 +621,11 @@ function getProjFiltered(){
   const q=(document.getElementById('proj-search').value||'').toLowerCase();
   const sort=document.getElementById('proj-sort').value;
   let d=allData.filter(r=>{
-    const matchQ=!q||(r.id||'').toLowerCase().includes(q);
+    const{pid,name}=parseId(r.id);
+    const matchQ=!q||pid.toLowerCase().includes(q)||name.toLowerCase().includes(q);
     const matchP=matchesPeriodFilter(r,projSelectedPeriods,projPeriodMode);
-    return matchQ&&matchP;
+    const matchM=matchesMarginFilter(r);
+    return matchQ&&matchP&&matchM;
   });
   d.sort((a,b)=>{
     if(sort==='margin_pct_desc')return b.margin_pct-a.margin_pct;
@@ -592,12 +651,17 @@ function renderCards(){
   if(!data.length){grid.innerHTML='<div class="empty"><i class="ti ti-search-off"></i>Aucun projet trouvé.</div>';return;}
   grid.innerHTML=data.map(r=>cardHTML(r)).join('');
 }
-function chipClass(v){return v>=0.4?'high':v>=0.2?'pos':v>=0.1?'warn':'neg'}
+
 function cardHTML(r){
   const isExp=expandedId===r.id;
-  const shortId=r.id.length>18?r.id.slice(0,6)+'…'+r.id.slice(-6):r.id;
+  const{pid,name}=parseId(r.id);
+  const ensolUrl=ENTOOL_BASE+pid+'?tab=overview';
   const cogsRatio=r.rev_post>0?Math.min(100,(r.cogs_total/r.rev_post)*100):0;
   const barColor=r.margin_pct>=0.3?'var(--green)':r.margin_pct>=0.1?'var(--amber)':'var(--red)';
+
+  // Ensol logo SVG inline
+  const ensolLogo=`<svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius:3px"><rect width="32" height="32" fill="#1DA462"/><path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
   let detail='';
   if(isExp){
     const revRows=PRODUCTS.filter(p=>r.rev_by_product&&(r.rev_by_product[p]?.post||0)!==0).map(p=>{
@@ -617,9 +681,21 @@ function cardHTML(r){
         <tr class="tot"><td>Marge brute</td><td style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)} (${fmtPct(r.margin_pct)})</td></tr>
       </table></div>`;
   }
+
   return`<div class="card${isExp?' expanded':''}" onclick="toggle('${r.id}')">
-    <div class="card-header"><div><div class="card-id">${shortId}</div><div class="card-name">${r.id}</div></div>
-    <div class="badges"><span class="chip ${chipClass(r.margin_pct)}">${fmtPct(r.margin_pct)}</span>${r.period?`<span class="period-tag"><i class="ti ti-calendar" style="font-size:10px"></i>${r.period}</span>`:''}</div></div>
+    <div class="card-header">
+      <div style="flex:1;min-width:0">
+        <div class="card-pid">${pid}</div>
+        <div class="card-name">${name}</div>
+      </div>
+      <div class="badges">
+        <span class="chip ${chipClass(r.margin_pct)}">${fmtPct(r.margin_pct)}</span>
+        ${r.period?`<span class="period-tag"><i class="ti ti-calendar" style="font-size:10px"></i>${r.period}</span>`:''}
+      </div>
+    </div>
+    <div class="card-actions" onclick="event.stopPropagation()">
+      <a href="${ensolUrl}" target="_blank" class="ensol-link">${ensolLogo} Voir sur Entool</a>
+    </div>
     <div class="kpi-row">
       <div class="kpi"><div class="kpi-label">Revenue</div><div class="kpi-val">${fmt(r.rev_post)}</div></div>
       <div class="kpi"><div class="kpi-label">COGS</div><div class="kpi-val">${fmt(r.cogs_total)}</div></div>
@@ -632,6 +708,7 @@ function cardHTML(r){
     <div class="expand-hint">${isExp?'▲ Réduire':'▼ Voir le détail'}</div>
   </div>`;
 }
+
 function toggle(id){expandedId=expandedId===id?null:id;renderCards()}
 
 function renderAll(){
@@ -645,14 +722,14 @@ function renderAll(){
 }
 
 const DEMO=[
-  {id:'cm372bgj600ogw6v6mbgovmqh',period:'4-25',rev_pre:42000,rev_post:38500,rev_by_product:{'PV':{pre:28000,post:25000},'Wallbox':{pre:8500,post:8000},'Additional works':{pre:5500,post:5500}},cogs_total:18200,cogs_detail:{'COGS - Material':12000,'COGS - Installation (external)':4800,'COGS - Small equipment':1400},margin_val:20300,margin_pct:0.527},
-  {id:'cx8k1mz900abx2y3nbhpwrtuv',period:'3-25',rev_pre:15800,rev_post:14200,rev_by_product:{'PV':{pre:15800,post:14200}},cogs_total:9100,cogs_detail:{'COGS - Material':6500,'COGS - Installation (external)':2100,'COGS - Project consumables':500},margin_val:5100,margin_pct:0.359},
-  {id:'bd2p4qr300cdl7k8mcxvnsyza',period:'5-25',rev_pre:67000,rev_post:61000,rev_by_product:{'PV':{pre:45000,post:40000},'Wallbox':{pre:12000,post:12000},'Batterie':{pre:6000,post:5500},'Additional works':{pre:4000,post:3500}},cogs_total:39500,cogs_detail:{'COGS - Material':24000,'COGS - Installation (external)':12000,'COGS - Small equipment':2000,'COGS - Project consumables':1500},margin_val:21500,margin_pct:0.352},
-  {id:'af9z7ys500efq1r2stuavbwcx',period:'4-25',rev_pre:8500,rev_post:8200,rev_by_product:{'Wallbox':{pre:8500,post:8200}},cogs_total:6900,cogs_detail:{'COGS - Material':4800,'COGS - Installation (external)':1800,'COGS - Fuel':300},margin_val:1300,margin_pct:0.159},
-  {id:'jk3l2nm700ghd4e5fuvbgwchx',period:'5-25',rev_pre:29000,rev_post:26500,rev_by_product:{'PV':{pre:20000,post:18000},'Additional works':{pre:6000,post:6000},'Order validation':{pre:3000,post:2500}},cogs_total:20100,cogs_detail:{'COGS - Material':13000,'COGS - Installation (external)':5800,'COGS - Restaurant':800,'COGS - Travel':500},margin_val:6400,margin_pct:0.242},
-  {id:'qr5t8uv200iji9j0kvwcxydze',period:'6-25',rev_pre:54000,rev_post:49800,rev_by_product:{'PV':{pre:38000,post:34000},'Wallbox':{pre:9800,post:9800},'Control equipment':{pre:3200,post:3000},'Additional works':{pre:3000,post:3000}},cogs_total:28900,cogs_detail:{'COGS - Material':17000,'COGS - Installation (external)':9200,'COGS - Small equipment':1400,'COGS - Project consumables':1300},margin_val:20900,margin_pct:0.420},
-  {id:'zt1w9xy400klm5n6opqrstuva',period:'6-25',rev_pre:12000,rev_post:11500,rev_by_product:{'PV':{pre:12000,post:11500}},cogs_total:11000,cogs_detail:{'COGS - Material':8000,'COGS - Installation (external)':3000},margin_val:500,margin_pct:0.043},
-  {id:'mn6p3rs100opb7c8duvwexfyg',period:'3-25',rev_pre:32000,rev_post:31000,rev_by_product:{'PV':{pre:22000,post:21000},'Batterie':{pre:10000,post:10000}},cogs_total:14000,cogs_detail:{'COGS - Material':10000,'COGS - Installation (external)':4000},margin_val:17000,margin_pct:0.548},
+  {id:'Alain Anes - cmiotxrdr004ilt2n0q0r1rb4',period:'5-26',rev_pre:8138,rev_post:8138,rev_by_product:{'PV':{pre:8138,post:8138}},cogs_total:0,cogs_detail:{},margin_val:8138,margin_pct:1.0},
+  {id:'Martin Dupont - cm372bgj600ogw6v6mbgovmqh',period:'4-25',rev_pre:42000,rev_post:38500,rev_by_product:{'PV':{pre:28000,post:25000},'Wallbox':{pre:8500,post:8000},'Additional works':{pre:5500,post:5500}},cogs_total:18200,cogs_detail:{'COGS - Material':12000,'COGS - Installation (external)':4800,'COGS - Small equipment':1400},margin_val:20300,margin_pct:0.527},
+  {id:'Sophie Bernard - cx8k1mz900abx2y3nbhpwrtuv',period:'3-25',rev_pre:15800,rev_post:14200,rev_by_product:{'PV':{pre:15800,post:14200}},cogs_total:9100,cogs_detail:{'COGS - Material':6500,'COGS - Installation (external)':2100,'COGS - Project consumables':500},margin_val:5100,margin_pct:0.359},
+  {id:'Famille Leclerc - bd2p4qr300cdl7k8mcxvnsyza',period:'5-25',rev_pre:67000,rev_post:61000,rev_by_product:{'PV':{pre:45000,post:40000},'Wallbox':{pre:12000,post:12000},'Batterie':{pre:6000,post:5500},'Additional works':{pre:4000,post:3500}},cogs_total:39500,cogs_detail:{'COGS - Material':24000,'COGS - Installation (external)':12000,'COGS - Small equipment':2000,'COGS - Project consumables':1500},margin_val:21500,margin_pct:0.352},
+  {id:'Jean-Pierre Moreau - af9z7ys500efq1r2stuavbwcx',period:'4-25',rev_pre:8500,rev_post:8200,rev_by_product:{'Wallbox':{pre:8500,post:8200}},cogs_total:6900,cogs_detail:{'COGS - Material':4800,'COGS - Installation (external)':1800,'COGS - Fuel':300},margin_val:1300,margin_pct:0.159},
+  {id:'Claire Martin - jk3l2nm700ghd4e5fuvbgwchx',period:'5-25',rev_pre:29000,rev_post:26500,rev_by_product:{'PV':{pre:20000,post:18000},'Additional works':{pre:6000,post:6000},'Order validation':{pre:3000,post:2500}},cogs_total:20100,cogs_detail:{'COGS - Material':13000,'COGS - Installation (external)':5800,'COGS - Restaurant':800,'COGS - Travel':500},margin_val:6400,margin_pct:0.242},
+  {id:'Thomas Petit - qr5t8uv200iji9j0kvwcxydze',period:'6-25',rev_pre:54000,rev_post:49800,rev_by_product:{'PV':{pre:38000,post:34000},'Wallbox':{pre:9800,post:9800},'Control equipment':{pre:3200,post:3000},'Additional works':{pre:3000,post:3000}},cogs_total:28900,cogs_detail:{'COGS - Material':17000,'COGS - Installation (external)':9200,'COGS - Small equipment':1400,'COGS - Project consumables':1300},margin_val:20900,margin_pct:0.420},
+  {id:'Isabelle Roux - zt1w9xy400klm5n6opqrstuva',period:'6-25',rev_pre:12000,rev_post:11500,rev_by_product:{'PV':{pre:12000,post:11500}},cogs_total:11000,cogs_detail:{'COGS - Material':8000,'COGS - Installation (external)':3000},margin_val:500,margin_pct:0.043},
 ];
 
 function loadData(){
