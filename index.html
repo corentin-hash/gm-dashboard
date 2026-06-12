@@ -222,7 +222,7 @@ canvas{max-height:220px}
 </div>
 
 <!-- PROJECTS -->
-<div class="panel" id="panel-projects">
+<div class="panel" id="panel-projects" style="display:none">
   <div class="filter-bar">
     <i class="ti ti-search" style="font-size:14px;color:var(--text2)"></i>
     <input type="text" id="proj-search" placeholder="Rechercher par ID ou nom client…" oninput="renderCards()">
@@ -266,7 +266,7 @@ canvas{max-height:220px}
 </div>
 
 <!-- P&L -->
-<div class="panel" id="panel-pl">
+<div class="panel" id="panel-pl" style="display:none">
   <div class="pl-wrap">
     <div class="pl-controls">
       <div class="toggle-btns">
@@ -281,7 +281,7 @@ canvas{max-height:220px}
 </div>
 
 <!-- ANOMALIES -->
-<div class="panel" id="panel-anomalies">
+<div class="panel" id="panel-anomalies" style="display:none">
   <div class="filter-bar">
     <i class="ti ti-search" style="font-size:14px;color:var(--text2)"></i>
     <input type="text" id="anom-search" placeholder="Rechercher par ID ou nom client…" oninput="renderAnomalies()">
@@ -303,7 +303,7 @@ canvas{max-height:220px}
 </div>
 
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwMHE_uzFGvHn8S5pVPNL9988AZjuBpUYjY_onN4Ctj9nLja7b34qtItNJ1iuiWnvAS/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzUOM-1jqiuJakcPIgoT4w1A8-jIU_O87C_pHTG_MqF1xSEZ2T8w2rUW62EPR3oXAaq/exec';
 const ENTOOL_BASE='https://entool.goensol.com/projects/';
 let allData=[];
 let expandedId=null;
@@ -345,10 +345,20 @@ function pp(p){
   return{m,y,sort:y*100+m,label:p,quarter:'Q'+Math.ceil(m/3)+'-'+pts[1],year:'20'+pts[1]};
 }
 function parseId(rawId){
-  if(!rawId)return{pid:rawId,name:rawId};
+  if(!rawId)return{pid:'',name:''};
   const idx=rawId.lastIndexOf(' - ');
   if(idx===-1)return{pid:rawId,name:rawId};
   return{pid:rawId.slice(idx+3),name:rawId.slice(0,idx)};
+}
+// Extrait le nom client depuis r.name (col A format "Prénom Nom - id")
+// ou fallback sur parseId(r.id) si r.name absent
+function getClientName(r){
+  if(r.name){
+    // col A peut être "Prénom Nom - id" → couper avant le dernier " - "
+    const idx=r.name.lastIndexOf(' - ');
+    return idx!==-1?r.name.slice(0,idx):r.name;
+  }
+  return parseId(r.id).name||r.id;
 }
 function chipClass(v){return v>=0.4?'high':v>=0.2?'pos':v>=0.1?'warn':'neg'}
 function matchesMarginFilter(r){
@@ -363,8 +373,11 @@ function matchesMarginFilter(r){
 /* ---- TABS ---- */
 function switchTab(tab){
   ['overview','projects','pl','anomalies'].forEach(t=>{
-    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
-    document.getElementById('panel-'+t).classList.toggle('active',t===tab);
+    const panel=document.getElementById('panel-'+t);
+    const isActive=t===tab;
+    document.getElementById('tab-'+t).classList.toggle('active',isActive);
+    panel.classList.toggle('active',isActive);
+    panel.style.display=isActive?'block':'none';
   });
 }
 
@@ -619,7 +632,7 @@ function getAnomFiltered(){
   return allData.filter(r=>{
     const isAnom=r.margin_pct<0.20||r.margin_pct>0.40;
     const{pid,name}=parseId(r.id);
-    const clientName=r.name||name;
+    const clientName=getClientName(r);
     const matchQ=!q||pid.toLowerCase().includes(q)||clientName.toLowerCase().includes(q);
     const matchP=matchesPeriodFilter(r,anomSelectedPeriods,anomPeriodMode);
     return isAnom&&matchQ&&matchP;
@@ -642,7 +655,7 @@ function renderAnomalies(){
   const rows=sorted.map(r=>{
     const isLow=r.margin_pct<0.20;
     const{pid,name}=parseId(r.id);
-    const clientName=r.name||name;
+    const clientName=getClientName(r);
     const ensolUrl=ENTOOL_BASE+pid+'?tab=overview';
     return`<tr>
       <td><div style="font-size:12px;font-weight:600">${clientName}</div><div class="mono" style="margin-top:2px">${pid}</div></td>
@@ -664,7 +677,7 @@ function getProjFiltered(){
   const sort=document.getElementById('proj-sort').value;
   let d=allData.filter(r=>{
     const{pid,name}=parseId(r.id);
-    const clientName=r.name||name;
+    const clientName=getClientName(r);
     const matchQ=!q||pid.toLowerCase().includes(q)||clientName.toLowerCase().includes(q);
     const matchP=matchesPeriodFilter(r,projSelectedPeriods,projPeriodMode);
     const matchM=matchesMarginFilter(r);
@@ -698,7 +711,7 @@ function renderCards(){
 function cardHTML(r){
   const isExp=expandedId===r.id;
   const{pid,name}=parseId(r.id);
-  const clientName=r.name||name;
+  const clientName=getClientName(r);
   const ensolUrl=ENTOOL_BASE+pid+'?tab=overview';
 
   const fnpEntries=getFNP(r.id);
