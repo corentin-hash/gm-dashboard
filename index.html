@@ -16,125 +16,133 @@
   --red:#E24B4A;--red-light:#FCEBEB;--red-text:#791F1F;
   --amber:#EF9F27;--amber-light:#FAEEDA;--amber-text:#633806;
   --blue:#378ADD;--blue-light:#E6F1FB;--blue-text:#0C447C;
+  --purple:#534AB7;--purple-light:#EEEDFE;--purple-text:#26215C;
   --radius:8px;--radius-lg:12px;
 }
 @media(prefers-color-scheme:dark){
   :root{
     --bg:#1e1e1e;--bg2:#262626;--bg3:#2e2e2e;
-    --text:#e8e8e8;--text2:#aaa;--text3:#666;
-    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+    --text:#e8e8e8;--text2:#aaa;--text3:#555;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.18);
     --green-light:#04342C;--green-text:#9FE1CB;
     --red-light:#501313;--red-text:#F09595;
     --amber-light:#412402;--amber-text:#FAC775;
     --blue-light:#042C53;--blue-text:#B5D4F4;
+    --purple-light:#26215C;--purple-text:#CECBF6;
   }
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:15px;line-height:1.5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--text);font-size:14px;line-height:1.5}
 code{font-family:ui-monospace,monospace;font-size:0.85em;background:var(--bg2);padding:1px 5px;border-radius:4px}
 
-/* HEADER */
-.app-header{padding:1.25rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;position:sticky;top:0;z-index:100}
-.header-left .title{font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px}
-.header-left .subtitle{font-size:12px;color:var(--text2);margin-top:2px}
+.app-header{padding:1rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.header-left .title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+.header-left .subtitle{font-size:12px;color:var(--text2);margin-top:1px}
 .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-select,input[type=text]{font-size:13px;padding:6px 10px;border-radius:var(--radius);border:0.5px solid var(--border2);background:var(--bg);color:var(--text);outline:none}
-select:focus,input[type=text]:focus{border-color:var(--green)}
+select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--radius);border:0.5px solid var(--border2);background:var(--bg);color:var(--text);outline:none}
 .btn{font-size:13px;padding:6px 14px;border-radius:var(--radius);border:0.5px solid var(--border2);background:transparent;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn:hover{background:var(--bg2)}
 .btn.primary{background:var(--green);color:#fff;border-color:var(--green-dark)}
 .btn.primary:hover{background:var(--green-dark)}
 
-/* TABS */
 .tabs{display:flex;gap:0;background:var(--bg);border-bottom:0.5px solid var(--border);padding:0 2rem}
 .tab{font-size:13px;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);display:flex;align-items:center;gap:6px;white-space:nowrap}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:500}
 .tab-badge{font-size:11px;background:var(--red-light);color:var(--red-text);padding:1px 6px;border-radius:10px;font-weight:600}
 
-/* FILTERS */
-.filters{padding:0.75rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.filters{padding:0.65rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .filters input[type=text]{flex:1;min-width:180px}
-.filter-label{font-size:12px;color:var(--text2);white-space:nowrap}
 
-/* SUMMARY */
-.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:1.25rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border)}
-.metric{background:var(--bg2);border-radius:var(--radius);padding:0.75rem 1rem}
-.metric-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
-.metric-value{font-size:20px;font-weight:600}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding:1rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border)}
+.metric{background:var(--bg2);border-radius:var(--radius);padding:0.65rem 1rem}
+.metric-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px}
+.metric-value{font-size:19px;font-weight:600}
 .metric-value.green{color:var(--green)}
 .metric-value.red{color:var(--red)}
 
-/* CHART SECTION */
-.chart-section{padding:1.5rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border)}
+.chart-section{padding:1.25rem 2rem;background:var(--bg);border-bottom:0.5px solid var(--border)}
 .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
-.chart-title{font-size:14px;font-weight:600;color:var(--text)}
+.chart-title{font-size:13px;font-weight:600}
 .chart-toggle{display:flex;gap:4px}
 .chart-toggle button{font-size:12px;padding:4px 10px;border-radius:var(--radius);border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer}
 .chart-toggle button.active{background:var(--green);color:#fff;border-color:var(--green-dark)}
-.chart-legend{display:flex;gap:16px;font-size:12px;color:var(--text2)}
+.chart-legend{display:flex;gap:16px;font-size:12px;color:var(--text2);margin-top:5px}
 .legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
-canvas{max-height:240px}
+canvas{max-height:220px}
 
-/* GRID */
-.grid{padding:1.5rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
-
-/* CARD */
-.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;cursor:pointer;transition:border-color .15s}
+.grid{padding:1.25rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.1rem;cursor:pointer;transition:border-color .15s}
 .card:hover{border-color:var(--border2)}
 .card.expanded{border-color:var(--green);border-width:1px}
-.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:14px}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px}
 .card-id{font-size:11px;color:var(--text2);font-family:ui-monospace,monospace;margin-bottom:2px}
-.card-name{font-size:15px;font-weight:600;word-break:break-all}
-.badges{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
-.chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px}
+.card-name{font-size:14px;font-weight:600;word-break:break-all}
+.badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.chip{font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px}
 .chip.pos{background:var(--green-light);color:var(--green-text)}
 .chip.neg{background:var(--red-light);color:var(--red-text)}
 .chip.warn{background:var(--amber-light);color:var(--amber-text)}
 .chip.high{background:var(--blue-light);color:var(--blue-text)}
-.period-tag{font-size:11px;background:var(--green-light);color:var(--green-text);padding:3px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:4px}
-
-/* KPI ROW */
-.kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px}
-.kpi{background:var(--bg2);border-radius:var(--radius);padding:8px 10px}
-.kpi-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:3px}
-.kpi-val{font-size:14px;font-weight:600}
-
-/* PROGRESS */
+.period-tag{font-size:11px;background:var(--green-light);color:var(--green-text);padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center;gap:3px}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:10px}
+.kpi{background:var(--bg2);border-radius:var(--radius);padding:7px 9px}
+.kpi-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:2px}
+.kpi-val{font-size:13px;font-weight:600}
 .progress-row{margin-bottom:2px}
-.progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:4px}
-.progress-track{height:5px;border-radius:3px;background:var(--bg2);overflow:hidden}
-.progress-fill{height:100%;border-radius:3px;transition:width .4s}
-
-/* DETAIL */
-.detail{margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border)}
-.detail-title{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;font-weight:600}
+.progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:3px}
+.progress-track{height:4px;border-radius:3px;background:var(--bg2);overflow:hidden}
+.progress-fill{height:100%;border-radius:3px}
+.detail{margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)}
+.detail-title{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:7px;font-weight:600}
 .detail-table{width:100%;font-size:12px;border-collapse:collapse}
-.detail-table tr td{padding:3px 0}
+.detail-table tr td{padding:2px 0}
 .detail-table tr td:first-child{color:var(--text2)}
 .detail-table tr td:last-child{text-align:right;font-family:ui-monospace,monospace;font-weight:500}
-.detail-table tr.total td{font-weight:700;border-top:0.5px solid var(--border);padding-top:6px}
-.expand-hint{text-align:center;font-size:11px;color:var(--text3);margin-top:12px}
+.detail-table tr.total td{font-weight:700;border-top:0.5px solid var(--border);padding-top:5px}
+.expand-hint{text-align:center;font-size:11px;color:var(--text3);margin-top:10px}
 
-/* ANOMALIES TABLE */
-.anomalies-wrap{padding:1.5rem 2rem}
+/* ANOMALIES */
+.anomalies-wrap{padding:1.25rem 2rem}
 .anomaly-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--bg);border-radius:var(--radius-lg);overflow:hidden;border:0.5px solid var(--border)}
-.anomaly-table th{background:var(--bg2);padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text2);font-weight:600;border-bottom:0.5px solid var(--border)}
-.anomaly-table td{padding:10px 14px;border-bottom:0.5px solid var(--border);vertical-align:middle}
+.anomaly-table th{background:var(--bg2);padding:9px 13px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text2);font-weight:600;border-bottom:0.5px solid var(--border)}
+.anomaly-table td{padding:9px 13px;border-bottom:0.5px solid var(--border);vertical-align:middle}
 .anomaly-table tr:last-child td{border-bottom:none}
 .anomaly-table tr:hover td{background:var(--bg2)}
 .anomaly-reason{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
 .anomaly-reason.low{background:var(--red-light);color:var(--red-text)}
 .anomaly-reason.high{background:var(--blue-light);color:var(--blue-text)}
 .mono{font-family:ui-monospace,monospace;font-size:12px}
-
-/* EMPTY / LOADING */
-.empty{text-align:center;padding:4rem 2rem;color:var(--text2);grid-column:1/-1}
-.empty i{font-size:36px;display:block;margin-bottom:12px;color:var(--text3)}
-.loading{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px}
-@keyframes spin{to{transform:rotate(360deg)}}
 .section-empty{padding:3rem 2rem;text-align:center;color:var(--text2);font-size:13px}
 
-/* PANEL HIDDEN */
+/* P&L TABLE */
+.pl-wrap{padding:1.25rem 2rem;overflow-x:auto}
+.pl-controls{display:flex;gap:8px;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+.pl-toggle{display:flex;gap:4px}
+.pl-toggle button{font-size:12px;padding:5px 12px;border-radius:var(--radius);border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer}
+.pl-toggle button.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.pl-table{border-collapse:collapse;font-size:12px;min-width:100%;background:var(--bg)}
+.pl-table th{background:var(--bg2);padding:7px 12px;text-align:right;font-size:11px;color:var(--text2);font-weight:600;border:0.5px solid var(--border);white-space:nowrap;position:sticky;top:0}
+.pl-table th:first-child{text-align:left;position:sticky;left:0;z-index:2;background:var(--bg2);min-width:220px}
+.pl-table td{padding:5px 12px;border:0.5px solid var(--border);text-align:right;white-space:nowrap;font-family:ui-monospace,monospace}
+.pl-table td:first-child{text-align:left;font-family:inherit;position:sticky;left:0;background:var(--bg);z-index:1}
+.pl-table tr:hover td{background:var(--bg2)}
+.pl-table tr:hover td:first-child{background:var(--bg2)}
+/* Row types */
+.pl-section td{background:var(--purple-light)!important;color:var(--purple-text)!important;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.04em;font-family:inherit!important}
+.pl-section td:first-child{background:var(--purple-light)!important;color:var(--purple-text)!important}
+.pl-subtotal td{background:var(--bg2)!important;font-weight:700;border-top:1px solid var(--border2)}
+.pl-subtotal td:first-child{background:var(--bg2)!important}
+.pl-total td{background:var(--green-light)!important;color:var(--green-text)!important;font-weight:700;font-size:13px;border-top:2px solid var(--green)}
+.pl-total td:first-child{background:var(--green-light)!important;color:var(--green-text)!important}
+.pl-empty td{color:var(--text3)!important;font-style:italic}
+.pl-indent{padding-left:24px!important}
+.negative{color:var(--red)!important}
+.positive-val{color:var(--green)!important}
+
+.empty{text-align:center;padding:3rem 2rem;color:var(--text2);grid-column:1/-1}
+.empty i{font-size:32px;display:block;margin-bottom:10px;color:var(--text3)}
+.loading{display:inline-block;width:15px;height:15px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px}
+@keyframes spin{to{transform:rotate(360deg)}}
 .panel{display:none}
 .panel.active{display:block}
 </style>
@@ -154,10 +162,11 @@ canvas{max-height:240px}
 <nav class="tabs">
   <div class="tab active" onclick="switchTab('overview')" id="tab-overview"><i class="ti ti-layout-dashboard"></i> Vue d'ensemble</div>
   <div class="tab" onclick="switchTab('projects')" id="tab-projects"><i class="ti ti-building"></i> Projets</div>
-  <div class="tab" onclick="switchTab('anomalies')" id="tab-anomalies"><i class="ti ti-alert-triangle"></i> Projets atypiques <span class="tab-badge" id="anomaly-count">0</span></div>
+  <div class="tab" onclick="switchTab('pl')" id="tab-pl"><i class="ti ti-table"></i> P&amp;L analytique</div>
+  <div class="tab" onclick="switchTab('anomalies')" id="tab-anomalies"><i class="ti ti-alert-triangle"></i> Atypiques <span class="tab-badge" id="anomaly-count">0</span></div>
 </nav>
 
-<!-- OVERVIEW PANEL -->
+<!-- OVERVIEW -->
 <div class="panel active" id="panel-overview">
   <div class="summary">
     <div class="metric"><div class="metric-label">Projets</div><div class="metric-value" id="s-count">—</div></div>
@@ -166,12 +175,11 @@ canvas{max-height:240px}
     <div class="metric"><div class="metric-label">Marge brute</div><div class="metric-value" id="s-margin">—</div></div>
     <div class="metric"><div class="metric-label">Marge moyenne %</div><div class="metric-value" id="s-pct">—</div></div>
   </div>
-
   <div class="chart-section">
     <div class="chart-header">
       <div>
         <div class="chart-title">Revenue & marge brute</div>
-        <div class="chart-legend" style="margin-top:6px">
+        <div class="chart-legend">
           <span><span class="legend-dot" style="background:var(--green)"></span>Revenue post-discount</span>
           <span><span class="legend-dot" style="background:var(--blue)"></span>Marge brute</span>
         </div>
@@ -185,11 +193,11 @@ canvas{max-height:240px}
   </div>
 </div>
 
-<!-- PROJECTS PANEL -->
+<!-- PROJECTS -->
 <div class="panel" id="panel-projects">
   <div class="filters">
-    <span class="filter-label"><i class="ti ti-search" style="font-size:14px;vertical-align:-2px"></i></span>
-    <input type="text" id="search" placeholder="Rechercher par ID projet ou nom client…" oninput="renderCards()">
+    <i class="ti ti-search" style="font-size:14px;color:var(--text2)"></i>
+    <input type="text" id="search" placeholder="Rechercher par ID projet…" oninput="renderCards()">
     <select id="period-filter" onchange="renderCards()"><option value="">Tous les mois</option></select>
     <select id="sort-select" onchange="renderCards()">
       <option value="margin_pct_desc">Marge % ↓</option>
@@ -199,12 +207,25 @@ canvas{max-height:240px}
       <option value="id">ID projet</option>
     </select>
   </div>
-  <div class="grid" id="cards-grid">
-    <div class="empty"><i class="ti ti-database-off"></i>Chargement en cours…</div>
+  <div class="grid" id="cards-grid"><div class="empty"><i class="ti ti-database-off"></i>Chargement…</div></div>
+</div>
+
+<!-- P&L -->
+<div class="panel" id="panel-pl">
+  <div class="pl-wrap">
+    <div class="pl-controls">
+      <div class="pl-toggle">
+        <button class="active" id="pl-btn-year" onclick="setPLMode('year')"><i class="ti ti-calendar" style="font-size:12px"></i> Annuel</button>
+        <button id="pl-btn-quarter" onclick="setPLMode('quarter')"><i class="ti ti-calendar-week" style="font-size:12px"></i> Trimestriel</button>
+        <button id="pl-btn-month" onclick="setPLMode('month')"><i class="ti ti-calendar-event" style="font-size:12px"></i> Mensuel</button>
+      </div>
+      <span style="font-size:12px;color:var(--text2);margin-left:8px">Les lignes grisées ne sont pas encore disponibles dans les données sources.</span>
+    </div>
+    <div id="pl-table-wrap"><div class="section-empty">Chargement…</div></div>
   </div>
 </div>
 
-<!-- ANOMALIES PANEL -->
+<!-- ANOMALIES -->
 <div class="panel" id="panel-anomalies">
   <div class="anomalies-wrap">
     <div id="anomalies-content"><div class="section-empty">Chargement…</div></div>
@@ -218,29 +239,29 @@ let allData = [];
 let expandedId = null;
 let chartMode = 'month';
 let chartInstance = null;
-let currentTab = 'overview';
+let plMode = 'year';
 
 const PRODUCTS = ['PV','Wallbox','Batterie','Control equipment','Air-to-water heatpump','Air-to-air heatpump','Water heater','Additional works','Order validation','À taguer'];
 const COGS_CATS = ['COGS - Small equipment','COGS - Material','COGS - Car rental & leasing','COGS - Warehouse rental','COGS - Warehouse running costs','COGS - Customer support service','COGS - Technical visits (external)','COGS - Installation (external)','COGS - Material inventory in','COGS - Restaurant','COGS - Admin services','COGS - Admin Consuel Inventory in','COGS - Project consumables','COGS - Car maintenance','COGS - Temp Tech','COGS - Other installation costs','COGS - Fuel','COGS - Hotel','COGS - Travel','COGS - Tolls'];
 
-const DEMO_DATA = [
-  {id:'cm372bgj600ogw6v6mbgovmqh',period:'4-25',rev_pre:42000,rev_post:38500,rev_by_product:{'PV':{pre:28000,post:25000},'Wallbox':{pre:8500,post:8000},'Additional works':{pre:5500,post:5500}},cogs_total:18200,cogs_detail:{'COGS - Material':12000,'COGS - Installation (external)':4800,'COGS - Small equipment':1400},margin_val:20300,margin_pct:0.527},
-  {id:'cx8k1mz900abx2y3nbhpwrtuv',period:'3-25',rev_pre:15800,rev_post:14200,rev_by_product:{'PV':{pre:15800,post:14200}},cogs_total:9100,cogs_detail:{'COGS - Material':6500,'COGS - Installation (external)':2100,'COGS - Project consumables':500},margin_val:5100,margin_pct:0.359},
-  {id:'bd2p4qr300cdl7k8mcxvnsyza',period:'5-25',rev_pre:67000,rev_post:61000,rev_by_product:{'PV':{pre:45000,post:40000},'Wallbox':{pre:12000,post:12000},'Batterie':{pre:6000,post:5500},'Additional works':{pre:4000,post:3500}},cogs_total:39500,cogs_detail:{'COGS - Material':24000,'COGS - Installation (external)':12000,'COGS - Small equipment':2000,'COGS - Project consumables':1500},margin_val:21500,margin_pct:0.352},
-  {id:'af9z7ys500efq1r2stuavbwcx',period:'4-25',rev_pre:8500,rev_post:8200,rev_by_product:{'Wallbox':{pre:8500,post:8200}},cogs_total:6900,cogs_detail:{'COGS - Material':4800,'COGS - Installation (external)':1800,'COGS - Fuel':300},margin_val:1300,margin_pct:0.159},
-  {id:'jk3l2nm700ghd4e5fuvbgwchx',period:'5-25',rev_pre:29000,rev_post:26500,rev_by_product:{'PV':{pre:20000,post:18000},'Additional works':{pre:6000,post:6000},'Order validation':{pre:3000,post:2500}},cogs_total:20100,cogs_detail:{'COGS - Material':13000,'COGS - Installation (external)':5800,'COGS - Restaurant':800,'COGS - Travel':500},margin_val:6400,margin_pct:0.242},
-  {id:'qr5t8uv200iji9j0kvwcxydze',period:'6-25',rev_pre:54000,rev_post:49800,rev_by_product:{'PV':{pre:38000,post:34000},'Wallbox':{pre:9800,post:9800},'Control equipment':{pre:3200,post:3000},'Additional works':{pre:3000,post:3000}},cogs_total:28900,cogs_detail:{'COGS - Material':17000,'COGS - Installation (external)':9200,'COGS - Small equipment':1400,'COGS - Project consumables':1300},margin_val:20900,margin_pct:0.420},
-  {id:'zt1w9xy400kl',period:'6-25',rev_pre:12000,rev_post:11500,rev_by_product:{'PV':{pre:12000,post:11500}},cogs_total:11000,cogs_detail:{'COGS - Material':8000,'COGS - Installation (external)':3000},margin_val:500,margin_pct:0.043},
-  {id:'mn6p3rs100op',period:'3-25',rev_pre:32000,rev_post:31000,rev_by_product:{'PV':{pre:22000,post:21000},'Batterie':{pre:10000,post:10000}},cogs_total:14000,cogs_detail:{'COGS - Material':10000,'COGS - Installation (external)':4000},margin_val:17000,margin_pct:0.548},
-];
-
-function fmt(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0)}
+/* ---- UTILS ---- */
+function fmt(n){if(n===null||n===undefined||n==='')return '';return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0)}
+function fmtPct(n){if(n===null||n===undefined||n==='')return '';return ((n||0)*100).toFixed(1)+'%'}
 function pct(n){return ((n||0)*100).toFixed(1)+'%'}
 function chipClass(v){return v>=0.4?'high':v>=0.2?'pos':v>=0.1?'warn':'neg'}
 
+function parsePeriod(p){
+  if(!p)return null;
+  const parts=String(p).split('-');
+  if(parts.length!==2)return null;
+  const m=parseInt(parts[0]);
+  const y=parseInt('20'+parts[1]);
+  if(isNaN(m)||isNaN(y))return null;
+  return{m,y,sort:y*100+m,label:p,quarter:'Q'+Math.ceil(m/3)+'-'+parts[1],year:'20'+parts[1]};
+}
+
 function switchTab(tab){
-  currentTab=tab;
-  ['overview','projects','anomalies'].forEach(t=>{
+  ['overview','projects','pl','anomalies'].forEach(t=>{
     document.getElementById('tab-'+t).classList.toggle('active',t===tab);
     document.getElementById('panel-'+t).classList.toggle('active',t===tab);
   });
@@ -262,16 +283,6 @@ function updateSummary(data){
 }
 
 /* ---- CHART ---- */
-function parsePeriod(p){
-  if(!p)return null;
-  const parts=p.split('-');
-  if(parts.length!==2)return null;
-  const m=parseInt(parts[0]);
-  const y=parseInt('20'+parts[1]);
-  if(isNaN(m)||isNaN(y))return null;
-  return{m,y,sort:y*100+m,label:p};
-}
-
 function setChartMode(mode){
   chartMode=mode;
   document.getElementById('btn-month').classList.toggle('active',mode==='month');
@@ -282,9 +293,7 @@ function setChartMode(mode){
 function buildChart(data){
   const ctx=document.getElementById('main-chart').getContext('2d');
   if(chartInstance){chartInstance.destroy();chartInstance=null;}
-
   let labels,revVals,marginVals;
-
   if(chartMode==='month'){
     const map={};
     data.forEach(r=>{
@@ -294,58 +303,183 @@ function buildChart(data){
       map[p.sort].rev+=(r.rev_post||0);
       map[p.sort].margin+=(r.margin_val||0);
     });
-    const sorted=Object.values(map).sort((a,b)=>a.label.localeCompare(b.label));
-    labels=sorted.map(x=>x.label);
-    revVals=sorted.map(x=>Math.round(x.rev));
-    marginVals=sorted.map(x=>Math.round(x.margin));
+    const sorted=Object.values(map).sort((a,b)=>parseInt(a.label.split('-')[1])*100+parseInt(a.label.split('-')[0])-(parseInt(b.label.split('-')[1])*100+parseInt(b.label.split('-')[0])));
+    labels=sorted.map(x=>x.label);revVals=sorted.map(x=>Math.round(x.rev));marginVals=sorted.map(x=>Math.round(x.margin));
   } else {
     const map={};
     data.forEach(r=>{
       const p=parsePeriod(r.period);
       if(!p)return;
-      const y='20'+r.period.split('-')[1];
-      if(!map[y])map[y]={rev:0,margin:0};
-      map[y].rev+=(r.rev_post||0);
-      map[y].margin+=(r.margin_val||0);
+      if(!map[p.year])map[p.year]={rev:0,margin:0};
+      map[p.year].rev+=(r.rev_post||0);map[p.year].margin+=(r.margin_val||0);
     });
     const sorted=Object.keys(map).sort();
-    labels=sorted;
-    revVals=sorted.map(y=>Math.round(map[y].rev));
-    marginVals=sorted.map(y=>Math.round(map[y].margin));
+    labels=sorted;revVals=sorted.map(y=>Math.round(map[y].rev));marginVals=sorted.map(y=>Math.round(map[y].margin));
+  }
+  const isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const gridColor=isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.05)';
+  const textColor=isDark?'#888':'#999';
+  chartInstance=new Chart(ctx,{type:'bar',data:{labels,datasets:[
+    {label:'Revenue post-discount',data:revVals,backgroundColor:'#1D9E75',borderRadius:3,order:2},
+    {label:'Marge brute',data:marginVals,backgroundColor:'#378ADD',borderRadius:3,order:1}
+  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+' : '+new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(c.raw)}}},scales:{x:{grid:{color:gridColor},ticks:{color:textColor,font:{size:11}}},y:{grid:{color:gridColor},ticks:{color:textColor,font:{size:11},callback:v=>new Intl.NumberFormat('fr-FR',{notation:'compact',currency:'EUR',style:'currency'}).format(v)}}}}});
+}
+
+/* ---- P&L ---- */
+function setPLMode(mode){
+  plMode=mode;
+  ['year','quarter','month'].forEach(m=>{
+    document.getElementById('pl-btn-'+m).classList.toggle('active',m===mode);
+  });
+  buildPL();
+}
+
+function getPLColumns(){
+  const periods=allData.map(r=>parsePeriod(r.period)).filter(Boolean);
+  if(!periods.length)return[];
+  if(plMode==='year'){
+    const years=[...new Set(periods.map(p=>p.year))].sort();
+    return years.map(y=>({key:y,label:y}));
+  } else if(plMode==='quarter'){
+    const qMap={};
+    periods.forEach(p=>{qMap[p.year+'_'+p.quarter]={key:p.quarter,label:p.quarter,sort:p.y*100+Math.ceil(p.m/3)};});
+    return Object.values(qMap).sort((a,b)=>a.sort-b.sort).map(x=>({key:x.key,label:x.label}));
+  } else {
+    const mMap={};
+    periods.forEach(p=>{mMap[p.sort]={key:p.label,label:p.label,sort:p.sort};});
+    return Object.values(mMap).sort((a,b)=>a.sort-b.sort).map(x=>({key:x.key,label:x.label}));
+  }
+}
+
+function periodMatchesCol(period,colKey){
+  const p=parsePeriod(period);
+  if(!p)return false;
+  if(plMode==='year')return p.year===colKey;
+  if(plMode==='quarter')return p.quarter===colKey;
+  return p.label===colKey;
+}
+
+function aggBy(colKey,fn){
+  return allData.filter(r=>periodMatchesCol(r.period,colKey)).reduce((s,r)=>s+fn(r),0);
+}
+
+function buildPL(){
+  const cols=getPLColumns();
+  const wrap=document.getElementById('pl-table-wrap');
+  if(!cols.length){wrap.innerHTML='<div class="section-empty">Aucune donnée disponible.</div>';return;}
+
+  // Build aggregated data per col
+  const D={};
+  cols.forEach(col=>{
+    const k=col.key;
+    D[k]={};
+    // Revenue pre-discount par produit
+    PRODUCTS.forEach(prod=>{
+      D[k]['rev_pre_'+prod]=allData.filter(r=>periodMatchesCol(r.period,k)).reduce((s,r)=>s+((r.rev_by_product&&r.rev_by_product[prod])?r.rev_by_product[prod].pre||0:0),0);
+      D[k]['disc_'+prod]=allData.filter(r=>periodMatchesCol(r.period,k)).reduce((s,r)=>s+((r.rev_by_product&&r.rev_by_product[prod])?(r.rev_by_product[prod].pre||0)-(r.rev_by_product[prod].post||0):0),0);
+      D[k]['rev_post_'+prod]=allData.filter(r=>periodMatchesCol(r.period,k)).reduce((s,r)=>s+((r.rev_by_product&&r.rev_by_product[prod])?r.rev_by_product[prod].post||0:0),0);
+    });
+    D[k]['rev_pre_total']=allData.filter(r=>periodMatchesCol(r.period,k)).reduce((s,r)=>s+(r.rev_pre||0),0);
+    D[k]['disc_total']=allData.filter(r=>periodMatchesCol(r.period,k)).reduce((s,r)=>s+(r.rev_pre||0)-(r.rev_post||0),0);
+    D[k]['rev_post_total']=allData.filter(r=>periodMatchesCol(r.period,k)).reduce((s,r)=>s+(r.rev_post||0),0);
+    COGS_CATS.forEach(cat=>{
+      D[k]['cogs_'+cat]=allData.filter(r=>periodMatchesCol(r.period,k)).reduce((s,r)=>s+((r.cogs_detail&&r.cogs_detail[cat])?r.cogs_detail[cat]||0:0),0);
+    });
+    D[k]['cogs_total']=allData.filter(r=>periodMatchesCol(r.period,k)).reduce((s,r)=>s+(r.cogs_total||0),0);
+    D[k]['margin_val']=allData.filter(r=>periodMatchesCol(r.period,k)).reduce((s,r)=>s+(r.margin_val||0),0);
+    D[k]['margin_pct']=D[k]['rev_post_total']>0?D[k]['margin_val']/D[k]['rev_post_total']:0;
+  });
+
+  function cell(k,field,isNeg,isPct){
+    const v=D[k]&&D[k][field]!==undefined?D[k][field]:null;
+    if(v===null||v===0)return '<td></td>';
+    if(isPct)return `<td class="${v>=0?'positive-val':'negative'}">${fmtPct(v)}</td>`;
+    const display=fmt(isNeg?-Math.abs(v):v);
+    const cls=isNeg&&v>0?'negative':(!isNeg&&v<0?'negative':'');
+    return `<td${cls?' class="'+cls+'"':''}>${display}</td>`;
+  }
+  function emptyCell(){return '<td style="color:var(--text3)">—</td>';}
+  function row(label,field,opts={}){
+    const {isNeg=false,isPct=false,indent=false,empty=false,subtotal=false,total=false,section=false}=opts;
+    let cls='';
+    if(section)cls='pl-section';
+    else if(total)cls='pl-total';
+    else if(subtotal)cls='pl-subtotal';
+    else if(empty)cls='pl-empty';
+    const labelCell=`<td class="${indent?'pl-indent':''}">${label}</td>`;
+    const dataCells=empty?cols.map(()=>emptyCell()).join(''):cols.map(c=>cell(c.key,field,isNeg,isPct)).join('');
+    return `<tr class="${cls}">${labelCell}${dataCells}</tr>`;
   }
 
-  const isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
-  const gridColor=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.06)';
-  const textColor=isDark?'#aaa':'#888';
+  const headers='<tr><th>Ligne</th>'+cols.map(c=>`<th>${c.label}</th>`).join('')+'</tr>';
 
-  chartInstance=new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels,
-      datasets:[
-        {label:'Revenue post-discount',data:revVals,backgroundColor:'#1D9E75',borderRadius:4,order:2},
-        {label:'Marge brute',data:marginVals,backgroundColor:'#378ADD',borderRadius:4,order:1}
-      ]
-    },
-    options:{
-      responsive:true,
-      maintainAspectRatio:true,
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          callbacks:{
-            label:ctx=>{
-              return ctx.dataset.label+' : '+new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(ctx.raw);
-            }
-          }
-        }
-      },
-      scales:{
-        x:{grid:{color:gridColor},ticks:{color:textColor,font:{size:11}}},
-        y:{grid:{color:gridColor},ticks:{color:textColor,font:{size:11},callback:v=>new Intl.NumberFormat('fr-FR',{notation:'compact',currency:'EUR',style:'currency'}).format(v)}}
-      }
-    }
-  });
+  const html=`<table class="pl-table">
+  <thead>${headers}</thead>
+  <tbody>
+    ${row('REVENUE - ENERGY EQUIPMENTS','',{section:true})}
+    ${row('Order validation','rev_pre_Order validation',{indent:true})}
+    ${row('PV installations','rev_pre_PV',{indent:true})}
+    ${row('Batteries','rev_pre_Batterie',{indent:true})}
+    ${row('Wallboxes','rev_pre_Wallbox',{indent:true})}
+    ${row('Air-to-air heat pump','rev_pre_Air-to-air heatpump',{indent:true})}
+    ${row('Air-to-water heat pump','rev_pre_Air-to-water heatpump',{indent:true})}
+    ${row('Water heater','rev_pre_Water heater',{indent:true})}
+    ${row('Control equipments','rev_pre_Control equipment',{indent:true})}
+    ${row('Additional works','rev_pre_Additional works',{indent:true})}
+    ${row('Revenue - Energy equipments','rev_pre_total',{subtotal:true})}
+    ${row('REVENUE - ENERGY SERVICES','',{section:true})}
+    ${row('Energy Management System','',{indent:true,empty:true})}
+    ${row('Virtual Power Plant','',{indent:true,empty:true})}
+    ${row('Revenue - Energy services','',{subtotal:true,empty:true})}
+    ${row('REVENUE - SUBSCRIPTION','',{section:true})}
+    ${row('Service','',{indent:true,empty:true})}
+    ${row('Operating & Maintenance','',{indent:true,empty:true})}
+    ${row('Revenue - Subscription','',{subtotal:true,empty:true})}
+    ${row('Revenue - Total','rev_pre_total',{total:true})}
+    ${row('DISCOUNT','',{section:true})}
+    ${row('Discount PV installations','disc_PV',{indent:true,isNeg:true})}
+    ${row('Discount Batteries','disc_Batterie',{indent:true,isNeg:true})}
+    ${row('Discount Wallboxes','disc_Wallbox',{indent:true,isNeg:true})}
+    ${row('Discount Air-to-air heat pump','disc_Air-to-air heatpump',{indent:true,isNeg:true})}
+    ${row('Discount Air-to-water heat pump','disc_Air-to-water heatpump',{indent:true,isNeg:true})}
+    ${row('Discount Control equipments','disc_Control equipment',{indent:true,isNeg:true})}
+    ${row('Discount - Total','disc_total',{subtotal:true,isNeg:true})}
+    ${row('Discounted revenue - Total','rev_post_total',{total:true})}
+    ${row('COGS - MATERIAL','',{section:true})}
+    ${row('Material','COGS - Material',{indent:true,isNeg:true})}
+    ${row('Material inventory out','COGS - Material inventory in',{indent:true,isNeg:true})}
+    ${row('Project consumables','COGS - Project consumables',{indent:true,isNeg:true})}
+    ${row('Admin services','COGS - Admin services',{indent:true,isNeg:true})}
+    ${row('Admin Consuel inventory out','COGS - Admin Consuel Inventory in',{indent:true,isNeg:true})}
+    ${row('Customer support service','COGS - Customer support service',{indent:true,isNeg:true})}
+    ${row('Small equipment','COGS - Small equipment',{indent:true,isNeg:true})}
+    ${row('All installations - material','cogs_material_sub',{subtotal:true,empty:true})}
+    ${row('COGS - EXTERNAL INSTALLATIONS','',{section:true})}
+    ${row('Installation (external)','COGS - Installation (external)',{indent:true,isNeg:true})}
+    ${row('Technical visits (external)','COGS - Technical visits (external)',{indent:true,isNeg:true})}
+    ${row('External installations','cogs_ext_sub',{subtotal:true,empty:true})}
+    ${row('COGS - INTERNAL INSTALLATIONS (FIELD OPS)','',{section:true})}
+    ${row('Car rental & leasing','COGS - Car rental & leasing',{indent:true,isNeg:true})}
+    ${row('Fuel','COGS - Fuel',{indent:true,isNeg:true})}
+    ${row('Tolls','COGS - Tolls',{indent:true,isNeg:true})}
+    ${row('Car maintenance','COGS - Car maintenance',{indent:true,isNeg:true})}
+    ${row('Hotel','COGS - Hotel',{indent:true,isNeg:true})}
+    ${row('Travel','COGS - Travel',{indent:true,isNeg:true})}
+    ${row('Restaurant','COGS - Restaurant',{indent:true,isNeg:true})}
+    ${row('Warehouse rental','COGS - Warehouse rental',{indent:true,isNeg:true})}
+    ${row('Warehouse running costs','COGS - Warehouse running costs',{indent:true,isNeg:true})}
+    ${row('Temp Tech','COGS - Temp Tech',{indent:true,isNeg:true})}
+    ${row('Other installation costs','COGS - Other installation costs',{indent:true,isNeg:true})}
+    ${row('Internal installations','cogs_int_sub',{subtotal:true,empty:true})}
+    ${row('COGS - STAFF COSTS','',{section:true})}
+    ${row('Staff costs - Field Ops technicians','',{indent:true,empty:true})}
+    ${row('Staff costs - Field Ops','',{subtotal:true,empty:true})}
+    ${row('COGS','cogs_total',{total:true,isNeg:true})}
+    ${row('GROSS MARGIN','margin_val',{total:true})}
+    ${row('GM %','margin_pct',{total:true,isPct:true})}
+  </tbody>
+</table>`;
+  wrap.innerHTML=html;
 }
 
 /* ---- ANOMALIES ---- */
@@ -353,27 +487,14 @@ function renderAnomalies(){
   const anomalies=allData.filter(r=>r.margin_pct<0.20||r.margin_pct>0.40);
   document.getElementById('anomaly-count').textContent=anomalies.length;
   const wrap=document.getElementById('anomalies-content');
-  if(!anomalies.length){
-    wrap.innerHTML='<div class="section-empty"><i class="ti ti-circle-check" style="font-size:32px;display:block;margin-bottom:8px;color:var(--green)"></i>Aucun projet atypique — tous entre 20% et 40%.</div>';
-    return;
-  }
+  if(!anomalies.length){wrap.innerHTML='<div class="section-empty"><i class="ti ti-circle-check" style="font-size:28px;display:block;margin-bottom:8px;color:var(--green)"></i>Aucun projet atypique.</div>';return;}
   const sorted=[...anomalies].sort((a,b)=>a.margin_pct-b.margin_pct);
   const rows=sorted.map(r=>{
     const isLow=r.margin_pct<0.20;
     const shortId=r.id.length>20?r.id.slice(0,8)+'…'+r.id.slice(-6):r.id;
-    return `<tr>
-      <td class="mono">${shortId}</td>
-      <td>${r.period||'—'}</td>
-      <td>${fmt(r.rev_post)}</td>
-      <td>${fmt(r.cogs_total)}</td>
-      <td style="font-weight:600;color:${isLow?'var(--red)':'var(--blue)'}">${fmt(r.margin_val)}</td>
-      <td><span class="anomaly-reason ${isLow?'low':'high'}">${isLow?'Marge basse < 20%':'Marge haute > 40%'}</span></td>
-    </tr>`;
+    return `<tr><td class="mono">${shortId}</td><td>${r.period||'—'}</td><td>${fmt(r.rev_post)}</td><td>${fmt(r.cogs_total)}</td><td style="font-weight:600;color:${isLow?'var(--red)':'var(--blue)'}">${fmt(r.margin_val)}</td><td style="font-weight:600;color:${isLow?'var(--red)':'var(--blue)'}">${pct(r.margin_pct)}</td><td><span class="anomaly-reason ${isLow?'low':'high'}">${isLow?'< 20%':'> 40%'}</span></td></tr>`;
   }).join('');
-  wrap.innerHTML=`<table class="anomaly-table">
-    <thead><tr><th>Project ID</th><th>Mois</th><th>Revenue</th><th>COGS</th><th>Marge brute</th><th>Raison</th></tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  wrap.innerHTML=`<table class="anomaly-table"><thead><tr><th>Project ID</th><th>Mois</th><th>Revenue</th><th>COGS</th><th>Marge €</th><th>Marge %</th><th>Raison</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 /* ---- CARDS ---- */
@@ -381,10 +502,7 @@ function getSortedFiltered(){
   const q=(document.getElementById('search').value||'').toLowerCase();
   const pf=document.getElementById('period-filter').value;
   const sort=document.getElementById('sort-select').value;
-  let d=[...allData].filter(r=>{
-    const matchQ=!q||(r.id||'').toLowerCase().includes(q);
-    return matchQ&&(!pf||r.period===pf);
-  });
+  let d=[...allData].filter(r=>(!q||(r.id||'').toLowerCase().includes(q))&&(!pf||r.period===pf));
   d.sort((a,b)=>{
     if(sort==='margin_pct_desc')return b.margin_pct-a.margin_pct;
     if(sort==='margin_pct_asc')return a.margin_pct-b.margin_pct;
@@ -407,47 +525,28 @@ function cardHTML(r){
   const shortId=r.id.length>18?r.id.slice(0,6)+'…'+r.id.slice(-6):r.id;
   const cogsRatio=r.rev_post>0?Math.min(100,(r.cogs_total/r.rev_post)*100):0;
   const barColor=r.margin_pct>=0.3?'var(--green)':r.margin_pct>=0.1?'var(--amber)':'var(--red)';
-
   let detail='';
   if(isExp){
     const revRows=PRODUCTS.filter(p=>r.rev_by_product&&(r.rev_by_product[p]?.post||0)!==0).map(p=>{
-      const bp=r.rev_by_product[p];
-      const disc=(bp.pre||0)-(bp.post||0);
+      const bp=r.rev_by_product[p];const disc=(bp.pre||0)-(bp.post||0);
       return `<tr><td>${p}</td><td>${fmt(bp.pre||0)}</td><td style="color:var(--red);font-size:11px">${disc>0?'-'+fmt(disc):''}</td><td>${fmt(bp.post||0)}</td></tr>`;
     }).join('');
-    const cogsRows=COGS_CATS.filter(c=>r.cogs_detail&&(r.cogs_detail[c]||0)!==0).map(c=>{
-      return `<tr><td>${c.replace('COGS - ','')}</td><td>${fmt(r.cogs_detail[c])}</td></tr>`;
-    }).join('');
+    const cogsRows=COGS_CATS.filter(c=>r.cogs_detail&&(r.cogs_detail[c]||0)!==0).map(c=>`<tr><td>${c.replace('COGS - ','')}</td><td>${fmt(r.cogs_detail[c])}</td></tr>`).join('');
     detail=`<div class="detail">
       <div class="detail-title">Revenue par produit</div>
-      <table class="detail-table" style="font-size:11px">
-        <thead><tr><td style="color:var(--text2)">Produit</td><td style="text-align:right;color:var(--text2)">Brut</td><td style="text-align:right;color:var(--text2)">Remise</td><td style="text-align:right;color:var(--text2)">Net</td></tr></thead>
-        <tbody>${revRows}</tbody>
-        <tr class="total"><td>Total</td><td style="text-align:right">${fmt(r.rev_pre)}</td><td></td><td style="text-align:right">${fmt(r.rev_post)}</td></tr>
-      </table>
-      ${cogsRows?`<div class="detail-title" style="margin-top:14px">COGS détaillés</div>
-      <table class="detail-table"><tbody>${cogsRows}</tbody>
-      <tr class="total"><td>Total</td><td>${fmt(r.cogs_total)}</td></tr></table>`:''}
-      <div class="detail-title" style="margin-top:14px">Marge brute</div>
+      <table class="detail-table" style="font-size:11px"><thead><tr><td>Produit</td><td style="text-align:right">Brut</td><td style="text-align:right">Remise</td><td style="text-align:right">Net</td></tr></thead>
+      <tbody>${revRows}</tbody><tr class="total"><td>Total</td><td style="text-align:right">${fmt(r.rev_pre)}</td><td></td><td style="text-align:right">${fmt(r.rev_post)}</td></tr></table>
+      ${cogsRows?`<div class="detail-title" style="margin-top:12px">COGS détaillés</div><table class="detail-table"><tbody>${cogsRows}</tbody><tr class="total"><td>Total</td><td>${fmt(r.cogs_total)}</td></tr></table>`:''}
+      <div class="detail-title" style="margin-top:12px">Marge brute</div>
       <table class="detail-table">
         <tr><td>Revenue post-discount</td><td>${fmt(r.rev_post)}</td></tr>
-        <tr><td>COGS total</td><td style="color:var(--red)">- ${fmt(r.cogs_total)}</td></tr>
+        <tr><td>COGS total</td><td class="negative">- ${fmt(r.cogs_total)}</td></tr>
         <tr class="total"><td>Marge brute</td><td style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)} (${pct(r.margin_pct)})</td></tr>
-      </table>
-    </div>`;
+      </table></div>`;
   }
-
   return `<div class="card${isExp?' expanded':''}" onclick="toggle('${r.id}')">
-    <div class="card-header">
-      <div>
-        <div class="card-id">${shortId}</div>
-        <div class="card-name">${r.id}</div>
-      </div>
-      <div class="badges">
-        <span class="chip ${chipClass(r.margin_pct)}">${pct(r.margin_pct)}</span>
-        ${r.period?`<span class="period-tag"><i class="ti ti-calendar" style="font-size:10px"></i>${r.period}</span>`:''}
-      </div>
-    </div>
+    <div class="card-header"><div><div class="card-id">${shortId}</div><div class="card-name">${r.id}</div></div>
+    <div class="badges"><span class="chip ${chipClass(r.margin_pct)}">${pct(r.margin_pct)}</span>${r.period?`<span class="period-tag"><i class="ti ti-calendar" style="font-size:10px"></i>${r.period}</span>`:''}</div></div>
     <div class="kpi-row">
       <div class="kpi"><div class="kpi-label">Revenue</div><div class="kpi-val">${fmt(r.rev_post)}</div></div>
       <div class="kpi"><div class="kpi-label">COGS</div><div class="kpi-val">${fmt(r.cogs_total)}</div></div>
@@ -456,8 +555,7 @@ function cardHTML(r){
     <div class="progress-row">
       <div class="progress-meta"><span>COGS / Revenue</span><span>${r.rev_post>0?pct(r.cogs_total/r.rev_post):'—'}</span></div>
       <div class="progress-track"><div class="progress-fill" style="width:${cogsRatio}%;background:${barColor}"></div></div>
-    </div>
-    ${detail}
+    </div>${detail}
     <div class="expand-hint">${isExp?'▲ Réduire':'▼ Voir le détail'}</div>
   </div>`;
 }
@@ -467,8 +565,7 @@ function toggle(id){expandedId=expandedId===id?null:id;renderCards()}
 function populatePeriodFilter(){
   const sel=document.getElementById('period-filter');
   const periods=[...new Set(allData.map(r=>r.period).filter(Boolean))].sort((a,b)=>{
-    const pa=parsePeriod(a),pb=parsePeriod(b);
-    return (pa?pa.sort:0)-(pb?pb.sort:0);
+    const pa=parsePeriod(a),pb=parsePeriod(b);return(pa?pa.sort:0)-(pb?pb.sort:0);
   });
   sel.innerHTML='<option value="">Tous les mois</option>'+periods.map(p=>`<option value="${p}">${p}</option>`).join('');
 }
@@ -479,27 +576,29 @@ function renderAll(){
   populatePeriodFilter();
   renderCards();
   renderAnomalies();
+  buildPL();
 }
+
+/* ---- LOAD ---- */
+const DEMO_DATA=[
+  {id:'cm372bgj600ogw6v6mbgovmqh',period:'4-25',rev_pre:42000,rev_post:38500,rev_by_product:{'PV':{pre:28000,post:25000},'Wallbox':{pre:8500,post:8000},'Additional works':{pre:5500,post:5500}},cogs_total:18200,cogs_detail:{'COGS - Material':12000,'COGS - Installation (external)':4800,'COGS - Small equipment':1400},margin_val:20300,margin_pct:0.527},
+  {id:'cx8k1mz900abx2y3nbhpwrtuv',period:'3-25',rev_pre:15800,rev_post:14200,rev_by_product:{'PV':{pre:15800,post:14200}},cogs_total:9100,cogs_detail:{'COGS - Material':6500,'COGS - Installation (external)':2100,'COGS - Project consumables':500},margin_val:5100,margin_pct:0.359},
+  {id:'bd2p4qr300cdl7k8mcxvnsyza',period:'5-25',rev_pre:67000,rev_post:61000,rev_by_product:{'PV':{pre:45000,post:40000},'Wallbox':{pre:12000,post:12000},'Batterie':{pre:6000,post:5500},'Additional works':{pre:4000,post:3500}},cogs_total:39500,cogs_detail:{'COGS - Material':24000,'COGS - Installation (external)':12000,'COGS - Small equipment':2000,'COGS - Project consumables':1500},margin_val:21500,margin_pct:0.352},
+  {id:'af9z7ys500efq1r2stuavbwcx',period:'4-25',rev_pre:8500,rev_post:8200,rev_by_product:{'Wallbox':{pre:8500,post:8200}},cogs_total:6900,cogs_detail:{'COGS - Material':4800,'COGS - Installation (external)':1800,'COGS - Fuel':300},margin_val:1300,margin_pct:0.159},
+  {id:'jk3l2nm700ghd4e5fuvbgwchx',period:'5-25',rev_pre:29000,rev_post:26500,rev_by_product:{'PV':{pre:20000,post:18000},'Additional works':{pre:6000,post:6000},'Order validation':{pre:3000,post:2500}},cogs_total:20100,cogs_detail:{'COGS - Material':13000,'COGS - Installation (external)':5800,'COGS - Restaurant':800,'COGS - Travel':500},margin_val:6400,margin_pct:0.242},
+  {id:'qr5t8uv200iji9j0kvwcxydze',period:'6-25',rev_pre:54000,rev_post:49800,rev_by_product:{'PV':{pre:38000,post:34000},'Wallbox':{pre:9800,post:9800},'Control equipment':{pre:3200,post:3000},'Additional works':{pre:3000,post:3000}},cogs_total:28900,cogs_detail:{'COGS - Material':17000,'COGS - Installation (external)':9200,'COGS - Small equipment':1400,'COGS - Project consumables':1300},margin_val:20900,margin_pct:0.420},
+  {id:'zt1w9xy400klm5n6opqrstuva',period:'6-25',rev_pre:12000,rev_post:11500,rev_by_product:{'PV':{pre:12000,post:11500}},cogs_total:11000,cogs_detail:{'COGS - Material':8000,'COGS - Installation (external)':3000},margin_val:500,margin_pct:0.043},
+  {id:'mn6p3rs100opb7c8duvwexfyg',period:'3-25',rev_pre:32000,rev_post:31000,rev_by_product:{'PV':{pre:22000,post:21000},'Batterie':{pre:10000,post:10000}},cogs_total:14000,cogs_detail:{'COGS - Material':10000,'COGS - Installation (external)':4000},margin_val:17000,margin_pct:0.548},
+];
 
 function loadData(){
   const btn=document.getElementById('load-btn');
-  btn.innerHTML='<span class="loading"></span> Chargement…';
-  btn.disabled=true;
+  btn.innerHTML='<span class="loading"></span> Chargement…';btn.disabled=true;
   fetch(APPS_SCRIPT_URL)
     .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(json=>{
-      if(json.data&&json.data.length){
-        allData=json.data;
-        renderAll();
-      } else {
-        document.getElementById('cards-grid').innerHTML='<div class="empty"><i class="ti ti-alert-circle"></i>Aucune donnée reçue.</div>';
-      }
-    })
-    .catch(()=>{
-      allData=DEMO_DATA;
-      renderAll();
-      document.getElementById('cards-grid').insertAdjacentHTML('afterbegin','<div style="grid-column:1/-1;font-size:12px;color:var(--text2);padding:4px 0"><i class="ti ti-info-circle"></i> Données de démonstration (erreur de connexion Apps Script).</div>');
-    })
+    .then(json=>{if(json.data&&json.data.length){allData=json.data;renderAll();}
+      else{document.getElementById('cards-grid').innerHTML='<div class="empty"><i class="ti ti-alert-circle"></i>Aucune donnée reçue.</div>';}})
+    .catch(()=>{allData=DEMO_DATA;renderAll();})
     .finally(()=>{btn.innerHTML='<i class="ti ti-refresh"></i> Actualiser';btn.disabled=false;});
 }
 
