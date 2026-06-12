@@ -160,6 +160,34 @@ canvas{max-height:220px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .panel{display:none}
 .panel.active{display:block}
+.fnp-toggle{font-size:11px;padding:2px 8px;border-radius:20px;border:.5px solid var(--amber);color:var(--amber-text);background:transparent;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:6px}
+.fnp-toggle:hover{background:var(--amber-light)}
+.fnp-form{margin-top:10px;padding:10px;background:var(--amber-light);border-radius:var(--r);border:.5px solid var(--amber);display:none}
+.fnp-form.open{display:block}
+.fnp-form-row{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px}
+.fnp-form-row label{font-size:11px;color:var(--amber-text);font-weight:600;display:block;margin-bottom:3px}
+.fnp-form-row select,.fnp-form-row input{font-size:12px;padding:4px 7px;border-radius:5px;border:.5px solid var(--amber);background:var(--bg);color:var(--text);flex:1;min-width:100px}
+.fnp-add-btn{font-size:12px;padding:5px 10px;border-radius:5px;border:none;background:var(--amber);color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.fnp-add-btn:hover{opacity:.85}
+.fnp-list{margin-top:8px}
+.fnp-item{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:4px 0;border-bottom:.5px solid rgba(0,0,0,0.08)}
+.fnp-item:last-child{border-bottom:none}
+.fnp-item-left{display:flex;flex-direction:column;gap:1px}
+.fnp-item-cat{color:var(--amber-text);font-weight:600}
+.fnp-item-sup{color:var(--text2)}
+.fnp-item-right{display:flex;align-items:center;gap:8px}
+.fnp-item-amount{font-family:ui-monospace,monospace;font-weight:600;color:var(--amber-text)}
+.fnp-del{font-size:14px;color:var(--text3);cursor:pointer;line-height:1;padding:0 2px}
+.fnp-del:hover{color:var(--red)}
+.fnp-section-title{font-size:11px;color:var(--amber-text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;font-weight:600;display:flex;align-items:center;gap:5px}
+.fnp-badge{font-size:10px;background:var(--amber);color:#fff;padding:1px 6px;border-radius:10px;font-weight:700}
+.kpi-fnp{border:.5px solid var(--amber)!important;background:var(--amber-light)!important}
+.kpi-fnp .kpi-label{color:var(--amber-text)!important}
+.kpi-fnp .kpi-val{color:var(--amber-text)!important}
+.view-toggle{display:flex;gap:0;border:.5px solid var(--border2);border-radius:var(--r);overflow:hidden;margin-left:auto}
+.view-toggle button{font-size:12px;padding:5px 12px;border:none;background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap}
+.view-toggle button.active{background:var(--amber);color:#fff}
+.stat-est{font-size:10px;color:var(--amber-text);margin-top:1px;font-weight:500}
 </style>
 </head>
 <body>
@@ -184,9 +212,16 @@ canvas{max-height:220px}
   <div class="stats-bar">
     <div class="stat"><div class="stat-label">Projets</div><div class="stat-value" id="s-count">—</div></div>
     <div class="stat"><div class="stat-label">Revenue post-disc</div><div class="stat-value" id="s-rev">—</div></div>
-    <div class="stat"><div class="stat-label">COGS total</div><div class="stat-value" id="s-cogs">—</div></div>
-    <div class="stat"><div class="stat-label">Marge brute</div><div class="stat-value" id="s-margin">—</div></div>
-    <div class="stat"><div class="stat-label">Marge moyenne %</div><div class="stat-value" id="s-pct">—</div></div>
+    <div class="stat"><div class="stat-label">COGS total</div><div class="stat-value" id="s-cogs">—</div><div class="stat-est" id="s-cogs-est" style="display:none"></div></div>
+    <div class="stat"><div class="stat-label">Marge brute</div><div class="stat-value" id="s-margin">—</div><div class="stat-est" id="s-margin-est" style="display:none"></div></div>
+    <div class="stat"><div class="stat-label">Marge moyenne %</div><div class="stat-value" id="s-pct">—</div><div class="stat-est" id="s-pct-est" style="display:none"></div></div>
+    <div class="stat" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-end;background:transparent;border:none">
+      <div class="stat-label" style="margin-bottom:5px">Vue</div>
+      <div class="view-toggle">
+        <button class="active" id="vt-real" onclick="setViewMode('real')">Réel</button>
+        <button id="vt-fnp" onclick="setViewMode('fnp')">+ FNP estimé</button>
+      </div>
+    </div>
   </div>
   <div class="chart-section">
     <div class="chart-header">
@@ -299,6 +334,23 @@ let marginFilter='all';
 const PRODUCTS=['PV','Wallbox','Batterie','Control equipment','Air-to-water heatpump','Air-to-air heatpump','Water heater','Additional works','Order validation','À taguer'];
 const COGS_CATS=['COGS - Small equipment','COGS - Material','COGS - Car rental & leasing','COGS - Warehouse rental','COGS - Warehouse running costs','COGS - Customer support service','COGS - Technical visits (external)','COGS - Installation (external)','COGS - Material inventory out','COGS - Restaurant','COGS - Admin services','COGS - Project consumables','COGS - Car maintenance','COGS - Temp Tech','COGS - Other installation costs','COGS - Fuel','COGS - Hotel','COGS - Travel','COGS - Tolls'];
 
+let viewMode='real';
+
+/* ---- FNP STORAGE ---- */
+function fnpKey(id){return'fnp_v1_'+id;}
+function getFNP(id){try{return JSON.parse(localStorage.getItem(fnpKey(id))||'[]');}catch{return[];}}
+function saveFNP(id,arr){localStorage.setItem(fnpKey(id),JSON.stringify(arr));}
+function fnpTotal(id){return getFNP(id).reduce((s,e)=>s+(e.amount||0),0);}
+function hasFNP(id){return getFNP(id).length>0;}
+
+function setViewMode(m){
+  viewMode=m;
+  document.getElementById('vt-real').classList.toggle('active',m==='real');
+  document.getElementById('vt-fnp').classList.toggle('active',m==='fnp');
+  updateOverviewStats();
+  renderCards();
+}
+
 /* ---- HELPERS ---- */
 function fmt(n){if(n===null||n===undefined||n==='')return'';return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0)}
 function fmtPct(n){if(n===null||n===undefined)return'';return((n||0)*100).toFixed(1)+'%'}
@@ -405,6 +457,19 @@ function updateOverviewStats(){
   document.getElementById('s-cogs').textContent=fmt(cogs);
   const me=document.getElementById('s-margin');me.textContent=fmt(margin);me.className='stat-value '+(margin>=0?'green':'red');
   const pe=document.getElementById('s-pct');pe.textContent=fmtPct(mp);pe.className='stat-value '+(mp>=0.1?'green':'red');
+
+  // FNP estimé
+  const totalFNP=allData.reduce((s,r)=>s+fnpTotal(r.id),0);
+  const cogsFNP=cogs+totalFNP;
+  const marginFNP=margin-totalFNP;
+  const mpFNP=rev>0?marginFNP/rev:0;
+  const showEst=viewMode==='fnp'&&totalFNP>0;
+  const ce=document.getElementById('s-cogs-est');
+  const mee=document.getElementById('s-margin-est');
+  const pee=document.getElementById('s-pct-est');
+  if(ce){ce.style.display=showEst?'block':'none';ce.textContent=showEst?'→ '+fmt(cogsFNP)+' (estimé)':'';}
+  if(mee){mee.style.display=showEst?'block':'none';mee.textContent=showEst?'→ '+fmt(marginFNP)+' (estimé)':'';}
+  if(pee){pee.style.display=showEst?'block':'none';pee.textContent=showEst?'→ '+fmtPct(mpFNP)+' (estimé)':'';}
 }
 
 /* ---- CHART ---- */
@@ -654,12 +719,29 @@ function renderCards(){
 function cardHTML(r){
   const isExp=expandedId===r.id;
   const{pid,name}=parseId(r.id);
+  // Nom client : depuis r.name (col A) si dispo, sinon fallback sur name extrait de r.id
+  const clientName=r.name||name;
   const ensolUrl=ENTOOL_BASE+pid+'?tab=overview';
-  const cogsRatio=r.rev_post>0?Math.min(100,(r.cogs_total/r.rev_post)*100):0;
-  const barColor=r.margin_pct>=0.3?'var(--green)':r.margin_pct>=0.1?'var(--amber)':'var(--red)';
 
-  // Ensol logo SVG inline
+  const fnpEntries=getFNP(r.id);
+  const fnpAmt=fnpEntries.reduce((s,e)=>s+(e.amount||0),0);
+  const cogsEst=r.cogs_total+fnpAmt;
+  const marginEst=r.margin_val-fnpAmt;
+  const marginPctEst=r.rev_post>0?marginEst/r.rev_post:0;
+
+  const showFNP=viewMode==='fnp';
+  const dispCogs=showFNP?cogsEst:r.cogs_total;
+  const dispMargin=showFNP?marginEst:r.margin_val;
+  const dispPct=showFNP?marginPctEst:r.margin_pct;
+
+  const cogsRatio=r.rev_post>0?Math.min(100,(dispCogs/r.rev_post)*100):0;
+  const barColor=dispPct>=0.3?'var(--green)':dispPct>=0.1?'var(--amber)':'var(--red)';
+
   const ensolLogo=`<svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius:3px"><rect width="32" height="32" fill="#1DA462"/><path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+  // Chip marge : si vue FNP et FNP saisi, montrer les deux
+  const chipReal=`<span class="chip ${chipClass(r.margin_pct)}">${fmtPct(r.margin_pct)}</span>`;
+  const chipEst=showFNP&&fnpAmt>0?`<span class="chip fnp" title="Estimé avec FNP">${fmtPct(marginPctEst)} est.</span>`:'';
 
   let detail='';
   if(isExp){
@@ -668,44 +750,104 @@ function cardHTML(r){
       return`<tr><td>${p}</td><td>${fmt(bp.pre||0)}</td><td style="color:var(--red);font-size:11px">${disc>0?'-'+fmt(disc):''}</td><td>${fmt(bp.post||0)}</td></tr>`;
     }).join('');
     const cogsRows=COGS_CATS.filter(c=>r.cogs_detail&&(r.cogs_detail[c]||0)!==0).map(c=>`<tr><td>${c.replace('COGS - ','')}</td><td>${fmt(r.cogs_detail[c])}</td></tr>`).join('');
+
+    // Section FNP
+    const fnpListHTML=fnpEntries.map((e,i)=>`
+      <div class="fnp-item">
+        <div class="fnp-item-left">
+          <span class="fnp-item-cat">${e.cat.replace('COGS - ','')}</span>
+          <span class="fnp-item-sup">${e.supplier||'—'}</span>
+        </div>
+        <div class="fnp-item-right">
+          <span class="fnp-item-amount">${fmt(e.amount)}</span>
+          <span class="fnp-del" onclick="deleteFNP('${r.id}',${i});event.stopPropagation()">✕</span>
+        </div>
+      </div>`).join('');
+
+    const catOptions=COGS_CATS.map(c=>`<option value="${c}">${c.replace('COGS - ','')}</option>`).join('');
+
+    const fnpSection=`
+      <div style="margin-top:12px">
+        <div class="fnp-section-title"><i class="ti ti-clock-exclamation" style="font-size:13px"></i> FNP — Factures non parvenues <span class="fnp-badge">${fnpEntries.length}</span></div>
+        ${fnpEntries.length>0?`<div class="fnp-list">${fnpListHTML}</div>`:'<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Aucune FNP saisie.</div>'}
+        <div class="fnp-form open" id="fnp-form-${pid}" onclick="event.stopPropagation()">
+          <div class="fnp-form-row">
+            <div style="flex:1.5;min-width:120px"><label>Catégorie COGS</label><select id="fnp-cat-${pid}">${catOptions}</select></div>
+            <div style="flex:1.5;min-width:120px"><label>Fournisseur</label><input type="text" id="fnp-sup-${pid}" placeholder="Nom fournisseur"></div>
+            <div style="flex:1;min-width:80px"><label>Montant (€)</label><input type="number" id="fnp-amt-${pid}" placeholder="0" min="0"></div>
+            <button class="fnp-add-btn" onclick="addFNP('${r.id}','${pid}');event.stopPropagation()"><i class="ti ti-plus" style="font-size:12px"></i> Ajouter</button>
+          </div>
+        </div>
+      </div>`;
+
+    // Tableau marge : réel + estimé si FNP
+    const marginRows=fnpAmt>0?`
+      <tr><td>Revenue post-discount</td><td>${fmt(r.rev_post)}</td></tr>
+      <tr><td>COGS réel</td><td class="neg">- ${fmt(r.cogs_total)}</td></tr>
+      <tr class="tot"><td>Marge réelle</td><td style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)} (${fmtPct(r.margin_pct)})</td></tr>
+      <tr><td style="color:var(--amber-text)">FNP estimé</td><td style="color:var(--amber-text)">- ${fmt(fnpAmt)}</td></tr>
+      <tr class="tot" style="background:var(--amber-light)!important"><td style="color:var(--amber-text)">Marge estimée post-FNP</td><td style="color:${marginEst>=0?'var(--amber-text)':'var(--red)'}">${fmt(marginEst)} (${fmtPct(marginPctEst)})</td></tr>`:`
+      <tr><td>Revenue post-discount</td><td>${fmt(r.rev_post)}</td></tr>
+      <tr><td>COGS total</td><td class="neg">- ${fmt(r.cogs_total)}</td></tr>
+      <tr class="tot"><td>Marge brute</td><td style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)} (${fmtPct(r.margin_pct)})</td></tr>`;
+
     detail=`<div class="detail">
       <div class="detail-title">Revenue par produit</div>
       <table class="dtable" style="font-size:11px"><thead><tr><td>Produit</td><td style="text-align:right">Brut</td><td style="text-align:right">Remise</td><td style="text-align:right">Net</td></tr></thead>
       <tbody>${revRows}</tbody><tr class="tot"><td>Total</td><td style="text-align:right">${fmt(r.rev_pre)}</td><td></td><td style="text-align:right">${fmt(r.rev_post)}</td></tr></table>
-      ${cogsRows?`<div class="detail-title" style="margin-top:12px">COGS détaillés</div><table class="dtable"><tbody>${cogsRows}</tbody><tr class="tot"><td>Total</td><td>${fmt(r.cogs_total)}</td></tr></table>`:''}
+      ${cogsRows?`<div class="detail-title" style="margin-top:12px">COGS détaillés (réel)</div><table class="dtable"><tbody>${cogsRows}</tbody><tr class="tot"><td>Total réel</td><td>${fmt(r.cogs_total)}</td></tr></table>`:''}
+      ${fnpSection}
       <div class="detail-title" style="margin-top:12px">Marge brute</div>
-      <table class="dtable">
-        <tr><td>Revenue post-discount</td><td>${fmt(r.rev_post)}</td></tr>
-        <tr><td>COGS total</td><td class="neg">- ${fmt(r.cogs_total)}</td></tr>
-        <tr class="tot"><td>Marge brute</td><td style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)} (${fmtPct(r.margin_pct)})</td></tr>
-      </table></div>`;
+      <table class="dtable">${marginRows}</table>
+    </div>`;
   }
 
   return`<div class="card${isExp?' expanded':''}" onclick="toggle('${r.id}')">
     <div class="card-header">
       <div style="flex:1;min-width:0">
         <div class="card-pid">${pid}</div>
-        <div class="card-name">${name}</div>
+        <div class="card-name">${clientName}</div>
       </div>
       <div class="badges">
-        <span class="chip ${chipClass(r.margin_pct)}">${fmtPct(r.margin_pct)}</span>
+        ${chipReal}${chipEst}
         ${r.period?`<span class="period-tag"><i class="ti ti-calendar" style="font-size:10px"></i>${r.period}</span>`:''}
       </div>
     </div>
     <div class="card-actions" onclick="event.stopPropagation()">
       <a href="${ensolUrl}" target="_blank" class="ensol-link">${ensolLogo} Voir sur Entool</a>
+      ${hasFNP(r.id)?`<span style="font-size:11px;color:var(--amber-text);display:inline-flex;align-items:center;gap:3px"><i class="ti ti-clock-exclamation" style="font-size:12px"></i> FNP ${fmt(fnpAmt)}</span>`:''}
     </div>
     <div class="kpi-row">
       <div class="kpi"><div class="kpi-label">Revenue</div><div class="kpi-val">${fmt(r.rev_post)}</div></div>
-      <div class="kpi"><div class="kpi-label">COGS</div><div class="kpi-val">${fmt(r.cogs_total)}</div></div>
-      <div class="kpi"><div class="kpi-label">Marge</div><div class="kpi-val" style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)}</div></div>
+      <div class="kpi${showFNP&&fnpAmt>0?' kpi-fnp':''}"><div class="kpi-label">COGS${showFNP&&fnpAmt>0?' (estimé)':''}</div><div class="kpi-val">${fmt(dispCogs)}</div></div>
+      <div class="kpi${showFNP&&fnpAmt>0?' kpi-fnp':''}"><div class="kpi-label">Marge${showFNP&&fnpAmt>0?' (estimée)':''}</div><div class="kpi-val" style="color:${dispMargin>=0?(showFNP&&fnpAmt>0?'var(--amber-text)':'var(--green)'):'var(--red)'}">${fmt(dispMargin)}</div></div>
     </div>
     <div class="progress-row">
-      <div class="progress-meta"><span>COGS / Revenue</span><span>${r.rev_post>0?fmtPct(r.cogs_total/r.rev_post):'—'}</span></div>
+      <div class="progress-meta"><span>COGS / Revenue</span><span>${r.rev_post>0?fmtPct(dispCogs/r.rev_post):'—'}</span></div>
       <div class="progress-track"><div class="progress-fill" style="width:${cogsRatio}%;background:${barColor}"></div></div>
     </div>${detail}
     <div class="expand-hint">${isExp?'▲ Réduire':'▼ Voir le détail'}</div>
   </div>`;
+}
+
+function addFNP(id,pid){
+  const cat=document.getElementById('fnp-cat-'+pid)?.value;
+  const sup=document.getElementById('fnp-sup-'+pid)?.value||'';
+  const amt=parseFloat(document.getElementById('fnp-amt-'+pid)?.value||'0');
+  if(!cat||!amt||amt<=0)return;
+  const arr=getFNP(id);
+  arr.push({cat,supplier:sup,amount:amt});
+  saveFNP(id,arr);
+  renderCards();
+  updateOverviewStats();
+}
+
+function deleteFNP(id,idx){
+  const arr=getFNP(id);
+  arr.splice(idx,1);
+  saveFNP(id,arr);
+  renderCards();
+  updateOverviewStats();
 }
 
 function toggle(id){expandedId=expandedId===id?null:id;renderCards()}
