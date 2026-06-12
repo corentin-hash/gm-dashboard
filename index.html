@@ -39,11 +39,12 @@ select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--r);bo
 .btn:hover{background:var(--bg2)}
 .btn.primary{background:var(--green);color:#fff;border-color:var(--green-dark)}
 .btn.primary:hover{background:var(--green-dark)}
-.tabs{display:flex;background:var(--bg);border-bottom:.5px solid var(--border);padding:0 2rem}
+.tabs{display:flex;background:var(--bg);border-bottom:.5px solid var(--border);padding:0 2rem;overflow-x:auto}
 .tab{font-size:13px;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);display:flex;align-items:center;gap:6px;white-space:nowrap}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:500}
 .tab-badge{font-size:11px;background:var(--red-light);color:var(--red-text);padding:1px 6px;border-radius:10px;font-weight:600}
+.tab-badge.amber{background:var(--amber-light);color:var(--amber-text)}
 .filter-bar{padding:.65rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .filter-bar input[type=text]{flex:1;min-width:160px}
 .filter-label{font-size:12px;color:var(--text2);white-space:nowrap}
@@ -162,6 +163,7 @@ canvas{max-height:220px}
 .fnp-form-field select,.fnp-form-field input{font-size:12px;padding:5px 8px;border-radius:5px;border:.5px solid var(--amber);background:var(--bg);color:var(--text);width:100%}
 .fnp-add-btn{width:100%;font-size:12px;padding:7px 10px;border-radius:5px;border:none;background:var(--amber);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
 .fnp-add-btn:hover{opacity:.85}
+.fnp-add-btn:disabled{opacity:.5;cursor:wait}
 .fnp-list{margin-top:8px;margin-bottom:10px}
 .fnp-item{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:4px 0;border-bottom:.5px solid rgba(0,0,0,0.08)}
 .fnp-item:last-child{border-bottom:none}
@@ -174,6 +176,22 @@ canvas{max-height:220px}
 .fnp-del:hover{color:var(--red)}
 .fnp-section-title{font-size:11px;color:var(--amber-text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;font-weight:600;display:flex;align-items:center;gap:5px}
 .fnp-badge{font-size:10px;background:var(--amber);color:#fff;padding:1px 6px;border-radius:10px;font-weight:700}
+/* Alertes FNP */
+.alert-card{background:var(--bg);border:.5px solid var(--amber);border-radius:var(--rl);padding:1.1rem;margin-bottom:.75rem}
+.alert-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.alert-card-title{font-size:14px;font-weight:600}
+.alert-card-pid{font-size:10px;color:var(--text3);font-family:ui-monospace,monospace;margin-top:2px}
+.alert-fnp-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--amber-light);border-radius:6px;margin-bottom:6px;font-size:12px;gap:8px;flex-wrap:wrap}
+.alert-fnp-info{display:flex;flex-direction:column;gap:2px}
+.alert-fnp-label{font-weight:600;color:var(--amber-text)}
+.alert-fnp-sub{color:var(--text2);font-size:11px}
+.alert-match{margin-top:6px;padding:7px 10px;background:var(--green-light);border-radius:6px;font-size:11px;color:var(--green-text);border:.5px solid var(--green)}
+.alert-match-title{font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.alert-match-line{color:var(--text2);margin-top:2px}
+.alert-del-btn{font-size:11px;padding:4px 10px;border-radius:5px;border:none;background:var(--red-light);color:var(--red-text);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.alert-del-btn:hover{background:var(--red);color:#fff}
+.alert-del-btn:disabled{opacity:.5;cursor:wait}
+.alerts-wrap{padding:1.25rem 2rem}
 </style>
 </head>
 <body>
@@ -191,6 +209,7 @@ canvas{max-height:220px}
   <div class="tab" onclick="switchTab('projects')" id="tab-projects"><i class="ti ti-building"></i> Projets</div>
   <div class="tab" onclick="switchTab('pl')" id="tab-pl"><i class="ti ti-table"></i> P&amp;L analytique</div>
   <div class="tab" onclick="switchTab('anomalies')" id="tab-anomalies"><i class="ti ti-alert-triangle"></i> Atypiques <span class="tab-badge" id="anomaly-count">0</span></div>
+  <div class="tab" onclick="switchTab('fnp-alerts')" id="tab-fnp-alerts"><i class="ti ti-clock-exclamation"></i> Alertes FNP <span class="tab-badge amber" id="fnp-alert-count" style="display:none">0</span></div>
 </nav>
 
 <!-- OVERVIEW -->
@@ -302,10 +321,21 @@ canvas{max-height:220px}
   <div class="atable-wrap"><div id="anomalies-content"><div class="sec-empty">Chargement…</div></div></div>
 </div>
 
+<!-- ALERTES FNP -->
+<div class="panel" id="panel-fnp-alerts" style="display:none">
+  <div class="filter-bar">
+    <i class="ti ti-info-circle" style="font-size:14px;color:var(--amber)"></i>
+    <span style="font-size:12px;color:var(--amber-text)">Ces FNP ont une contrepartie réelle détectée dans COGS - Data (même projet, même catégorie, montant similaire). Vérifiez et supprimez si la facture est bien arrivée.</span>
+  </div>
+  <div class="alerts-wrap" id="fnp-alerts-content"><div class="sec-empty">Chargement…</div></div>
+</div>
+
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzUOM-1jqiuJakcPIgoT4w1A8-jIU_O87C_pHTG_MqF1xSEZ2T8w2rUW62EPR3oXAaq/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxnrcZwPz5z67Nwglsqf-f8jLkjVn-rLlTUkXX2xT61hFqrvqRrcfWfqsxzwnQfFCI/exec';
 const ENTOOL_BASE='https://entool.goensol.com/projects/';
 let allData=[];
+let allFNPs={};      // { projectId: [{fnpId, cat, supplier, amount, createdAt}] }
+let allCogsLines=[]; // lignes COGS réelles pour le matching
 let expandedId=null;
 let chartMode='month';
 let chartInstance=null;
@@ -320,12 +350,74 @@ let viewMode='real';
 const PRODUCTS=['PV','Wallbox','Batterie','Control equipment','Air-to-water heatpump','Air-to-air heatpump','Water heater','Additional works','Order validation','À taguer'];
 const COGS_CATS=['COGS - Small equipment','COGS - Material','COGS - Car rental & leasing','COGS - Warehouse rental','COGS - Warehouse running costs','COGS - Customer support service','COGS - Technical visits (external)','COGS - Installation (external)','COGS - Material inventory out','COGS - Restaurant','COGS - Admin services','COGS - Project consumables','COGS - Car maintenance','COGS - Temp Tech','COGS - Other installation costs','COGS - Fuel','COGS - Hotel','COGS - Travel','COGS - Tolls'];
 
-/* ---- FNP ---- */
-function fnpKey(id){return'fnp_v1_'+id;}
-function getFNP(id){try{return JSON.parse(localStorage.getItem(fnpKey(id))||'[]');}catch{return[];}}
-function saveFNP(id,arr){localStorage.setItem(fnpKey(id),JSON.stringify(arr));}
-function fnpTotal(id){return getFNP(id).reduce((s,e)=>s+(e.amount||0),0);}
-function hasFNP(id){return getFNP(id).length>0;}
+// Catégories FNP = COGS_CATS avec "(FNP)" ajouté — mais on mappe vers la catégorie réelle pour le matching
+const FNP_CATS=COGS_CATS.map(c=>c+' (FNP)');
+// Map catégorie FNP → catégorie COGS réelle
+function fnpCatToReal(fnpCat){return fnpCat.replace(' (FNP)','');}
+// Map catégorie réelle → catégorie FNP
+function realCatToFnp(realCat){return realCat+' (FNP)';}
+
+/* ---- FNP — lecture/écriture GSheet via google.script.run ---- */
+function getFNP(projectId){return allFNPs[projectId]||[];}
+function fnpTotal(projectId){return getFNP(projectId).reduce((s,e)=>s+(e.amount||0),0);}
+function hasFNP(projectId){return getFNP(projectId).length>0;}
+
+function generateId(){return'fnp_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
+
+function addFNP(id,pid){
+  const catEl=document.getElementById('fnp-cat-'+pid);
+  const supEl=document.getElementById('fnp-sup-'+pid);
+  const amtEl=document.getElementById('fnp-amt-'+pid);
+  const btn=document.getElementById('fnp-add-btn-'+pid);
+  const cat=catEl?.value;
+  const sup=supEl?.value||'';
+  const amt=parseFloat(amtEl?.value||'0');
+  if(!cat||!amt||amt<=0)return;
+
+  const fnpId=generateId();
+  const projectName=allData.find(r=>r.id===id)?.name||id;
+
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="loading"></span> Enregistrement…';}
+
+  google.script.run
+    .withSuccessHandler(()=>{
+      // Mise à jour locale immédiate
+      if(!allFNPs[id])allFNPs[id]=[];
+      allFNPs[id].push({fnpId,cat,supplier:sup,amount:amt,createdAt:new Date().toISOString()});
+      if(supEl)supEl.value='';
+      if(amtEl)amtEl.value='';
+      if(btn){btn.disabled=false;btn.innerHTML='<i class="ti ti-plus" style="font-size:12px"></i> Ajouter';}
+      renderCards();
+      updateOverviewStats();
+      renderFNPAlerts();
+    })
+    .withFailureHandler(err=>{
+      console.error('Erreur saveFNP',err);
+      if(btn){btn.disabled=false;btn.innerHTML='<i class="ti ti-plus" style="font-size:12px"></i> Ajouter';}
+      alert('Erreur lors de l\'enregistrement de la FNP.');
+    })
+    .saveFNPToSheet(fnpId, id, projectName, cat, sup, amt);
+}
+
+function deleteFNP(projectId, fnpId, btnEl){
+  if(btnEl){btnEl.disabled=true;btnEl.textContent='…';}
+  google.script.run
+    .withSuccessHandler(()=>{
+      if(allFNPs[projectId]){
+        allFNPs[projectId]=allFNPs[projectId].filter(f=>f.fnpId!==fnpId);
+        if(allFNPs[projectId].length===0)delete allFNPs[projectId];
+      }
+      renderCards();
+      updateOverviewStats();
+      renderFNPAlerts();
+    })
+    .withFailureHandler(err=>{
+      console.error('Erreur deleteFNP',err);
+      if(btnEl){btnEl.disabled=false;btnEl.textContent='✕';}
+    })
+    .deleteFNPFromSheet(fnpId);
+}
+
 function setViewMode(m){
   viewMode=m;
   document.getElementById('vt-real').classList.toggle('active',m==='real');
@@ -350,14 +442,8 @@ function parseId(rawId){
   if(idx===-1)return{pid:rawId,name:rawId};
   return{pid:rawId.slice(idx+3),name:rawId.slice(0,idx)};
 }
-// Extrait le nom client depuis r.name (col A format "Prénom Nom - id")
-// ou fallback sur parseId(r.id) si r.name absent
 function getClientName(r){
-  if(r.name){
-    // col A peut être "Prénom Nom - id" → couper avant le dernier " - "
-    const idx=r.name.lastIndexOf(' - ');
-    return idx!==-1?r.name.slice(0,idx):r.name;
-  }
+  if(r.name){const idx=r.name.lastIndexOf(' - ');return idx!==-1?r.name.slice(0,idx):r.name;}
   return parseId(r.id).name||r.id;
 }
 function chipClass(v){return v>=0.4?'high':v>=0.2?'pos':v>=0.1?'warn':'neg'}
@@ -370,9 +456,102 @@ function matchesMarginFilter(r){
   return true;
 }
 
+/* ---- ALERTES FNP — logique de matching ---- */
+function computeFNPAlerts(){
+  const alerts=[];
+  Object.entries(allFNPs).forEach(([projectId,fnps])=>{
+    fnps.forEach(fnp=>{
+      const realCat=fnpCatToReal(fnp.cat);
+      const createdAt=fnp.createdAt?new Date(fnp.createdAt):null;
+      // Lignes réelles : même projet, même catégorie, arrivées après la création de la FNP
+      const matches=allCogsLines.filter(line=>{
+        if(line.projectId!==projectId)return false;
+        if(line.cat!==realCat)return false;
+        // Montant similaire : ±30%
+        const ratio=Math.abs(line.amount-fnp.amount)/Math.max(fnp.amount,1);
+        if(ratio>0.30)return false;
+        // Postérieure à la création de la FNP (si date dispo)
+        if(createdAt&&line.date){
+          const lineDate=new Date(line.date);
+          if(lineDate<=createdAt)return false;
+        }
+        return true;
+      });
+      if(matches.length>0){
+        const projectRow=allData.find(r=>r.id===projectId);
+        alerts.push({projectId,projectName:projectRow?.name||projectId,fnp,matches});
+      }
+    });
+  });
+  return alerts;
+}
+
+function renderFNPAlerts(){
+  const alerts=computeFNPAlerts();
+  const badge=document.getElementById('fnp-alert-count');
+  if(alerts.length>0){badge.style.display='';badge.textContent=alerts.length;}
+  else{badge.style.display='none';}
+
+  const wrap=document.getElementById('fnp-alerts-content');
+  if(!wrap)return;
+  if(!alerts.length){
+    wrap.innerHTML='<div class="sec-empty"><i class="ti ti-circle-check" style="font-size:28px;display:block;margin-bottom:8px;color:var(--green)"></i>Aucune alerte FNP — tout semble OK.</div>';
+    return;
+  }
+
+  // Grouper par projet
+  const byProject={};
+  alerts.forEach(a=>{
+    if(!byProject[a.projectId])byProject[a.projectId]={projectName:a.projectName,items:[]};
+    byProject[a.projectId].items.push(a);
+  });
+
+  const html=Object.entries(byProject).map(([projectId,group])=>{
+    const projectRow=allData.find(r=>r.id===projectId);
+    const clientName=projectRow?getClientName(projectRow):projectId;
+    const itemsHTML=group.items.map(a=>{
+      const matchesHTML=a.matches.map(m=>`
+        <div class="alert-match-line">→ ${m.cat.replace('COGS - ','')}${m.supplier?' · '+m.supplier:''} · <strong>${fmt(m.amount)}</strong>${m.date?' · '+new Date(m.date).toLocaleDateString('fr-FR'):''}</div>
+      `).join('');
+      const btnId='del-fnp-'+a.fnp.fnpId;
+      return`
+        <div class="alert-fnp-row">
+          <div class="alert-fnp-info">
+            <span class="alert-fnp-label">${a.fnp.cat.replace('COGS - ','')}</span>
+            <span class="alert-fnp-sub">${a.fnp.supplier||'—'} · ${fmt(a.fnp.amount)}${a.fnp.createdAt?' · créée le '+new Date(a.fnp.createdAt).toLocaleDateString('fr-FR'):''}</span>
+          </div>
+          <button class="alert-del-btn" id="${btnId}" onclick="deleteFNPFromAlert('${projectId}','${a.fnp.fnpId}','${btnId}')">
+            <i class="ti ti-trash" style="font-size:11px"></i> Supprimer
+          </button>
+        </div>
+        <div class="alert-match">
+          <div class="alert-match-title"><i class="ti ti-check" style="font-size:12px"></i> Ligne(s) réelle(s) détectée(s)</div>
+          ${matchesHTML}
+        </div>`;
+    }).join('');
+
+    return`<div class="alert-card">
+      <div class="alert-card-header">
+        <div>
+          <div class="alert-card-title">${clientName}</div>
+          <div class="alert-card-pid">${projectId}</div>
+        </div>
+      </div>
+      ${itemsHTML}
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML=html;
+}
+
+function deleteFNPFromAlert(projectId, fnpId, btnId){
+  const btn=document.getElementById(btnId);
+  deleteFNP(projectId, fnpId, btn);
+}
+
 /* ---- TABS ---- */
 function switchTab(tab){
-  ['overview','projects','pl','anomalies'].forEach(t=>{
+  ['overview','projects','pl','anomalies','fnp-alerts'].forEach(t=>{
     const panel=document.getElementById('panel-'+t);
     const isActive=t===tab;
     document.getElementById('tab-'+t).classList.toggle('active',isActive);
@@ -631,7 +810,7 @@ function getAnomFiltered(){
   const q=(document.getElementById('anom-search').value||'').toLowerCase();
   return allData.filter(r=>{
     const isAnom=r.margin_pct<0.20||r.margin_pct>0.40;
-    const{pid,name}=parseId(r.id);
+    const{pid}=parseId(r.id);
     const clientName=getClientName(r);
     const matchQ=!q||pid.toLowerCase().includes(q)||clientName.toLowerCase().includes(q);
     const matchP=matchesPeriodFilter(r,anomSelectedPeriods,anomPeriodMode);
@@ -654,7 +833,7 @@ function renderAnomalies(){
   const ensolLogo=`<svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius:3px"><rect width="32" height="32" fill="#1DA462"/><path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const rows=sorted.map(r=>{
     const isLow=r.margin_pct<0.20;
-    const{pid,name}=parseId(r.id);
+    const{pid}=parseId(r.id);
     const clientName=getClientName(r);
     const ensolUrl=ENTOOL_BASE+pid+'?tab=overview';
     return`<tr>
@@ -676,7 +855,7 @@ function getProjFiltered(){
   const q=(document.getElementById('proj-search').value||'').toLowerCase();
   const sort=document.getElementById('proj-sort').value;
   let d=allData.filter(r=>{
-    const{pid,name}=parseId(r.id);
+    const{pid}=parseId(r.id);
     const clientName=getClientName(r);
     const matchQ=!q||pid.toLowerCase().includes(q)||clientName.toLowerCase().includes(q);
     const matchP=matchesPeriodFilter(r,projSelectedPeriods,projPeriodMode);
@@ -710,7 +889,7 @@ function renderCards(){
 
 function cardHTML(r){
   const isExp=expandedId===r.id;
-  const{pid,name}=parseId(r.id);
+  const{pid}=parseId(r.id);
   const clientName=getClientName(r);
   const ensolUrl=ENTOOL_BASE+pid+'?tab=overview';
 
@@ -740,7 +919,8 @@ function cardHTML(r){
       return`<tr><td>${p}</td><td>${fmt(bp.pre||0)}</td><td style="color:var(--red);font-size:11px">${disc>0?'-'+fmt(disc):''}</td><td>${fmt(bp.post||0)}</td></tr>`;
     }).join('');
     const cogsRows=COGS_CATS.filter(c=>r.cogs_detail&&(r.cogs_detail[c]||0)!==0).map(c=>`<tr><td>${c.replace('COGS - ','')}</td><td>${fmt(r.cogs_detail[c])}</td></tr>`).join('');
-    const fnpListHTML=fnpEntries.map((e,i)=>`
+
+    const fnpListHTML=fnpEntries.map(e=>`
       <div class="fnp-item">
         <div class="fnp-item-left">
           <span class="fnp-item-cat">${e.cat.replace('COGS - ','')}</span>
@@ -748,10 +928,12 @@ function cardHTML(r){
         </div>
         <div class="fnp-item-right">
           <span class="fnp-item-amount">${fmt(e.amount)}</span>
-          <span class="fnp-del" onclick="deleteFNP('${r.id}',${i});event.stopPropagation()">✕</span>
+          <span class="fnp-del" onclick="deleteFNP('${r.id}','${e.fnpId}',null);event.stopPropagation()">✕</span>
         </div>
       </div>`).join('');
-    const catOptions=COGS_CATS.map(c=>`<option value="${c}">${c.replace('COGS - ','')}</option>`).join('');
+
+    const catOptions=FNP_CATS.map(c=>`<option value="${c}">${c.replace('COGS - ','')}</option>`).join('');
+
     const fnpSection=`
       <div style="margin-top:12px">
         <div class="fnp-section-title"><i class="ti ti-clock-exclamation" style="font-size:13px"></i> FNP — Factures non parvenues <span class="fnp-badge">${fnpEntries.length}</span></div>
@@ -762,9 +944,10 @@ function cardHTML(r){
             <div class="fnp-form-field"><label>Fournisseur</label><input type="text" id="fnp-sup-${pid}" placeholder="Nom fournisseur"></div>
             <div class="fnp-form-field"><label>Montant (€)</label><input type="number" id="fnp-amt-${pid}" placeholder="0" min="0"></div>
           </div>
-          <button class="fnp-add-btn" onclick="addFNP('${r.id}','${pid}');event.stopPropagation()"><i class="ti ti-plus" style="font-size:12px"></i> Ajouter</button>
+          <button class="fnp-add-btn" id="fnp-add-btn-${pid}" onclick="addFNP('${r.id}','${pid}');event.stopPropagation()"><i class="ti ti-plus" style="font-size:12px"></i> Ajouter</button>
         </div>
       </div>`;
+
     const marginRows=fnpAmt>0?`
       <tr><td>Revenue post-discount</td><td>${fmt(r.rev_post)}</td></tr>
       <tr><td>COGS réel</td><td class="neg">- ${fmt(r.cogs_total)}</td></tr>
@@ -774,6 +957,7 @@ function cardHTML(r){
       <tr><td>Revenue post-discount</td><td>${fmt(r.rev_post)}</td></tr>
       <tr><td>COGS total</td><td class="neg">- ${fmt(r.cogs_total)}</td></tr>
       <tr class="tot"><td>Marge brute</td><td style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)} (${fmtPct(r.margin_pct)})</td></tr>`;
+
     detail=`<div class="detail">
       <div class="detail-title">Revenue par produit</div>
       <table class="dtable" style="font-size:11px"><thead><tr><td>Produit</td><td style="text-align:right">Brut</td><td style="text-align:right">Remise</td><td style="text-align:right">Net</td></tr></thead>
@@ -814,24 +998,6 @@ function cardHTML(r){
   </div>`;
 }
 
-function addFNP(id,pid){
-  const cat=document.getElementById('fnp-cat-'+pid)?.value;
-  const sup=document.getElementById('fnp-sup-'+pid)?.value||'';
-  const amt=parseFloat(document.getElementById('fnp-amt-'+pid)?.value||'0');
-  if(!cat||!amt||amt<=0)return;
-  const arr=getFNP(id);
-  arr.push({cat,supplier:sup,amount:amt});
-  saveFNP(id,arr);
-  renderCards();
-  updateOverviewStats();
-}
-function deleteFNP(id,idx){
-  const arr=getFNP(id);
-  arr.splice(idx,1);
-  saveFNP(id,arr);
-  renderCards();
-  updateOverviewStats();
-}
 function toggle(id){expandedId=expandedId===id?null:id;renderCards();}
 
 function renderAll(){
@@ -842,6 +1008,7 @@ function renderAll(){
   renderCards();
   renderAnomalies();
   buildPL();
+  renderFNPAlerts();
 }
 
 const DEMO=[
@@ -856,8 +1023,15 @@ function loadData(){
   btn.innerHTML='<span class="loading"></span> Chargement…';btn.disabled=true;
   fetch(APPS_SCRIPT_URL)
     .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(json=>{if(json.data&&json.data.length){allData=json.data;renderAll();}})
-    .catch(()=>{allData=DEMO;renderAll();})
+    .then(json=>{
+      if(json.data&&json.data.length){
+        allData=json.data;
+        allFNPs=json.fnps||{};
+        allCogsLines=json.cogsLines||[];
+        renderAll();
+      }
+    })
+    .catch(()=>{allData=DEMO;allFNPs={};allCogsLines=[];renderAll();})
     .finally(()=>{btn.innerHTML='<i class="ti ti-refresh"></i> Actualiser';btn.disabled=false;});
 }
 loadData();
