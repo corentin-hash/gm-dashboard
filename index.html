@@ -283,7 +283,7 @@ canvas{max-height:220px}
 </div>
 
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwTB9a_JL-GOti8REFDa2pIoL-9_CbcQWmdomJh6zVLqrCZnqQ6jXgPgdFp-y5AE3wK/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwi-lnanA7vak5T5LfQL8C9O-2n6rmmkvRlDAt0b5JpTWu28vRRZmU0ZQMK8PpSE-2U/exec';
 const ENTOOL_BASE='https://entool.goensol.com/projects/';
 let allData=[];
 let expandedId=null;
@@ -297,7 +297,7 @@ let anomSelectedPeriods=new Set();
 let marginFilter='all';
 
 const PRODUCTS=['PV','Wallbox','Batterie','Control equipment','Air-to-water heatpump','Air-to-air heatpump','Water heater','Additional works','Order validation','À taguer'];
-const COGS_CATS=['COGS - Small equipment','COGS - Material','COGS - Car rental & leasing','COGS - Warehouse rental','COGS - Warehouse running costs','COGS - Customer support service','COGS - Technical visits (external)','COGS - Installation (external)','COGS - Material inventory in','COGS - Restaurant','COGS - Admin services','COGS - Admin Consuel Inventory in','COGS - Project consumables','COGS - Car maintenance','COGS - Temp Tech','COGS - Other installation costs','COGS - Fuel','COGS - Hotel','COGS - Travel','COGS - Tolls'];
+const COGS_CATS=['COGS - Small equipment','COGS - Material','COGS - Car rental & leasing','COGS - Warehouse rental','COGS - Warehouse running costs','COGS - Customer support service','COGS - Technical visits (external)','COGS - Installation (external)','COGS - Material inventory out','COGS - Restaurant','COGS - Admin services','COGS - Admin Consuel Inventory out','COGS - Project consumables','COGS - Car maintenance','COGS - Temp Tech','COGS - Other installation costs','COGS - Fuel','COGS - Hotel','COGS - Travel','COGS - Tolls'];
 
 /* ---- HELPERS ---- */
 function fmt(n){if(n===null||n===undefined||n==='')return'';return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0)}
@@ -542,10 +542,10 @@ function buildPL(){
     ${row('Discounted revenue — Total','rev_post',{tot:true})}
     ${row('COGS — MATERIAL','',{sec:true})}
     ${row('Material','c_COGS - Material',{ind:true,isNeg:true})}
-    ${row('Material inventory out','c_COGS - Material inventory in',{ind:true,isNeg:true})}
+    ${row('Material inventory out','c_COGS - Material inventory out',{ind:true,isNeg:true})}
     ${row('Project consumables','c_COGS - Project consumables',{ind:true,isNeg:true})}
     ${row('Admin services','c_COGS - Admin services',{ind:true,isNeg:true})}
-    ${row('Admin Consuel inventory out','c_COGS - Admin Consuel Inventory in',{ind:true,isNeg:true})}
+    ${row('Admin Consuel inventory out','c_COGS - Admin Consuel Inventory out',{ind:true,isNeg:true})}
     ${row('Customer support service','c_COGS - Customer support service',{ind:true,isNeg:true})}
     ${row('Small equipment','c_COGS - Small equipment',{ind:true,isNeg:true})}
     ${row('COGS — EXTERNAL INSTALLATIONS','',{sec:true})}
