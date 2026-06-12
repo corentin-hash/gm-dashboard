@@ -103,11 +103,13 @@ canvas{max-height:220px}
 .chip.neg{background:var(--red-light);color:var(--red-text)}
 .chip.warn{background:var(--amber-light);color:var(--amber-text)}
 .chip.high{background:var(--blue-light);color:var(--blue-text)}
+.chip.fnp{background:var(--amber);color:#fff}
 .period-tag{font-size:11px;background:var(--green-light);color:var(--green-text);padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center;gap:3px}
-.kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:10px}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px;margin-bottom:10px}
 .kpi{background:var(--bg2);border-radius:var(--r);padding:7px 9px}
 .kpi-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
 .kpi-val{font-size:13px;font-weight:600}
+.kpi-est{font-size:11px;color:var(--amber-text);font-weight:600;margin-top:2px}
 .progress-row{margin-bottom:2px}
 .progress-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:3px}
 .progress-track{height:4px;border-radius:3px;background:var(--bg2);overflow:hidden}
@@ -164,10 +166,13 @@ canvas{max-height:220px}
 .fnp-toggle:hover{background:var(--amber-light)}
 .fnp-form{margin-top:10px;padding:10px;background:var(--amber-light);border-radius:var(--r);border:.5px solid var(--amber);display:none}
 .fnp-form.open{display:block}
-.fnp-form-row{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end;margin-bottom:8px}
+.fnp-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.fnp-form-full{grid-column:1/-1}
 .fnp-form-row label{font-size:11px;color:var(--amber-text);font-weight:600;display:block;margin-bottom:3px}
-.fnp-form-row select,.fnp-form-row input{font-size:12px;padding:4px 7px;border-radius:5px;border:.5px solid var(--amber);background:var(--bg);color:var(--text);flex:1;min-width:100px}
-.fnp-add-btn{font-size:12px;padding:5px 10px;border-radius:5px;border:none;background:var(--amber);color:#fff;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.fnp-form-grid select,.fnp-form-grid input{font-size:12px;padding:5px 8px;border-radius:5px;border:.5px solid var(--amber);background:var(--bg);color:var(--text);width:100%}
+.fnp-form-field label{font-size:11px;color:var(--amber-text);font-weight:600;display:block;margin-bottom:3px}
+.fnp-form-field select,.fnp-form-field input{font-size:12px;padding:5px 8px;border-radius:5px;border:.5px solid var(--amber);background:var(--bg);color:var(--text);width:100%}
+.fnp-add-btn{width:100%;font-size:12px;padding:7px 10px;border-radius:5px;border:none;background:var(--amber);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
 .fnp-add-btn:hover{opacity:.85}
 .fnp-list{margin-top:8px}
 .fnp-item{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:4px 0;border-bottom:.5px solid rgba(0,0,0,0.08)}
@@ -215,13 +220,6 @@ canvas{max-height:220px}
     <div class="stat"><div class="stat-label">COGS total</div><div class="stat-value" id="s-cogs">—</div><div class="stat-est" id="s-cogs-est" style="display:none"></div></div>
     <div class="stat"><div class="stat-label">Marge brute</div><div class="stat-value" id="s-margin">—</div><div class="stat-est" id="s-margin-est" style="display:none"></div></div>
     <div class="stat"><div class="stat-label">Marge moyenne %</div><div class="stat-value" id="s-pct">—</div><div class="stat-est" id="s-pct-est" style="display:none"></div></div>
-    <div class="stat" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-end;background:transparent;border:none">
-      <div class="stat-label" style="margin-bottom:5px">Vue</div>
-      <div class="view-toggle">
-        <button class="active" id="vt-real" onclick="setViewMode('real')">Réel</button>
-        <button id="vt-fnp" onclick="setViewMode('fnp')">+ FNP estimé</button>
-      </div>
-    </div>
   </div>
   <div class="chart-section">
     <div class="chart-header">
@@ -255,6 +253,11 @@ canvas{max-height:220px}
       <span class="pill mf-warn" onclick="setMarginFilter('warn')">Basse 10–20%</span>
       <span class="pill mf-neg" onclick="setMarginFilter('neg')">Très basse &lt;10%</span>
     </div>
+    <div class="view-toggle" style="margin-left:auto">
+      <button class="active" id="vt-real" onclick="setViewMode('real')">Réel</button>
+      <button id="vt-fnp" onclick="setViewMode('fnp')">+ FNP estimé</button>
+    </div>
+  </div>
     <span class="filter-label">Période :</span>
     <div class="toggle-btns">
       <button class="active" id="proj-by-month" onclick="setProjPeriodMode('month')">Mois</button>
@@ -729,19 +732,20 @@ function cardHTML(r){
   const marginEst=r.margin_val-fnpAmt;
   const marginPctEst=r.rev_post>0?marginEst/r.rev_post:0;
 
-  const showFNP=viewMode==='fnp';
-  const dispCogs=showFNP?cogsEst:r.cogs_total;
-  const dispMargin=showFNP?marginEst:r.margin_val;
-  const dispPct=showFNP?marginPctEst:r.margin_pct;
+  // Afficher les valeurs estimées dès qu'une FNP est saisie (indépendamment du toggle global)
+  const hasFNPData=fnpAmt>0;
+  const dispCogs=hasFNPData?cogsEst:r.cogs_total;
+  const dispMargin=hasFNPData?marginEst:r.margin_val;
+  const dispPct=hasFNPData?marginPctEst:r.margin_pct;
 
   const cogsRatio=r.rev_post>0?Math.min(100,(dispCogs/r.rev_post)*100):0;
   const barColor=dispPct>=0.3?'var(--green)':dispPct>=0.1?'var(--amber)':'var(--red)';
 
   const ensolLogo=`<svg width="14" height="14" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="border-radius:3px"><rect width="32" height="32" fill="#1DA462"/><path d="M8 16L14 22L24 10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-  // Chip marge : si vue FNP et FNP saisi, montrer les deux
+  // Chip marge : toujours montrer l'estimé si FNP saisi
   const chipReal=`<span class="chip ${chipClass(r.margin_pct)}">${fmtPct(r.margin_pct)}</span>`;
-  const chipEst=showFNP&&fnpAmt>0?`<span class="chip fnp" title="Estimé avec FNP">${fmtPct(marginPctEst)} est.</span>`:'';
+  const chipEst=fnpAmt>0?`<span class="chip fnp">${fmtPct(marginPctEst)} est.</span>`:'';
 
   let detail='';
   if(isExp){
@@ -771,12 +775,12 @@ function cardHTML(r){
         <div class="fnp-section-title"><i class="ti ti-clock-exclamation" style="font-size:13px"></i> FNP — Factures non parvenues <span class="fnp-badge">${fnpEntries.length}</span></div>
         ${fnpEntries.length>0?`<div class="fnp-list">${fnpListHTML}</div>`:'<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Aucune FNP saisie.</div>'}
         <div class="fnp-form open" id="fnp-form-${pid}" onclick="event.stopPropagation()">
-          <div class="fnp-form-row">
-            <div style="flex:1.5;min-width:120px"><label>Catégorie COGS</label><select id="fnp-cat-${pid}">${catOptions}</select></div>
-            <div style="flex:1.5;min-width:120px"><label>Fournisseur</label><input type="text" id="fnp-sup-${pid}" placeholder="Nom fournisseur"></div>
-            <div style="flex:1;min-width:80px"><label>Montant (€)</label><input type="number" id="fnp-amt-${pid}" placeholder="0" min="0"></div>
-            <button class="fnp-add-btn" onclick="addFNP('${r.id}','${pid}');event.stopPropagation()"><i class="ti ti-plus" style="font-size:12px"></i> Ajouter</button>
+          <div class="fnp-form-grid">
+            <div class="fnp-form-field fnp-form-full"><label>Catégorie COGS</label><select id="fnp-cat-${pid}">${catOptions}</select></div>
+            <div class="fnp-form-field"><label>Fournisseur</label><input type="text" id="fnp-sup-${pid}" placeholder="Nom fournisseur"></div>
+            <div class="fnp-form-field"><label>Montant (€)</label><input type="number" id="fnp-amt-${pid}" placeholder="0" min="0"></div>
           </div>
+          <button class="fnp-add-btn" onclick="addFNP('${r.id}','${pid}');event.stopPropagation()"><i class="ti ti-plus" style="font-size:12px"></i> Ajouter</button>
         </div>
       </div>`;
 
@@ -817,13 +821,14 @@ function cardHTML(r){
       <a href="${ensolUrl}" target="_blank" class="ensol-link">${ensolLogo} Voir sur Entool</a>
       ${hasFNP(r.id)?`<span style="font-size:11px;color:var(--amber-text);display:inline-flex;align-items:center;gap:3px"><i class="ti ti-clock-exclamation" style="font-size:12px"></i> FNP ${fmt(fnpAmt)}</span>`:''}
     </div>
-    <div class="kpi-row">
+    <div class="kpi-row" style="grid-template-columns:${fnpAmt>0?'1fr 1fr 1fr 1fr':'1fr 1fr 1fr'}">
       <div class="kpi"><div class="kpi-label">Revenue</div><div class="kpi-val">${fmt(r.rev_post)}</div></div>
-      <div class="kpi${showFNP&&fnpAmt>0?' kpi-fnp':''}"><div class="kpi-label">COGS${showFNP&&fnpAmt>0?' (estimé)':''}</div><div class="kpi-val">${fmt(dispCogs)}</div></div>
-      <div class="kpi${showFNP&&fnpAmt>0?' kpi-fnp':''}"><div class="kpi-label">Marge${showFNP&&fnpAmt>0?' (estimée)':''}</div><div class="kpi-val" style="color:${dispMargin>=0?(showFNP&&fnpAmt>0?'var(--amber-text)':'var(--green)'):'var(--red)'}">${fmt(dispMargin)}</div></div>
+      <div class="kpi"><div class="kpi-label">COGS réel</div><div class="kpi-val">${fmt(r.cogs_total)}</div></div>
+      ${fnpAmt>0?`<div class="kpi kpi-fnp"><div class="kpi-label">COGS estimé</div><div class="kpi-val">${fmt(cogsEst)}</div><div class="kpi-est">+${fmt(fnpAmt)} FNP</div></div>`:''}
+      <div class="kpi${fnpAmt>0?' kpi-fnp':''}"><div class="kpi-label">Marge${fnpAmt>0?' estimée':''}</div><div class="kpi-val" style="color:${dispMargin>=0?(fnpAmt>0?'var(--amber-text)':'var(--green)'):'var(--red)'}">${fmt(dispMargin)}</div>${fnpAmt>0?`<div class="kpi-est">${fmtPct(marginPctEst)}</div>`:''}</div>
     </div>
     <div class="progress-row">
-      <div class="progress-meta"><span>COGS / Revenue</span><span>${r.rev_post>0?fmtPct(dispCogs/r.rev_post):'—'}</span></div>
+      <div class="progress-meta"><span>COGS / Revenue</span><span style="${fnpAmt>0?'color:var(--amber-text)':''}">${r.rev_post>0?fmtPct(dispCogs/r.rev_post):'—'}</span></div>
       <div class="progress-track"><div class="progress-fill" style="width:${cogsRatio}%;background:${barColor}"></div></div>
     </div>${detail}
     <div class="expand-hint">${isExp?'▲ Réduire':'▼ Voir le détail'}</div>
