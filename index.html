@@ -331,7 +331,7 @@ canvas{max-height:220px}
 </div>
 
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxnrcZwPz5z67Nwglsqf-f8jLkjVn-rLlTUkXX2xT61hFqrvqRrcfWfqsxzwnQfFCI/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw8INzPGKo_dtp0Cg5LLn3FxQAoxmzmUWOJoPwD_W1XBXrJ1p167VaXNlAny2oKMV3L/exec';
 const ENTOOL_BASE='https://entool.goensol.com/projects/';
 let allData=[];
 let allFNPs={};      // { projectId: [{fnpId, cat, supplier, amount, createdAt}] }
@@ -379,9 +379,19 @@ function addFNP(id,pid){
 
   if(btn){btn.disabled=true;btn.innerHTML='<span class="loading"></span> Enregistrement…';}
 
-  google.script.run
-    .withSuccessHandler(()=>{
-      // Mise à jour locale immédiate
+  const params=new URLSearchParams({
+    action:'saveFNP',
+    fnpId,
+    projectId:id,
+    projectName,
+    cat,
+    supplier:sup,
+    amount:amt
+  });
+
+  fetch(APPS_SCRIPT_URL+'?'+params.toString())
+    .then(r=>r.json())
+    .then(()=>{
       if(!allFNPs[id])allFNPs[id]=[];
       allFNPs[id].push({fnpId,cat,supplier:sup,amount:amt,createdAt:new Date().toISOString()});
       if(supEl)supEl.value='';
@@ -391,18 +401,21 @@ function addFNP(id,pid){
       updateOverviewStats();
       renderFNPAlerts();
     })
-    .withFailureHandler(err=>{
+    .catch(err=>{
       console.error('Erreur saveFNP',err);
       if(btn){btn.disabled=false;btn.innerHTML='<i class="ti ti-plus" style="font-size:12px"></i> Ajouter';}
       alert('Erreur lors de l\'enregistrement de la FNP.');
-    })
-    .saveFNPToSheet(fnpId, id, projectName, cat, sup, amt);
+    });
 }
 
-function deleteFNP(projectId, fnpId, btnEl){
+function deleteFNP(projectId,fnpId,btnEl){
   if(btnEl){btnEl.disabled=true;btnEl.textContent='…';}
-  google.script.run
-    .withSuccessHandler(()=>{
+
+  const params=new URLSearchParams({action:'deleteFNP',fnpId});
+
+  fetch(APPS_SCRIPT_URL+'?'+params.toString())
+    .then(r=>r.json())
+    .then(()=>{
       if(allFNPs[projectId]){
         allFNPs[projectId]=allFNPs[projectId].filter(f=>f.fnpId!==fnpId);
         if(allFNPs[projectId].length===0)delete allFNPs[projectId];
@@ -411,11 +424,10 @@ function deleteFNP(projectId, fnpId, btnEl){
       updateOverviewStats();
       renderFNPAlerts();
     })
-    .withFailureHandler(err=>{
+    .catch(err=>{
       console.error('Erreur deleteFNP',err);
       if(btnEl){btnEl.disabled=false;btnEl.textContent='✕';}
-    })
-    .deleteFNPFromSheet(fnpId);
+    });
 }
 
 function setViewMode(m){
