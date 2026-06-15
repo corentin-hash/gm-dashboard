@@ -256,6 +256,7 @@ canvas{max-height:220px}
   <div class="tab" onclick="switchTab('pl')" id="tab-pl"><i class="ti ti-table"></i> P&amp;L analytique</div>
   <div class="tab" onclick="switchTab('anomalies')" id="tab-anomalies"><i class="ti ti-alert-triangle"></i> Atypiques <span class="tab-badge" id="anomaly-count">0</span></div>
   <div class="tab" onclick="switchTab('fnp-alerts')" id="tab-fnp-alerts"><i class="ti ti-clock-exclamation"></i> Alertes FNP <span class="tab-badge amber" id="fnp-alert-count" style="display:none">0</span></div>
+  <div class="tab" onclick="switchTab('import')" id="tab-import"><i class="ti ti-upload"></i> Import</div>
 </nav>
 
 <!-- BARRE DE FILTRES GLOBALE -->
@@ -525,8 +526,171 @@ canvas{max-height:220px}
   <div class="alerts-wrap" id="fnp-alerts-content"><div class="sec-empty">Chargement…</div></div>
 </div>
 
+<div class="panel" id="panel-import" style="display:none">
+<style>
+.imp-wrap{max-width:860px;margin:0 auto;padding:2rem}
+.imp-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.imp-header .imp-icon{width:38px;height:38px;background:var(--blue-light);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px}
+.imp-header h2{font-size:16px;font-weight:600}
+.imp-header p{font-size:12px;color:var(--text2);margin-top:2px}
+.imp-steps{display:flex;border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:24px}
+.imp-step{flex:1;padding:10px 14px;background:var(--bg);display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);border-right:.5px solid var(--border)}
+.imp-step:last-child{border-right:none}
+.imp-step.active{background:var(--bg2);color:var(--text)}
+.imp-step.done{color:var(--green)}
+.imp-step .sn{width:20px;height:20px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.imp-step.active .sn{background:var(--green);color:#fff}
+.imp-step.done .sn{background:var(--green);color:#fff}
+.imp-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.imp-card-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:14px}
+.imp-drop{border:2px dashed var(--border);border-radius:var(--r);padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative}
+.imp-drop:hover,.imp-drop.drag-over{border-color:var(--blue);background:var(--blue-light)}
+.imp-drop.has-file{border-color:var(--green);background:var(--green-light)}
+.imp-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.imp-drop .dicon{font-size:28px;margin-bottom:8px}
+.imp-drop .dlabel{font-size:14px;font-weight:500;margin-bottom:4px}
+.imp-drop .dsub{font-size:12px;color:var(--text2)}
+.imp-file-info{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);margin-top:12px}
+.imp-file-info .fi-name{font-weight:500;font-size:13px}
+.imp-file-info .fi-meta{font-size:11px;color:var(--text2)}
+.imp-file-info .fi-rm{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text2);font-size:16px;padding:3px;border-radius:4px}
+.imp-file-info .fi-rm:hover{color:var(--red)}
+.imp-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.imp-stat{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.imp-stat .isv{font-size:20px;font-weight:700}
+.imp-stat .isl{font-size:11px;color:var(--text2);margin-top:2px}
+.imp-stat.blue .isv{color:var(--blue)}
+.imp-stat.green .isv{color:var(--green)}
+.imp-stat.amber .isv{color:var(--amber)}
+.imp-alert{border-radius:var(--r);padding:12px 16px;margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;background:var(--amber-light);border:.5px solid rgba(239,159,39,.3)}
+.imp-alert .ia-title{font-weight:600;font-size:13px;color:var(--amber-text);margin-bottom:3px}
+.imp-alert .ia-body{font-size:12px;color:var(--text);line-height:1.5}
+.imp-unknown-list{display:flex;flex-direction:column;gap:8px}
+.imp-unknown-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:.5px solid rgba(239,159,39,.3);border-radius:var(--r)}
+.imp-unknown-item .uin{font-weight:500;font-size:13px;min-width:220px;flex-shrink:0}
+.imp-unknown-item .uim{font-size:11px;color:var(--text2);margin-top:1px}
+.imp-unknown-item select{flex:1;font-size:12px;padding:6px 8px;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg);color:var(--text);outline:none}
+.imp-unknown-item select:focus{border-color:var(--green)}
+.imp-table-wrap{overflow-x:auto;border-radius:var(--r);border:.5px solid var(--border)}
+.imp-table{width:100%;border-collapse:collapse;font-size:12px}
+.imp-table thead th{background:var(--bg2);padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);font-weight:600;border-bottom:.5px solid var(--border);white-space:nowrap}
+.imp-table tbody tr{border-bottom:.5px solid var(--border)}
+.imp-table tbody tr:last-child{border-bottom:none}
+.imp-table tbody tr:hover{background:var(--bg2)}
+.imp-table tbody td{padding:7px 12px}
+.imp-table .td-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.imp-badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600}
+.imp-badge.blue{background:var(--blue-light);color:var(--blue-text)}
+.imp-badge.green{background:var(--green-light);color:var(--green-text)}
+.imp-badge.amber{background:var(--amber-light);color:var(--amber-text)}
+.imp-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.imp-blocked{font-size:11px;color:var(--amber-text);display:none}
+.imp-progress{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+.imp-progress-label{font-size:13px;color:var(--text2);margin-bottom:8px}
+.imp-progress-bg{background:var(--bg3);border-radius:4px;height:5px;overflow:hidden}
+.imp-progress-fill{height:100%;background:var(--blue);border-radius:4px;transition:width .3s;width:0%}
+.imp-progress-status{font-size:11px;color:var(--text2);margin-top:6px}
+.imp-success{background:var(--green-light);border:.5px solid rgba(29,158,117,.3);border-radius:var(--r);padding:24px;text-align:center;display:none}
+.imp-success.visible{display:block}
+.imp-success h3{font-size:16px;font-weight:700;color:var(--green);margin-bottom:6px}
+.imp-success p{font-size:12px;color:var(--text2)}
+</style>
+
+<div class="imp-wrap">
+  <div class="imp-header">
+    <div class="imp-icon">📥</div>
+    <div>
+      <h2>Import OD de paie</h2>
+      <p>Payfit → Staff Costs - Data</p>
+    </div>
+  </div>
+
+  <div class="imp-steps">
+    <div class="imp-step active" id="imp-step1-ind"><div class="sn">1</div> Upload fichier</div>
+    <div class="imp-step" id="imp-step2-ind"><div class="sn">2</div> Vérification</div>
+    <div class="imp-step" id="imp-step3-ind"><div class="sn">3</div> Import GSheet</div>
+  </div>
+
+  <!-- ÉTAPE 1 -->
+  <div id="imp-s1">
+    <div class="imp-card">
+      <div class="imp-card-title">Fichier Payfit</div>
+      <div class="imp-drop" id="impDropZone">
+        <input type="file" id="impFileInput" accept=".xlsx,.xls">
+        <div class="dicon">📊</div>
+        <div class="dlabel">Dépose ton export Payfit ici</div>
+        <div class="dsub">ou clique pour sélectionner — .xlsx ou .xls</div>
+      </div>
+      <div id="impFileInfo" style="display:none">
+        <div class="imp-file-info">
+          <span style="font-size:18px">📄</span>
+          <div>
+            <div class="fi-name" id="impFileName"></div>
+            <div class="fi-meta" id="impFileMeta"></div>
+          </div>
+          <button class="fi-rm" id="impRemoveFile">✕</button>
+        </div>
+      </div>
+    </div>
+    <div class="imp-actions">
+      <button class="btn primary" id="impBtnAnalyse" disabled><i class="ti ti-search"></i> Analyser le fichier</button>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 2 -->
+  <div id="imp-s2" style="display:none">
+    <div class="imp-stat-grid">
+      <div class="imp-stat blue"><div class="isv" id="impStatMois">—</div><div class="isl">Mois traité</div></div>
+      <div class="imp-stat green"><div class="isv" id="impStatEmp">—</div><div class="isl">Employés matchés</div></div>
+      <div class="imp-stat amber"><div class="isv" id="impStatUnk">—</div><div class="isl">Inconnus à résoudre</div></div>
+    </div>
+    <div class="imp-alert" id="impAlertUnk" style="display:none">
+      <span style="font-size:18px">⚠️</span>
+      <div>
+        <div class="ia-title">Employés absents du mapping</div>
+        <div class="ia-body" id="impAlertBody"></div>
+      </div>
+    </div>
+    <div class="imp-card" id="impCardUnk" style="display:none">
+      <div class="imp-card-title">Affecter une équipe</div>
+      <div class="imp-unknown-list" id="impUnkList"></div>
+    </div>
+    <div class="imp-card">
+      <div class="imp-card-title">Aperçu des lignes à importer</div>
+      <div class="imp-table-wrap">
+        <table class="imp-table">
+          <thead><tr><th>Mois</th><th>Employé</th><th>Équipe</th><th>Catégorie analytique</th><th style="text-align:right">Montant</th><th>Statut</th></tr></thead>
+          <tbody id="impPreviewBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="imp-actions">
+      <button class="btn" id="impBtnBack">← Retour</button>
+      <button class="btn primary" id="impBtnImport" disabled><i class="ti ti-check"></i> Importer dans le GSheet</button>
+      <span class="imp-blocked" id="impBlockedMsg">Résous les inconnus avant d'importer</span>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 3 -->
+  <div id="imp-s3" style="display:none">
+    <div class="imp-progress" id="impProgress">
+      <div class="imp-progress-label" id="impProgressLabel">Envoi en cours…</div>
+      <div class="imp-progress-bg"><div class="imp-progress-fill" id="impProgressFill"></div></div>
+      <div class="imp-progress-status" id="impProgressStatus"></div>
+    </div>
+    <div class="imp-success" id="impSuccess">
+      <div style="font-size:36px;margin-bottom:10px">✅</div>
+      <h3 id="impSuccessTitle">Import réussi</h3>
+      <p id="impSuccessMsg"></p>
+      <br>
+      <button class="btn" id="impBtnReset" style="margin:0 auto">Nouvel import</button>
+    </div>
+  </div>
+</div><!-- /.imp-wrap -->
+</div><!-- /#panel-import -->
+
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwCQ10hSksDjIOdjeAVNsa12QtPPzM_V1GLnj7bCh2KCHniyz_1aUUfwCSHhduEn8k/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbySD_MzGx9pRUeWNqqXIpy-BXVLXA4rzgnBSmxF9v_kusEJ85n_5GAHXR6RMDiXavYT/exec';
 const ENTOOL_BASE='https://entool.goensol.com/projects/';
 const INTERNAL_INSTALLERS=['Ensol Occitanie','Ensol PACA'];
 
@@ -869,7 +1033,7 @@ function getPeriodOptions(mode){
    TABS
    ================================================================ */
 function switchTab(tab){
-  ['overview','projects','pl','anomalies','fnp-alerts'].forEach(t=>{
+  ['overview','projects','pl','anomalies','fnp-alerts','import'].forEach(t=>{
     const panel=document.getElementById('panel-'+t);
     const isActive=t===tab;
     document.getElementById('tab-'+t).classList.toggle('active',isActive);
@@ -1520,6 +1684,290 @@ function loadData(){
     });
 }
 loadData();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+/* ================================================================
+   IMPORT OD DE PAIE — logique complète
+   ================================================================ */
+
+const IMP_EMPLOYE_EQUIPE = {
+  "albane renault-sablonière":"HR","alicia poilevilain":"Office ops - csm",
+  "aliénor hamoir":"Energy - VPP engineer","antoine liorel":"Sales team lead",
+  "antoine papait":"Office ops - planning","ardji servat":"Field ops - VT Technicians",
+  "arthur patouillet":"Account executives","aymeric venel":"Account executives",
+  "benjamin guerin":"Field ops - VT Technicians","benjamin malacan":"Account executives",
+  "benjamin rivet-chalençon":"Inside sales","bertrand beauchard":"Field ops - VT Technicians",
+  "charline barbé":"Sales ops","clara gros":"Tech - Fullstack developer",
+  "clotilde moulis":"Account executives","corentin lhuillier":"Finance",
+  "damien moulin":"Field ops - Managers","daniel chirouse":"Field ops - Technicians",
+  "david alphonsine":"Account executives","dimitri ourvouai":"Field ops - VT Technicians",
+  "edouard segard":"Office ops - supply","elie dutheil":"Tech - Fullstack manager",
+  "elise rigaud":"Finance","emmanuel peugeot":"Finance",
+  "erwan benkara":"Energy - VPP engineer","fardi said":"Field ops - Technicians",
+  "félix lamotte":"Inside sales","gabin planet":"Account executives",
+  "gauthier bonder":"Inside sales","geoffrey sautieres":"Tech - Fullstack developer",
+  "giovanni bini":"Account executives","grégoire leveillé nizerolle":"Founders",
+  "guillaume  hardy":"Field ops - Technicians","hadrien voegtlin":"Field ops - Technicians",
+  "hansell chavreemootoo":"Field ops - Technicians","jean bastin":"Energy - Manager",
+  "jean-christophe tailly":"Sales manager","jean-claude mendy":"Field ops - Technicians",
+  "jean-luc dorliac":"Account executives","joan goutagny":"Field ops - Technicians",
+  "johan marty":"Field ops - Technicians","jonathan jeanblanc":"Field ops - VT Technicians",
+  "joséphine céleste iphigénie de bellefroid":"Energy - VPP engineer",
+  "julen  urchoeguia":"Tech - Data analyst","juliette lelievre":"Office ops - efficiency",
+  "kani atac":"Account executives","laurent souques":"Account executives",
+  "léonie coursin":"Sales ops","léonore dalbera":"Office ops - csm",
+  "louis hochart":"Field ops - Technicians","lucas grenier":"Inside sales",
+  "lucas pradeilles":"Field ops - Technicians","manhattan  giordani":"Field ops - Technicians",
+  "marc laurin":"Marketing manager","marie de bon":"Office ops - csm",
+  "marion bondoux":"Account executives","marlon tavares semedo":"Field ops - Technicians",
+  "morgan baudeur":"Account executives","myriam etienne":"Account executives",
+  "nathan mercereau":"Sales ops","nicholas malboeuf":"Field ops - Managers",
+  "nicolas renouf":"Account executives","oscar macquet":"Office ops - supply",
+  "pierre barrielle":"Field ops - Managers","pierre-jean livintzeff":"Field ops - VT Technicians",
+  "rami semichat":"Field ops - VT Technicians","rayann chami":"Account executives",
+  "roché wanabo":"Field ops - Technicians","sadji abdou":"Field ops - Technicians",
+  "sophie oudry":"Office ops - csm","sophie vincent":"Sales team lead",
+  "terence campos":"Account executives","theo barnes":"Ops manager",
+  "théophile gallardo":"Sales team lead","thierry chardes":"Account executives",
+  "thomas bertiaux":"Inside sales","thomas poupinel":"Office ops - efficiency",
+  "valérie loria":"Account executives","yann mattiucci":"Field ops - Technicians",
+  "youcef el attlati":"Field ops - Technicians"
+};
+
+const IMP_EQUIPE_CAT = {
+  "Field ops - Technicians":"Staff costs - Field Ops technicians",
+  "Field ops - VT Technicians":"Staff costs - Field Ops VT technicians",
+  "Field ops - Managers":"Staff costs - Field Ops managers",
+  "Inside sales":"Staff costs - Inside sales",
+  "Account executives":"Staff costs - Account executives",
+  "Sales team lead":"Staff costs - Team leads",
+  "Sales manager":"Staff costs - Sales manager",
+  "Sales ops":"Staff costs - Business strategy",
+  "Office ops - csm":"Staff costs - CSM",
+  "Office ops - efficiency":"Staff costs - Ops efficiency",
+  "Office ops - planning":"Staff costs - Planning",
+  "Office ops - supply":"Staff costs - Supply",
+  "Marketing manager":"Staff costs - Marketing manager",
+  "Ops manager":"Staff costs - Ops manager",
+  "Tech - Fullstack developer":"Staff costs - Fullstack developer",
+  "Tech - Fullstack manager":"Staff costs - Fullstack manager",
+  "Tech - Data analyst":"Staff costs - Data analyst",
+  "Energy - VPP engineer":"Staff costs - VPP engineer",
+  "Energy - Manager":"Staff costs - Energy manager",
+  "HR":"Staff costs - HR",
+  "Finance":"Staff costs - Finance",
+  "Founders":"Staff costs - Founders",
+  "Admin":"Staff costs - Admin"
+};
+const IMP_ALL_EQUIPES = Object.keys(IMP_EQUIPE_CAT).sort();
+
+let impFile=null, impRows=[], impUnknowns=[], impMois='';
+
+function impFmt(n){return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+' €';}
+
+function impSetStep(n){
+  document.getElementById('imp-s1').style.display=n===1?'block':'none';
+  document.getElementById('imp-s2').style.display=n===2?'block':'none';
+  document.getElementById('imp-s3').style.display=n===3?'block':'none';
+  [1,2,3].forEach(i=>{
+    const el=document.getElementById('imp-step'+i+'-ind');
+    el.classList.toggle('active',i===n);
+    el.classList.toggle('done',i<n);
+  });
+}
+
+function impExcelDateToMois(serial){
+  const d=new Date(Math.round((serial-25569)*86400*1000));
+  return `${d.getUTCMonth()+1}-${String(d.getUTCFullYear()).slice(2)}`;
+}
+
+function impParseFile(buf){
+  const wb=XLSX.read(buf,{type:'array'});
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+  let hi=-1;
+  for(let i=0;i<rows.length;i++){if(rows[i].some(c=>String(c).trim()==='EcritureDate')){hi=i;break;}}
+  if(hi===-1)throw new Error("Colonne 'EcritureDate' introuvable.");
+  const h=rows[hi].map(c=>String(c).trim());
+  const iD=h.indexOf('EcritureDate'),iC=h.indexOf('CompteNum'),iDb=h.indexOf('Debit'),iE=h.indexOf('EmployeLib');
+  if([iD,iC,iDb,iE].includes(-1))throw new Error("Colonnes manquantes : EcritureDate, CompteNum, Debit, EmployeLib.");
+  const tot={};let mois='';
+  for(let i=hi+1;i<rows.length;i++){
+    const r=rows[i];
+    const compte=String(r[iC]||'').trim();
+    const emp=String(r[iE]||'').trim();
+    const dv=r[iD];
+    if(!compte.startsWith('6')||!emp)continue;
+    const d=parseFloat(r[iDb])||0;
+    if(!d)continue;
+    if(!mois&&dv)mois=typeof dv==='number'?impExcelDateToMois(dv):(()=>{const dt=new Date(dv);return isNaN(dt)?'':`${dt.getMonth()+1}-${String(dt.getFullYear()).slice(2)}`;})();
+    tot[emp]=(tot[emp]||0)+d;
+  }
+  if(!mois)throw new Error("Impossible de détecter le mois.");
+  return{tot,mois};
+}
+
+function impHandleFile(f){
+  if(!f.name.match(/\.(xlsx|xls)$/i)){alert('Format non supporté. Utilise un fichier .xlsx ou .xls');return;}
+  impFile=f;
+  document.getElementById('impFileName').textContent=f.name;
+  document.getElementById('impFileMeta').textContent=(f.size/1024).toFixed(0)+' Ko';
+  document.getElementById('impFileInfo').style.display='flex';
+  document.getElementById('impDropZone').classList.add('has-file');
+  document.getElementById('impBtnAnalyse').disabled=false;
+}
+
+function impResetFile(){
+  impFile=null;
+  document.getElementById('impFileInput').value='';
+  document.getElementById('impFileInfo').style.display='none';
+  document.getElementById('impDropZone').classList.remove('has-file');
+  document.getElementById('impBtnAnalyse').disabled=true;
+}
+
+function impRenderPreview(){
+  const all=[...impRows];
+  impUnknowns.forEach((u,i)=>{
+    const sel=document.getElementById('imp-unk-sel-'+i);
+    if(!sel||!sel.value)all.push({mois:impMois,employe:u.name,equipe:null,categorie:null,montant:u.total});
+  });
+  all.sort((a,b)=>a.employe.localeCompare(b.employe));
+  document.getElementById('impPreviewBody').innerHTML=all.map(r=>`
+    <tr>
+      <td style="color:var(--text2)">${r.mois}</td>
+      <td>${r.employe}</td>
+      <td style="color:var(--text2)">${r.equipe||'<span style="color:var(--amber)">Non affecté</span>'}</td>
+      <td>${r.categorie?`<span class="imp-badge blue">${r.categorie}</span>`:'<span class="imp-badge amber">En attente</span>'}</td>
+      <td class="td-amt">${impFmt(r.montant)}</td>
+      <td><span class="imp-badge ${r.equipe?'green':'amber'}">${r.equipe?'✓ Prêt':'⏳ En attente'}</span></td>
+    </tr>`).join('');
+}
+
+function impResolveUnk(idx,equipe){
+  const u=impUnknowns[idx];
+  impRows=impRows.filter(r=>r.employe!==u.name);
+  if(equipe){
+    impRows.push({mois:impMois,employe:u.name,equipe,categorie:IMP_EQUIPE_CAT[equipe],montant:u.total});
+    impRows.sort((a,b)=>a.employe.localeCompare(b.employe));
+  }
+  const allOk=impUnknowns.every((_,i)=>{const s=document.getElementById('imp-unk-sel-'+i);return s&&s.value;});
+  document.getElementById('impBtnImport').disabled=!allOk;
+  document.getElementById('impBlockedMsg').style.display=allOk?'none':'inline';
+  impRenderPreview();
+}
+
+function impRenderStep2(){
+  impSetStep(2);
+  document.getElementById('impStatMois').textContent=impMois;
+  document.getElementById('impStatEmp').textContent=impRows.length;
+  document.getElementById('impStatUnk').textContent=impUnknowns.length;
+  if(impUnknowns.length>0){
+    document.getElementById('impAlertUnk').style.display='flex';
+    document.getElementById('impAlertBody').textContent=impUnknowns.map(u=>u.name).join(', ')+` — absent${impUnknowns.length>1?'s':''} du mapping. Affecte-leur une équipe ci-dessous pour continuer.`;
+    document.getElementById('impCardUnk').style.display='block';
+    const list=document.getElementById('impUnkList');
+    list.innerHTML=impUnknowns.map((u,i)=>`
+      <div class="imp-unknown-item">
+        <div class="uin">${u.name}<div class="uim">${impFmt(u.total)}</div></div>
+        <span style="color:var(--text2)">→</span>
+        <select id="imp-unk-sel-${i}" onchange="impResolveUnk(${i},this.value)">
+          <option value="">— Choisir une équipe —</option>
+          ${IMP_ALL_EQUIPES.map(e=>`<option value="${e}">${IMP_EQUIPE_CAT[e]}</option>`).join('')}
+        </select>
+      </div>`).join('');
+    document.getElementById('impBtnImport').disabled=true;
+    document.getElementById('impBlockedMsg').style.display='inline';
+  } else {
+    document.getElementById('impAlertUnk').style.display='none';
+    document.getElementById('impCardUnk').style.display='none';
+    document.getElementById('impBtnImport').disabled=false;
+    document.getElementById('impBlockedMsg').style.display='none';
+  }
+  impRenderPreview();
+}
+
+// Drag & drop
+document.getElementById('impDropZone').addEventListener('dragover',e=>{e.preventDefault();document.getElementById('impDropZone').classList.add('drag-over');});
+document.getElementById('impDropZone').addEventListener('dragleave',()=>document.getElementById('impDropZone').classList.remove('drag-over'));
+document.getElementById('impDropZone').addEventListener('drop',e=>{e.preventDefault();document.getElementById('impDropZone').classList.remove('drag-over');if(e.dataTransfer.files[0])impHandleFile(e.dataTransfer.files[0]);});
+document.getElementById('impFileInput').addEventListener('change',function(){if(this.files[0])impHandleFile(this.files[0]);});
+document.getElementById('impRemoveFile').addEventListener('click',impResetFile);
+
+document.getElementById('impBtnAnalyse').addEventListener('click',()=>{
+  if(!impFile)return;
+  document.getElementById('impBtnAnalyse').disabled=true;
+  document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-loader"></i> Analyse…';
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const{tot,mois}=impParseFile(e.target.result);
+      impMois=mois; impRows=[]; impUnknowns=[];
+      for(const[emp,montant] of Object.entries(tot)){
+        const key=emp.toLowerCase().replace(/\s+/g,' ').trim();
+        const equipe=IMP_EMPLOYE_EQUIPE[key];
+        if(!equipe){impUnknowns.push({name:emp,total:Math.round(montant*100)/100});}
+        else{impRows.push({mois,employe:emp,equipe,categorie:IMP_EQUIPE_CAT[equipe],montant:Math.round(montant*100)/100});}
+      }
+      impRows.sort((a,b)=>a.employe.localeCompare(b.employe));
+      impUnknowns.sort((a,b)=>a.name.localeCompare(b.name));
+      impRenderStep2();
+    }catch(err){
+      alert('Erreur : '+err.message);
+      document.getElementById('impBtnAnalyse').disabled=false;
+      document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser le fichier';
+    }
+  };
+  reader.readAsArrayBuffer(impFile);
+});
+
+document.getElementById('impBtnBack').addEventListener('click',()=>{
+  impSetStep(1);
+  document.getElementById('impBtnAnalyse').disabled=false;
+  document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser le fichier';
+});
+
+document.getElementById('impBtnImport').addEventListener('click',async()=>{
+  impSetStep(3);
+  document.getElementById('impProgressFill').style.width='10%';
+  document.getElementById('impProgressLabel').textContent=`Envoi de ${impRows.length} lignes vers le GSheet…`;
+  document.getElementById('impProgressStatus').textContent='Connexion à Apps Script…';
+  const payload={action:'importStaffCosts',mois:impMois,rows:impRows.map(r=>[r.mois,r.employe,r.equipe,r.categorie,r.montant])};
+  try{
+    document.getElementById('impProgressFill').style.width='40%';
+    document.getElementById('impProgressStatus').textContent='Écriture dans Staff Costs - Data…';
+    const url=APPS_SCRIPT_URL+'?action=importStaffCosts&data='+encodeURIComponent(JSON.stringify(payload));
+    const resp=await fetch(url,{redirect:'follow'});
+    const text=await resp.text();
+    let result;try{result=JSON.parse(text);}catch{result={success:false,error:text};}
+    document.getElementById('impProgressFill').style.width='100%';
+    if(result.success){
+      document.getElementById('impProgressLabel').textContent='Import terminé';
+      document.getElementById('impProgressStatus').textContent='';
+      document.getElementById('impSuccess').classList.add('visible');
+      document.getElementById('impSuccessTitle').textContent=`${impRows.length} lignes importées`;
+      document.getElementById('impSuccessMsg').textContent=`Mois ${impMois} — onglet "Staff Costs - Data" mis à jour. Les données du mois précédent ont été remplacées.`;
+    }else{throw new Error(result.error||'Erreur inconnue');}
+  }catch(err){
+    document.getElementById('impProgressLabel').textContent='Erreur lors de l\'import';
+    document.getElementById('impProgressStatus').textContent=err.message;
+    document.getElementById('impProgressFill').style.background='var(--red)';
+  }
+});
+
+document.getElementById('impBtnReset').addEventListener('click',()=>{
+  impFile=null; impRows=[]; impUnknowns=[]; impMois='';
+  document.getElementById('impFileInput').value='';
+  document.getElementById('impFileInfo').style.display='none';
+  document.getElementById('impDropZone').classList.remove('has-file');
+  document.getElementById('impBtnAnalyse').disabled=true;
+  document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser le fichier';
+  document.getElementById('impSuccess').classList.remove('visible');
+  document.getElementById('impProgressFill').style.width='0%';
+  document.getElementById('impProgressFill').style.background='var(--blue)';
+  impSetStep(1);
+});
 </script>
 </body>
 </html>
