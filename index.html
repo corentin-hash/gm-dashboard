@@ -45,6 +45,8 @@ select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--r);bo
 .tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:500}
 .tab-badge{font-size:11px;background:var(--red-light);color:var(--red-text);padding:1px 6px;border-radius:10px;font-weight:600}
 .tab-badge.amber{background:var(--amber-light);color:var(--amber-text)}
+
+/* ---- FILTER BAR & DROPDOWNS ---- */
 .filter-bar{padding:.65rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .filter-bar input[type=text]{flex:1;min-width:160px}
 .filter-label{font-size:12px;color:var(--text2);white-space:nowrap}
@@ -69,6 +71,27 @@ select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--r);bo
 .view-toggle{display:flex;border:.5px solid var(--border2);border-radius:var(--r);overflow:hidden}
 .view-toggle button{font-size:12px;padding:5px 12px;border:none;background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap}
 .view-toggle button.active{background:var(--amber);color:#fff}
+
+/* Multi-select dropdown */
+.dd-wrap{position:relative;display:inline-block}
+.dd-btn{font-size:12px;padding:5px 10px;border-radius:var(--r);border:.5px solid var(--border2);background:var(--bg);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;user-select:none}
+.dd-btn:hover{background:var(--bg2)}
+.dd-btn.has-val{border-color:var(--green);color:var(--green-text);background:var(--green-light)}
+.dd-btn .dd-count{font-size:10px;background:var(--green);color:#fff;padding:0 5px;border-radius:8px;font-weight:700}
+.dd-menu{position:absolute;top:calc(100% + 4px);left:0;min-width:200px;max-width:280px;background:var(--bg);border:.5px solid var(--border2);border-radius:var(--rl);box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;padding:6px 0;display:none}
+.dd-menu.open{display:block}
+.dd-menu-header{padding:6px 10px 4px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.dd-item{display:flex;align-items:center;gap:8px;padding:6px 10px;cursor:pointer;font-size:12px;color:var(--text)}
+.dd-item:hover{background:var(--bg2)}
+.dd-item input[type=checkbox]{width:13px;height:13px;accent-color:var(--green);flex-shrink:0;cursor:pointer}
+.dd-item.dd-all{border-bottom:.5px solid var(--border);margin-bottom:4px;font-weight:600}
+.dd-item.dd-group-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px 2px;cursor:default;font-weight:600}
+.dd-item.dd-group-label:hover{background:none}
+.dd-sep{height:.5px;background:var(--border);margin:4px 0}
+.dd-clear{width:100%;text-align:center;font-size:11px;color:var(--text3);padding:5px 10px;cursor:pointer;border-top:.5px solid var(--border);margin-top:4px}
+.dd-clear:hover{color:var(--red-text)}
+
+/* ---- STATS ---- */
 .stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:.85rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border)}
 .stat{background:var(--bg2);border-radius:var(--r);padding:.6rem .9rem}
 .stat-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
@@ -79,17 +102,22 @@ select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--r);bo
 .chart-section{padding:1.25rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border)}
 .chart-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
 .chart-title{font-size:13px;font-weight:600}
-.chart-legend{display:flex;gap:14px;font-size:12px;color:var(--text2);margin-top:5px}
+.chart-legend{display:flex;gap:14px;font-size:12px;color:var(--text2);margin-top:5px;flex-wrap:wrap}
 .legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
 canvas{max-height:220px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.charts-grid .chart-section{border-right:.5px solid var(--border)}
+.charts-grid .chart-section:nth-child(2n){border-right:none}
+@media(max-width:800px){.charts-grid{grid-template-columns:1fr}}
+.charts-grid canvas{max-height:200px}
 .grid{padding:1.25rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
 .card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:1.1rem;cursor:pointer;transition:border-color .15s}
 .card:hover{border-color:var(--border2)}
 .card.expanded{border-color:var(--green);border-width:1px}
-.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
 .card-pid{font-size:10px;color:var(--text3);font-family:ui-monospace,monospace;margin-bottom:3px;word-break:break-all;line-height:1.3}
 .card-name{font-size:15px;font-weight:600}
-.card-actions{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.card-actions{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
 .ensol-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);text-decoration:none;padding:3px 8px;border-radius:20px;border:.5px solid var(--border2);background:var(--bg2);transition:background .15s}
 .ensol-link:hover{background:var(--bg3);color:var(--text)}
 .badges{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
@@ -100,6 +128,14 @@ canvas{max-height:220px}
 .chip.high{background:var(--blue-light);color:var(--blue-text)}
 .chip.fnp{background:var(--amber);color:#fff}
 .period-tag{font-size:11px;background:var(--green-light);color:var(--green-text);padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center;gap:3px}
+
+/* Card meta tags */
+.card-meta{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.meta-tag{font-size:10px;padding:2px 7px;border-radius:20px;border:.5px solid var(--border);background:var(--bg2);color:var(--text2);display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.meta-tag.int{background:var(--green-light);color:var(--green-text);border-color:var(--green-light)}
+.meta-tag.ext{background:var(--amber-light);color:var(--amber-text);border-color:var(--amber-light)}
+.meta-tag.flag{background:var(--purple-light);color:var(--purple-text);border-color:var(--purple-light)}
+
 .kpi-row{display:grid;gap:5px;margin-bottom:10px}
 .kpi{background:var(--bg2);border-radius:var(--r);padding:7px 9px}
 .kpi-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
@@ -176,7 +212,6 @@ canvas{max-height:220px}
 .fnp-del:hover{color:var(--red)}
 .fnp-section-title{font-size:11px;color:var(--amber-text);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;font-weight:600;display:flex;align-items:center;gap:5px}
 .fnp-badge{font-size:10px;background:var(--amber);color:#fff;padding:1px 6px;border-radius:10px;font-weight:700}
-/* Alertes FNP */
 .alert-card{background:var(--bg);border:.5px solid var(--amber);border-radius:var(--rl);padding:1.1rem;margin-bottom:.75rem}
 .alert-card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
 .alert-card-title{font-size:14px;font-weight:600}
@@ -192,6 +227,11 @@ canvas{max-height:220px}
 .alert-del-btn:hover{background:var(--red);color:#fff}
 .alert-del-btn:disabled{opacity:.5;cursor:wait}
 .alerts-wrap{padding:1.25rem 2rem}
+
+/* Modular chart section */
+.modular-chart-section{padding:1.25rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border)}
+.modular-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem;padding:10px;background:var(--bg2);border-radius:var(--r)}
+.modular-controls .filter-label{font-weight:600}
 </style>
 </head>
 <body>
@@ -238,35 +278,204 @@ canvas{max-height:220px}
     </div>
     <canvas id="main-chart"></canvas>
   </div>
+
+  <!-- Grille de graphiques analytiques -->
+  <div class="charts-grid">
+    <div class="chart-section">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Installations : internes vs externes</div>
+          <div class="chart-legend"><span><span class="legend-dot" style="background:var(--green)"></span>Internes</span><span><span class="legend-dot" style="background:var(--amber)"></span>Externes</span></div>
+        </div>
+      </div>
+      <canvas id="chart-int-ext"></canvas>
+    </div>
+    <div class="chart-section">
+      <div class="chart-header">
+        <div><div class="chart-title">Installations par installateur</div></div>
+      </div>
+      <canvas id="chart-installer"></canvas>
+    </div>
+    <div class="chart-section">
+      <div class="chart-header">
+        <div><div class="chart-title">Répartition par type de projet</div></div>
+      </div>
+      <canvas id="chart-project-type"></canvas>
+    </div>
+    <div class="chart-section">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">Type de facturation PV</div>
+          <div class="chart-legend" id="legend-pv-billing" style="font-size:11px"></div>
+        </div>
+      </div>
+      <canvas id="chart-pv-billing"></canvas>
+    </div>
+  </div>
+
+  <!-- Graphique modulable -->
+  <div class="modular-chart-section">
+    <div class="chart-header">
+      <div>
+        <div class="chart-title"><i class="ti ti-adjustments-horizontal" style="font-size:13px;vertical-align:-2px"></i> Graphique modulable</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px">Personnalisez l'axe, les filtres et la métrique affichée</div>
+      </div>
+    </div>
+    <div class="modular-controls">
+      <span class="filter-label">Axe X :</span>
+      <select id="mod-axis" onchange="buildModularChart()">
+        <option value="period">Mois analytique</option>
+        <option value="installationType">Type installation (Int/Ext)</option>
+        <option value="installationInstaller">Installateur</option>
+        <option value="projectType">Type de projet</option>
+        <option value="photovoltaicBillingType">Facturation PV</option>
+        <option value="batteryBillingType">Facturation Batterie</option>
+        <option value="flagEnphase">Flag Enphase Upsell</option>
+      </select>
+      <span class="filter-label">Métrique :</span>
+      <select id="mod-metric" onchange="buildModularChart()">
+        <option value="count">Nombre de projets</option>
+        <option value="rev_post">CA post-discount (€)</option>
+        <option value="margin_val">Marge brute (€)</option>
+        <option value="cogs_total">COGS total (€)</option>
+      </select>
+      <span class="filter-label">Période :</span>
+      <div class="toggle-btns">
+        <button class="active" id="mod-btn-all" onclick="setModPeriod('all')">Tout</button>
+        <button id="mod-btn-year" onclick="setModPeriod('year')">Année</button>
+        <button id="mod-btn-quarter" onclick="setModPeriod('quarter')">Trimestre</button>
+      </div>
+      <select id="mod-period-val" onchange="buildModularChart()" style="display:none"></select>
+    </div>
+    <canvas id="chart-modular" style="max-height:260px"></canvas>
+  </div>
 </div>
 
 <!-- PROJECTS -->
 <div class="panel" id="panel-projects" style="display:none">
+  <!-- Barre principale : recherche + FNP toggle -->
   <div class="filter-bar">
     <i class="ti ti-search" style="font-size:14px;color:var(--text2)"></i>
     <input type="text" id="proj-search" placeholder="Rechercher par ID ou nom client…" oninput="renderCards()">
-    <span class="filter-label">Marge :</span>
-    <div class="period-pills" id="margin-filter-pills">
-      <span class="pill mf-all active" onclick="setMarginFilter('all')">Tous</span>
-      <span class="pill mf-high" onclick="setMarginFilter('high')">Élevée &gt;40%</span>
-      <span class="pill mf-pos" onclick="setMarginFilter('pos')">Normale 20–40%</span>
-      <span class="pill mf-warn" onclick="setMarginFilter('warn')">Basse 10–20%</span>
-      <span class="pill mf-neg" onclick="setMarginFilter('neg')">Très basse &lt;10%</span>
-    </div>
-    <div class="view-toggle" style="margin-left:auto">
-      <button class="active" id="vt-real" onclick="setViewMode('real')">Réel</button>
-      <button id="vt-fnp" onclick="setViewMode('fnp')">+ FNP estimé</button>
+    <div style="margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <div class="view-toggle">
+        <button class="active" id="vt-real" onclick="setViewMode('real')">Réel</button>
+        <button id="vt-fnp" onclick="setViewMode('fnp')">+ FNP estimé</button>
+      </div>
     </div>
   </div>
-  <div class="filter-bar" style="border-top:none;padding-top:.4rem">
-    <span class="filter-label">Période :</span>
-    <div class="toggle-btns">
-      <button class="active" id="proj-by-month" onclick="setProjPeriodMode('month')">Mois</button>
-      <button id="proj-by-quarter" onclick="setProjPeriodMode('quarter')">Trimestre</button>
-      <button id="proj-by-year" onclick="setProjPeriodMode('year')">Année</button>
+
+  <!-- Barre de filtres dropdown -->
+  <div class="filter-bar" style="border-top:none;padding-top:.4rem;gap:6px">
+
+    <!-- Période -->
+    <div class="dd-wrap" id="dd-wrap-period">
+      <div class="dd-btn" id="dd-btn-period" onclick="toggleDD('period')">
+        <i class="ti ti-calendar" style="font-size:12px"></i>
+        <span id="dd-label-period">Période</span>
+        <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i>
+      </div>
+      <div class="dd-menu" id="dd-menu-period">
+        <div class="dd-menu-header">Granularité</div>
+        <div style="display:flex;gap:4px;padding:4px 10px 8px">
+          <button class="active" id="dd-period-month" onclick="setProjPeriodMode('month');event.stopPropagation()" style="font-size:11px;padding:3px 8px;border-radius:5px;border:.5px solid var(--border2);background:var(--green);color:#fff;cursor:pointer">Mois</button>
+          <button id="dd-period-quarter" onclick="setProjPeriodMode('quarter');event.stopPropagation()" style="font-size:11px;padding:3px 8px;border-radius:5px;border:.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer">Trim.</button>
+          <button id="dd-period-year" onclick="setProjPeriodMode('year');event.stopPropagation()" style="font-size:11px;padding:3px 8px;border-radius:5px;border:.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer">Année</button>
+        </div>
+        <div class="dd-sep"></div>
+        <div id="dd-items-period"></div>
+        <div class="dd-clear" onclick="clearDDFilter('period')">Effacer la sélection</div>
+      </div>
     </div>
-    <div class="period-pills" id="proj-period-pills"></div>
-    <select id="proj-sort" onchange="renderCards()">
+
+    <!-- Marge -->
+    <div class="dd-wrap" id="dd-wrap-margin">
+      <div class="dd-btn" id="dd-btn-margin" onclick="toggleDD('margin')">
+        <i class="ti ti-percentage" style="font-size:12px"></i>
+        <span id="dd-label-margin">Marge</span>
+        <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i>
+      </div>
+      <div class="dd-menu" id="dd-menu-margin">
+        <div class="dd-item dd-all" onclick="toggleDDItem('margin','all',true)"><input type="checkbox" id="dd-margin-all" checked> Tous</div>
+        <div class="dd-item" onclick="toggleDDItem('margin','high')"><input type="checkbox" id="dd-margin-high"> <span style="color:var(--blue-text)">Élevée &gt;40%</span></div>
+        <div class="dd-item" onclick="toggleDDItem('margin','pos')"><input type="checkbox" id="dd-margin-pos"> <span style="color:var(--green-text)">Normale 20–40%</span></div>
+        <div class="dd-item" onclick="toggleDDItem('margin','warn')"><input type="checkbox" id="dd-margin-warn"> <span style="color:var(--amber-text)">Basse 10–20%</span></div>
+        <div class="dd-item" onclick="toggleDDItem('margin','neg')"><input type="checkbox" id="dd-margin-neg"> <span style="color:var(--red-text)">Très basse &lt;10%</span></div>
+      </div>
+    </div>
+
+    <!-- Installateur -->
+    <div class="dd-wrap" id="dd-wrap-installer">
+      <div class="dd-btn" id="dd-btn-installer" onclick="toggleDD('installer')">
+        <i class="ti ti-tools" style="font-size:12px"></i>
+        <span id="dd-label-installer">Installateur</span>
+        <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i>
+      </div>
+      <div class="dd-menu" id="dd-menu-installer" style="min-width:240px">
+        <div class="dd-menu-header">Type</div>
+        <div class="dd-item" onclick="toggleDDItem('installer','__int__')"><input type="checkbox" id="dd-inst-int"> <span style="color:var(--green-text)">● Interne</span></div>
+        <div class="dd-item" onclick="toggleDDItem('installer','__ext__')"><input type="checkbox" id="dd-inst-ext"> <span style="color:var(--amber-text)">● Externe</span></div>
+        <div class="dd-sep"></div>
+        <div class="dd-menu-header">Par installateur</div>
+        <div id="dd-items-installer"></div>
+        <div class="dd-clear" onclick="clearDDFilter('installer')">Effacer la sélection</div>
+      </div>
+    </div>
+
+    <!-- Type de projet -->
+    <div class="dd-wrap" id="dd-wrap-projectType">
+      <div class="dd-btn" id="dd-btn-projectType" onclick="toggleDD('projectType')">
+        <i class="ti ti-category" style="font-size:12px"></i>
+        <span id="dd-label-projectType">Type de projet</span>
+        <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i>
+      </div>
+      <div class="dd-menu" id="dd-menu-projectType">
+        <div id="dd-items-projectType"></div>
+        <div class="dd-clear" onclick="clearDDFilter('projectType')">Effacer la sélection</div>
+      </div>
+    </div>
+
+    <!-- Facturation PV -->
+    <div class="dd-wrap" id="dd-wrap-pvBilling">
+      <div class="dd-btn" id="dd-btn-pvBilling" onclick="toggleDD('pvBilling')">
+        <i class="ti ti-solar-panel" style="font-size:12px"></i>
+        <span id="dd-label-pvBilling">Facturation PV</span>
+        <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i>
+      </div>
+      <div class="dd-menu" id="dd-menu-pvBilling">
+        <div id="dd-items-pvBilling"></div>
+        <div class="dd-clear" onclick="clearDDFilter('pvBilling')">Effacer la sélection</div>
+      </div>
+    </div>
+
+    <!-- Facturation Batterie -->
+    <div class="dd-wrap" id="dd-wrap-battBilling">
+      <div class="dd-btn" id="dd-btn-battBilling" onclick="toggleDD('battBilling')">
+        <i class="ti ti-battery" style="font-size:12px"></i>
+        <span id="dd-label-battBilling">Facturation Batterie</span>
+        <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i>
+      </div>
+      <div class="dd-menu" id="dd-menu-battBilling">
+        <div id="dd-items-battBilling"></div>
+        <div class="dd-clear" onclick="clearDDFilter('battBilling')">Effacer la sélection</div>
+      </div>
+    </div>
+
+    <!-- Flag Enphase -->
+    <div class="dd-wrap" id="dd-wrap-enphase">
+      <div class="dd-btn" id="dd-btn-enphase" onclick="toggleDD('enphase')">
+        <i class="ti ti-bolt" style="font-size:12px"></i>
+        <span id="dd-label-enphase">Enphase Upsell</span>
+        <i class="ti ti-chevron-down" style="font-size:11px;margin-left:2px"></i>
+      </div>
+      <div class="dd-menu" id="dd-menu-enphase">
+        <div id="dd-items-enphase"></div>
+        <div class="dd-clear" onclick="clearDDFilter('enphase')">Effacer la sélection</div>
+      </div>
+    </div>
+
+    <!-- Tri -->
+    <select id="proj-sort" onchange="renderCards()" style="margin-left:auto">
       <option value="margin_pct_desc">Marge % ↓</option>
       <option value="margin_pct_asc">Marge % ↑</option>
       <option value="revenue_desc">Revenue ↓</option>
@@ -274,12 +483,13 @@ canvas{max-height:220px}
       <option value="id">ID projet</option>
     </select>
   </div>
+
   <div class="stats-bar">
     <div class="stat"><div class="stat-label">Projets filtrés</div><div class="stat-value" id="ps-count">—</div></div>
     <div class="stat"><div class="stat-label">CA total</div><div class="stat-value" id="ps-rev">—</div></div>
-    <div class="stat"><div class="stat-label">COGS total</div><div class="stat-value" id="ps-cogs">—</div></div>
-    <div class="stat"><div class="stat-label">Marge totale</div><div class="stat-value" id="ps-margin">—</div></div>
-    <div class="stat"><div class="stat-label">Marge moyenne</div><div class="stat-value" id="ps-avg">—</div></div>
+    <div class="stat"><div class="stat-label">COGS total</div><div class="stat-value" id="ps-cogs">—</div><div class="stat-est" id="ps-cogs-est" style="display:none"></div></div>
+    <div class="stat"><div class="stat-label">Marge totale</div><div class="stat-value" id="ps-margin">—</div><div class="stat-est" id="ps-margin-est" style="display:none"></div></div>
+    <div class="stat"><div class="stat-label">Marge moyenne</div><div class="stat-value" id="ps-avg">—</div><div class="stat-est" id="ps-avg-est" style="display:none"></div></div>
   </div>
   <div class="grid" id="cards-grid"><div class="empty"><i class="ti ti-database-off"></i>Chargement…</div></div>
 </div>
@@ -331,37 +541,202 @@ canvas{max-height:220px}
 </div>
 
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbw8INzPGKo_dtp0Cg5LLn3FxQAoxmzmUWOJoPwD_W1XBXrJ1p167VaXNlAny2oKMV3L/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbyKip7lTiMgegoadmqiY9BJJXj8plI8pOHOhL-xQKvtxgdPJlv1rDP7mDPT2_LyO666/exec';
 const ENTOOL_BASE='https://entool.goensol.com/projects/';
+const INTERNAL_INSTALLERS=['Ensol Occitanie','Ensol PACA'];
+
 let allData=[];
-let allFNPs={};      // { projectId: [{fnpId, cat, supplier, amount, createdAt}] }
-let allCogsLines=[]; // lignes COGS réelles pour le matching
+let allFNPs={};
+let allCogsLines=[];
 let expandedId=null;
 let chartMode='month';
 let chartInstance=null;
+let chartIntExtInstance=null;
+let chartInstallerInstance=null;
+let chartProjectTypeInstance=null;
+let chartPvBillingInstance=null;
+let chartModularInstance=null;
 let plMode='year';
 let projPeriodMode='month';
 let projSelectedPeriods=new Set();
 let anomPeriodMode='month';
 let anomSelectedPeriods=new Set();
-let marginFilter='all';
 let viewMode='real';
+let modPeriodMode='all';
+
+// Filtres dropdown state
+const ddState={
+  margin: new Set(),         // 'all','high','pos','warn','neg'
+  period: new Set(),
+  installer: new Set(),      // '__int__','__ext__', ou noms
+  projectType: new Set(),
+  pvBilling: new Set(),
+  battBilling: new Set(),
+  enphase: new Set(),
+};
 
 const PRODUCTS=['PV','Wallbox','Batterie','Control equipment','Air-to-water heatpump','Air-to-air heatpump','Water heater','Additional works','Order validation','À taguer'];
 const COGS_CATS=['COGS - Small equipment','COGS - Material','COGS - Car rental & leasing','COGS - Warehouse rental','COGS - Warehouse running costs','COGS - Customer support service','COGS - Technical visits (external)','COGS - Installation (external)','COGS - Material inventory out','COGS - Restaurant','COGS - Admin services','COGS - Project consumables','COGS - Car maintenance','COGS - Temp Tech','COGS - Other installation costs','COGS - Fuel','COGS - Hotel','COGS - Travel','COGS - Tolls'];
-
-// Catégories FNP = COGS_CATS avec "(FNP)" ajouté — mais on mappe vers la catégorie réelle pour le matching
 const FNP_CATS=COGS_CATS.map(c=>c+' (FNP)');
-// Map catégorie FNP → catégorie COGS réelle
 function fnpCatToReal(fnpCat){return fnpCat.replace(' (FNP)','');}
-// Map catégorie réelle → catégorie FNP
 function realCatToFnp(realCat){return realCat+' (FNP)';}
 
-/* ---- FNP — lecture/écriture GSheet via google.script.run ---- */
+/* ---- DD helpers ---- */
+let openDD=null;
+function toggleDD(name){
+  const menu=document.getElementById('dd-menu-'+name);
+  if(!menu)return;
+  if(openDD&&openDD!==name){
+    const prev=document.getElementById('dd-menu-'+openDD);
+    if(prev)prev.classList.remove('open');
+  }
+  menu.classList.toggle('open');
+  openDD=menu.classList.contains('open')?name:null;
+}
+document.addEventListener('click',e=>{
+  if(openDD&&!e.target.closest('.dd-wrap')){
+    const menu=document.getElementById('dd-menu-'+openDD);
+    if(menu)menu.classList.remove('open');
+    openDD=null;
+  }
+});
+
+function toggleDDItem(filter, val, isRadio=false){
+  event.stopPropagation();
+  const s=ddState[filter];
+  if(isRadio){
+    // "Tous" = vide la sélection
+    s.clear();
+  } else {
+    if(s.has(val))s.delete(val); else s.add(val);
+  }
+  refreshDDUI(filter);
+  renderCards();
+}
+
+function clearDDFilter(filter){
+  ddState[filter].clear();
+  refreshDDUI(filter);
+  renderCards();
+}
+
+function isInternal(installer){
+  if(!installer)return false;
+  return INTERNAL_INSTALLERS.some(i=>installer.trim()===i.trim());
+}
+
+function refreshDDUI(filter){
+  const s=ddState[filter];
+  const btn=document.getElementById('dd-btn-'+filter);
+  const lbl=document.getElementById('dd-label-'+filter);
+  if(!btn)return;
+
+  if(filter==='margin'){
+    const isEmpty=s.size===0;
+    btn.classList.toggle('has-val',!isEmpty);
+    const allChk=document.getElementById('dd-margin-all');
+    if(allChk)allChk.checked=isEmpty;
+    ['high','pos','warn','neg'].forEach(v=>{
+      const el=document.getElementById('dd-margin-'+v);
+      if(el)el.checked=s.has(v);
+    });
+    if(lbl){lbl.textContent=isEmpty?'Marge':`Marge (${s.size})`;}
+    const cntEl=btn.querySelector('.dd-count');
+    if(cntEl)cntEl.remove();
+    if(!isEmpty){const c=document.createElement('span');c.className='dd-count';c.textContent=s.size;btn.insertBefore(c,btn.lastElementChild);}
+    return;
+  }
+
+  const hasVal=s.size>0;
+  btn.classList.toggle('has-val',hasVal);
+  const labels={period:'Période',installer:'Installateur',projectType:'Type de projet',pvBilling:'Facturation PV',battBilling:'Facturation Batterie',enphase:'Enphase Upsell'};
+  if(lbl){lbl.textContent=hasVal?`${labels[filter]||filter} (${s.size})`:labels[filter]||filter;}
+  const cntEl=btn.querySelector('.dd-count');
+  if(cntEl)cntEl.remove();
+  if(hasVal){const c=document.createElement('span');c.className='dd-count';c.textContent=s.size;btn.insertBefore(c,btn.lastElementChild);}
+
+  if(filter==='installer'){
+    document.getElementById('dd-inst-int').checked=s.has('__int__');
+    document.getElementById('dd-inst-ext').checked=s.has('__ext__');
+    document.querySelectorAll('#dd-items-installer .dd-item input').forEach(el=>{
+      el.checked=s.has(el.dataset.val);
+    });
+    return;
+  }
+  if(filter==='period'){
+    document.querySelectorAll('#dd-items-period .dd-item input').forEach(el=>{
+      el.checked=s.has(el.dataset.val);
+    });
+    return;
+  }
+  ['projectType','pvBilling','battBilling','enphase'].forEach(f=>{
+    if(f===filter){
+      document.querySelectorAll(`#dd-items-${f} .dd-item input`).forEach(el=>{
+        el.checked=s.has(el.dataset.val);
+      });
+    }
+  });
+}
+
+function buildDynamicDDItems(){
+  // Period
+  buildPeriodDDItems();
+  // Installers
+  const installers=[...new Set(allData.map(r=>r.installationInstaller||'').filter(Boolean))].sort();
+  const instContainer=document.getElementById('dd-items-installer');
+  if(instContainer){
+    instContainer.innerHTML=installers.map(v=>`
+      <div class="dd-item" onclick="toggleDDItem('installer','${v.replace(/'/g,"\\'")}');event.stopPropagation()">
+        <input type="checkbox" data-val="${v.replace(/"/g,'&quot;')}" ${ddState.installer.has(v)?'checked':''}> 
+        <span>${v} <span style="font-size:10px;color:${isInternal(v)?'var(--green-text)':'var(--amber-text)'}">${isInternal(v)?'Int.':'Ext.'}</span></span>
+      </div>`).join('');
+  }
+  // Project types
+  buildSimpleDDItems('projectType','dd-items-projectType',r=>r.projectType||'');
+  // PV billing
+  buildSimpleDDItems('pvBilling','dd-items-pvBilling',r=>r.photovoltaicBillingType||'');
+  // Batt billing
+  buildSimpleDDItems('battBilling','dd-items-battBilling',r=>r.batteryBillingType||'');
+  // Enphase
+  buildSimpleDDItems('enphase','dd-items-enphase',r=>r.flagEnphaseUpsell||'');
+}
+
+function buildSimpleDDItems(filterKey, containerId, getter){
+  const vals=[...new Set(allData.map(getter).filter(Boolean))].sort();
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  el.innerHTML=vals.map(v=>`
+    <div class="dd-item" onclick="toggleDDItem('${filterKey}','${v.replace(/'/g,"\\'")}');event.stopPropagation()">
+      <input type="checkbox" data-val="${v.replace(/"/g,'&quot;')}" ${ddState[filterKey].has(v)?'checked':''}> ${v||'(vide)'}
+    </div>`).join('');
+}
+
+function buildPeriodDDItems(){
+  const opts=getPeriodOptions(projPeriodMode);
+  const el=document.getElementById('dd-items-period');
+  if(!el)return;
+  el.innerHTML=opts.map(o=>`
+    <div class="dd-item" onclick="toggleDDItem('period','${o}');event.stopPropagation()">
+      <input type="checkbox" data-val="${o}" ${ddState.period.has(o)?'checked':''}> ${o}
+    </div>`).join('');
+}
+
+function setProjPeriodMode(mode){
+  projPeriodMode=mode;
+  projSelectedPeriods.clear();
+  ddState.period.clear();
+  ['month','quarter','year'].forEach(m=>{
+    const btn=document.getElementById('dd-period-'+m);
+    if(btn){btn.style.background=m===mode?'var(--green)':'transparent';btn.style.color=m===mode?'#fff':'var(--text2)';}
+  });
+  buildPeriodDDItems();
+  renderCards();
+}
+
+/* ---- FNP ---- */
 function getFNP(projectId){return allFNPs[projectId]||[];}
 function fnpTotal(projectId){return getFNP(projectId).reduce((s,e)=>s+(e.amount||0),0);}
 function hasFNP(projectId){return getFNP(projectId).length>0;}
-
 function generateId(){return'fnp_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);}
 
 function addFNP(id,pid){
@@ -373,33 +748,18 @@ function addFNP(id,pid){
   const sup=supEl?.value||'';
   const amt=parseFloat(amtEl?.value||'0');
   if(!cat||!amt||amt<=0)return;
-
   const fnpId=generateId();
   const projectName=allData.find(r=>r.id===id)?.name||id;
-
   if(btn){btn.disabled=true;btn.innerHTML='<span class="loading"></span> Enregistrement…';}
-
-  const params=new URLSearchParams({
-    action:'saveFNP',
-    fnpId,
-    projectId:id,
-    projectName,
-    cat,
-    supplier:sup,
-    amount:amt
-  });
-
+  const params=new URLSearchParams({action:'saveFNP',fnpId,projectId:id,projectName,cat,supplier:sup,amount:amt});
   fetch(APPS_SCRIPT_URL+'?'+params.toString())
     .then(r=>r.json())
     .then(()=>{
       if(!allFNPs[id])allFNPs[id]=[];
       allFNPs[id].push({fnpId,cat,supplier:sup,amount:amt,createdAt:new Date().toISOString()});
-      if(supEl)supEl.value='';
-      if(amtEl)amtEl.value='';
+      if(supEl)supEl.value='';if(amtEl)amtEl.value='';
       if(btn){btn.disabled=false;btn.innerHTML='<i class="ti ti-plus" style="font-size:12px"></i> Ajouter';}
-      renderCards();
-      updateOverviewStats();
-      renderFNPAlerts();
+      renderCards();updateOverviewStats();renderFNPAlerts();
     })
     .catch(err=>{
       console.error('Erreur saveFNP',err);
@@ -410,9 +770,7 @@ function addFNP(id,pid){
 
 function deleteFNP(projectId,fnpId,btnEl){
   if(btnEl){btnEl.disabled=true;btnEl.textContent='…';}
-
   const params=new URLSearchParams({action:'deleteFNP',fnpId});
-
   fetch(APPS_SCRIPT_URL+'?'+params.toString())
     .then(r=>r.json())
     .then(()=>{
@@ -420,9 +778,7 @@ function deleteFNP(projectId,fnpId,btnEl){
         allFNPs[projectId]=allFNPs[projectId].filter(f=>f.fnpId!==fnpId);
         if(allFNPs[projectId].length===0)delete allFNPs[projectId];
       }
-      renderCards();
-      updateOverviewStats();
-      renderFNPAlerts();
+      renderCards();updateOverviewStats();renderFNPAlerts();
     })
     .catch(err=>{
       console.error('Erreur deleteFNP',err);
@@ -434,8 +790,7 @@ function setViewMode(m){
   viewMode=m;
   document.getElementById('vt-real').classList.toggle('active',m==='real');
   document.getElementById('vt-fnp').classList.toggle('active',m==='fnp');
-  updateOverviewStats();
-  renderCards();
+  updateOverviewStats();renderCards();
 }
 
 /* ---- HELPERS ---- */
@@ -459,34 +814,66 @@ function getClientName(r){
   return parseId(r.id).name||r.id;
 }
 function chipClass(v){return v>=0.4?'high':v>=0.2?'pos':v>=0.1?'warn':'neg'}
-function matchesMarginFilter(r){
-  if(marginFilter==='all')return true;
-  if(marginFilter==='high')return r.margin_pct>=0.4;
-  if(marginFilter==='pos')return r.margin_pct>=0.2&&r.margin_pct<0.4;
-  if(marginFilter==='warn')return r.margin_pct>=0.1&&r.margin_pct<0.2;
-  if(marginFilter==='neg')return r.margin_pct<0.1;
+
+const CHART_COLORS=['#1D9E75','#378ADD','#EF9F27','#534AB7','#E24B4A','#0F6E56','#2962A6','#C07A00','#3B2E8C','#9B2E2E','#5DBAAC','#7BB3E8','#F5C36A','#8D80D0','#EE8080'];
+
+/* ---- FILTRAGE PROJECTS ---- */
+function matchesAllFilters(r){
+  const s=ddState;
+
+  // Période
+  if(s.period.size>0){
+    const p=pp(r.period);if(!p)return false;
+    const key=projPeriodMode==='year'?p.year:projPeriodMode==='quarter'?p.quarter:p.label;
+    if(!s.period.has(key))return false;
+  }
+
+  // Marge
+  if(s.margin.size>0){
+    const v=r.margin_pct;
+    const ok=(s.margin.has('high')&&v>=0.4)||(s.margin.has('pos')&&v>=0.2&&v<0.4)||(s.margin.has('warn')&&v>=0.1&&v<0.2)||(s.margin.has('neg')&&v<0.1);
+    if(!ok)return false;
+  }
+
+  // Installateur
+  if(s.installer.size>0){
+    const inst=r.installationInstaller||'';
+    const intMatch=s.installer.has('__int__')&&isInternal(inst);
+    const extMatch=s.installer.has('__ext__')&&!isInternal(inst)&&inst!=='';
+    const nameMatch=s.installer.has(inst);
+    // Si on a uniquement des flags __int__/__ext__, pas de noms
+    const hasTypeFlags=s.installer.has('__int__')||s.installer.has('__ext__');
+    const hasNames=[...s.installer].filter(v=>v!=='__int__'&&v!=='__ext__').length>0;
+    if(hasTypeFlags&&!hasNames){if(!intMatch&&!extMatch)return false;}
+    else if(!hasTypeFlags&&hasNames){if(!nameMatch)return false;}
+    else{if(!intMatch&&!extMatch&&!nameMatch)return false;}
+  }
+
+  // Type de projet
+  if(s.projectType.size>0&&!s.projectType.has(r.projectType||''))return false;
+  // PV billing
+  if(s.pvBilling.size>0&&!s.pvBilling.has(r.photovoltaicBillingType||''))return false;
+  // Batt billing
+  if(s.battBilling.size>0&&!s.battBilling.has(r.batteryBillingType||''))return false;
+  // Enphase
+  if(s.enphase.size>0&&!s.enphase.has(r.flagEnphaseUpsell||''))return false;
+
   return true;
 }
 
-/* ---- ALERTES FNP — logique de matching ---- */
+/* ---- FNP ALERTS ---- */
 function computeFNPAlerts(){
   const alerts=[];
   Object.entries(allFNPs).forEach(([projectId,fnps])=>{
     fnps.forEach(fnp=>{
       const realCat=fnpCatToReal(fnp.cat);
       const createdAt=fnp.createdAt?new Date(fnp.createdAt):null;
-      // Lignes réelles : même projet, même catégorie, arrivées après la création de la FNP
       const matches=allCogsLines.filter(line=>{
         if(line.projectId!==projectId)return false;
         if(line.cat!==realCat)return false;
-        // Montant similaire : ±30%
         const ratio=Math.abs(line.amount-fnp.amount)/Math.max(fnp.amount,1);
         if(ratio>0.30)return false;
-        // Postérieure à la création de la FNP (si date dispo)
-        if(createdAt&&line.date){
-          const lineDate=new Date(line.date);
-          if(lineDate<=createdAt)return false;
-        }
+        if(createdAt&&line.date){const lineDate=new Date(line.date);if(lineDate<=createdAt)return false;}
         return true;
       });
       if(matches.length>0){
@@ -503,62 +890,34 @@ function renderFNPAlerts(){
   const badge=document.getElementById('fnp-alert-count');
   if(alerts.length>0){badge.style.display='';badge.textContent=alerts.length;}
   else{badge.style.display='none';}
-
   const wrap=document.getElementById('fnp-alerts-content');
   if(!wrap)return;
   if(!alerts.length){
     wrap.innerHTML='<div class="sec-empty"><i class="ti ti-circle-check" style="font-size:28px;display:block;margin-bottom:8px;color:var(--green)"></i>Aucune alerte FNP — tout semble OK.</div>';
     return;
   }
-
-  // Grouper par projet
   const byProject={};
   alerts.forEach(a=>{
     if(!byProject[a.projectId])byProject[a.projectId]={projectName:a.projectName,items:[]};
     byProject[a.projectId].items.push(a);
   });
-
   const html=Object.entries(byProject).map(([projectId,group])=>{
     const projectRow=allData.find(r=>r.id===projectId);
     const clientName=projectRow?getClientName(projectRow):projectId;
     const itemsHTML=group.items.map(a=>{
-      const matchesHTML=a.matches.map(m=>`
-        <div class="alert-match-line">→ ${m.cat.replace('COGS - ','')}${m.supplier?' · '+m.supplier:''} · <strong>${fmt(m.amount)}</strong>${m.date?' · '+new Date(m.date).toLocaleDateString('fr-FR'):''}</div>
-      `).join('');
+      const matchesHTML=a.matches.map(m=>`<div class="alert-match-line">→ ${m.cat.replace('COGS - ','')}${m.supplier?' · '+m.supplier:''} · <strong>${fmt(m.amount)}</strong>${m.date?' · '+new Date(m.date).toLocaleDateString('fr-FR'):''}</div>`).join('');
       const btnId='del-fnp-'+a.fnp.fnpId;
-      return`
-        <div class="alert-fnp-row">
-          <div class="alert-fnp-info">
-            <span class="alert-fnp-label">${a.fnp.cat.replace('COGS - ','')}</span>
-            <span class="alert-fnp-sub">${a.fnp.supplier||'—'} · ${fmt(a.fnp.amount)}${a.fnp.createdAt?' · créée le '+new Date(a.fnp.createdAt).toLocaleDateString('fr-FR'):''}</span>
-          </div>
-          <button class="alert-del-btn" id="${btnId}" onclick="deleteFNPFromAlert('${projectId}','${a.fnp.fnpId}','${btnId}')">
-            <i class="ti ti-trash" style="font-size:11px"></i> Supprimer
-          </button>
-        </div>
-        <div class="alert-match">
-          <div class="alert-match-title"><i class="ti ti-check" style="font-size:12px"></i> Ligne(s) réelle(s) détectée(s)</div>
-          ${matchesHTML}
-        </div>`;
+      return`<div class="alert-fnp-row"><div class="alert-fnp-info"><span class="alert-fnp-label">${a.fnp.cat.replace('COGS - ','')}</span><span class="alert-fnp-sub">${a.fnp.supplier||'—'} · ${fmt(a.fnp.amount)}${a.fnp.createdAt?' · créée le '+new Date(a.fnp.createdAt).toLocaleDateString('fr-FR'):''}</span></div><button class="alert-del-btn" id="${btnId}" onclick="deleteFNPFromAlert('${projectId}','${a.fnp.fnpId}','${btnId}')"><i class="ti ti-trash" style="font-size:11px"></i> Supprimer</button></div>
+      <div class="alert-match"><div class="alert-match-title"><i class="ti ti-check" style="font-size:12px"></i> Ligne(s) réelle(s) détectée(s)</div>${matchesHTML}</div>`;
     }).join('');
-
-    return`<div class="alert-card">
-      <div class="alert-card-header">
-        <div>
-          <div class="alert-card-title">${clientName}</div>
-          <div class="alert-card-pid">${projectId}</div>
-        </div>
-      </div>
-      ${itemsHTML}
-    </div>`;
+    return`<div class="alert-card"><div class="alert-card-header"><div><div class="alert-card-title">${clientName}</div><div class="alert-card-pid">${projectId}</div></div></div>${itemsHTML}</div>`;
   }).join('');
-
   wrap.innerHTML=html;
 }
 
-function deleteFNPFromAlert(projectId, fnpId, btnId){
+function deleteFNPFromAlert(projectId,fnpId,btnId){
   const btn=document.getElementById(btnId);
-  deleteFNP(projectId, fnpId, btn);
+  deleteFNP(projectId,fnpId,btn);
 }
 
 /* ---- TABS ---- */
@@ -572,16 +931,7 @@ function switchTab(tab){
   });
 }
 
-/* ---- MARGIN FILTER ---- */
-function setMarginFilter(f){
-  marginFilter=f;
-  document.querySelectorAll('#margin-filter-pills .pill').forEach(p=>{
-    p.classList.toggle('active',p.getAttribute('onclick').includes("'"+f+"'"));
-  });
-  renderCards();
-}
-
-/* ---- PERIOD PILLS ---- */
+/* ---- PERIOD helpers ---- */
 function getPeriodOptions(mode){
   const set={};
   allData.forEach(r=>{
@@ -595,21 +945,9 @@ function getPeriodOptions(mode){
 function buildPills(containerId,selectedSet,mode,onToggle){
   const opts=getPeriodOptions(mode);
   const el=document.getElementById(containerId);
-  if(!opts.length){el.innerHTML='';return;}
+  if(!el||!opts.length){if(el)el.innerHTML='';return;}
   el.innerHTML=opts.map(o=>`<span class="pill${selectedSet.has(o)?' active':''}" onclick="(${onToggle})('${o}')">${o}</span>`).join('')
     +(selectedSet.size?`<span class="pill remove" onclick="(${onToggle})('__clear__')"><i class="ti ti-x" style="font-size:10px"></i> Effacer</span>`:'');
-}
-function toggleProjPeriod(val){
-  if(val==='__clear__')projSelectedPeriods.clear();
-  else{if(projSelectedPeriods.has(val))projSelectedPeriods.delete(val);else projSelectedPeriods.add(val);}
-  buildPills('proj-period-pills',projSelectedPeriods,projPeriodMode,'toggleProjPeriod');
-  renderCards();
-}
-function setProjPeriodMode(mode){
-  projPeriodMode=mode;projSelectedPeriods.clear();
-  ['month','quarter','year'].forEach(m=>document.getElementById('proj-by-'+m).classList.toggle('active',m===mode));
-  buildPills('proj-period-pills',projSelectedPeriods,projPeriodMode,'toggleProjPeriod');
-  renderCards();
 }
 function toggleAnomPeriod(val){
   if(val==='__clear__')anomSelectedPeriods.clear();
@@ -642,7 +980,7 @@ function updateOverviewStats(){
   const me=document.getElementById('s-margin');me.textContent=fmt(margin);me.className='stat-value '+(margin>=0?'green':'red');
   const pe=document.getElementById('s-pct');pe.textContent=fmtPct(mp);pe.className='stat-value '+(mp>=0.1?'green':'red');
   const totalFNP=allData.reduce((s,r)=>s+fnpTotal(r.id),0);
-  const showEst=viewMode==='fnp'&&totalFNP>0;
+  const showEst=totalFNP>0;
   const cogsFNP=cogs+totalFNP;
   const marginFNP=margin-totalFNP;
   const mpFNP=rev>0?marginFNP/rev:0;
@@ -654,7 +992,7 @@ function updateOverviewStats(){
   if(pee){pee.style.display=showEst?'block':'none';pee.textContent=showEst?'→ '+fmtPct(mpFNP)+' estimé':'';}
 }
 
-/* ---- CHART ---- */
+/* ---- MAIN CHART ---- */
 function setChartMode(mode){
   chartMode=mode;
   ['month','quarter','year'].forEach(m=>document.getElementById('chart-btn-'+m).classList.toggle('active',m===mode));
@@ -697,6 +1035,215 @@ function buildChart(){
       }
     }
   });
+}
+
+/* ---- ANALYTICS CHARTS ---- */
+function destroyChart(inst){if(inst){try{inst.destroy();}catch(e){}}}
+function getIsDark(){return window.matchMedia('(prefers-color-scheme:dark)').matches;}
+function chartDefaults(){
+  const isDark=getIsDark();
+  return{gc:isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.05)',tc:isDark?'#888':'#999'};
+}
+
+function buildIntExtChart(){
+  destroyChart(chartIntExtInstance);
+  const ctx=document.getElementById('chart-int-ext');
+  if(!ctx)return;
+  const intData={count:0,rev:0},extData={count:0,rev:0};
+  allData.forEach(r=>{
+    const t=isInternal(r.installationInstaller||'')?intData:extData;
+    t.count++;t.rev+=(r.rev_post||0);
+  });
+  const {tc}=chartDefaults();
+  chartIntExtInstance=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:['Internes','Externes'],
+      datasets:[{data:[intData.count,extData.count],backgroundColor:['#1D9E75','#EF9F27'],borderWidth:0}]
+    },
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{
+        legend:{position:'bottom',labels:{color:tc,font:{size:11},boxWidth:12}},
+        tooltip:{callbacks:{label:c=>`${c.label} : ${c.raw} projet${c.raw>1?'s':''} · ${fmt(c.label==='Internes'?intData.rev:extData.rev)}`}}
+      }
+    }
+  });
+}
+
+function buildInstallerChart(){
+  destroyChart(chartInstallerInstance);
+  const ctx=document.getElementById('chart-installer');
+  if(!ctx)return;
+  const map={};
+  allData.forEach(r=>{
+    const k=r.installationInstaller||'(non renseigné)';
+    if(!map[k])map[k]=0;map[k]++;
+  });
+  const entries=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  const {gc,tc}=chartDefaults();
+  chartInstallerInstance=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:entries.map(e=>e[0]),
+      datasets:[{label:'Projets',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>CHART_COLORS[i%CHART_COLORS.length]),borderRadius:3}]
+    },
+    options:{responsive:true,maintainAspectRatio:true,indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw} projet${c.raw>1?'s':''}`}}},
+      scales:{
+        x:{grid:{color:gc},ticks:{color:tc,font:{size:11}}},
+        y:{grid:{color:gc},ticks:{color:tc,font:{size:11}}}
+      }
+    }
+  });
+}
+
+function buildProjectTypeChart(){
+  destroyChart(chartProjectTypeInstance);
+  const ctx=document.getElementById('chart-project-type');
+  if(!ctx)return;
+  const map={};
+  allData.forEach(r=>{
+    const k=r.projectType||'(non renseigné)';
+    if(!map[k])map[k]=0;map[k]++;
+  });
+  const entries=Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  chartProjectTypeInstance=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:entries.map(e=>e[0]),
+      datasets:[{data:entries.map(e=>e[1]),backgroundColor:CHART_COLORS.slice(0,entries.length),borderWidth:0}]
+    },
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{position:'bottom',labels:{color:chartDefaults().tc,font:{size:11},boxWidth:12}}}
+    }
+  });
+}
+
+function buildPvBillingChart(){
+  destroyChart(chartPvBillingInstance);
+  const ctx=document.getElementById('chart-pv-billing');
+  if(!ctx)return;
+  const map={};
+  allData.forEach(r=>{
+    const k=r.photovoltaicBillingType||'(non renseigné)';
+    if(!map[k])map[k]=0;map[k]++;
+  });
+  const entries=Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  const {tc}=chartDefaults();
+  const legendEl=document.getElementById('legend-pv-billing');
+  if(legendEl){legendEl.innerHTML=entries.map((e,i)=>`<span><span class="legend-dot" style="background:${CHART_COLORS[i%CHART_COLORS.length]}"></span>${e[0]}</span>`).join('');}
+  chartPvBillingInstance=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:entries.map(e=>e[0]),
+      datasets:[{label:'Projets',data:entries.map(e=>e[1]),backgroundColor:entries.map((_,i)=>CHART_COLORS[i%CHART_COLORS.length]),borderRadius:3}]
+    },
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw} projet${c.raw>1?'s':''}`}}},
+      scales:{
+        x:{grid:{color:chartDefaults().gc},ticks:{color:tc,font:{size:11}}},
+        y:{grid:{color:chartDefaults().gc},ticks:{color:tc,font:{size:11}}}
+      }
+    }
+  });
+}
+
+/* ---- MODULAR CHART ---- */
+function setModPeriod(mode){
+  modPeriodMode=mode;
+  ['all','year','quarter'].forEach(m=>document.getElementById('mod-btn-'+m).classList.toggle('active',m===mode));
+  const sel=document.getElementById('mod-period-val');
+  if(mode==='all'){sel.style.display='none';}
+  else{
+    sel.style.display='';
+    const opts=getPeriodOptions(mode);
+    sel.innerHTML=opts.map(o=>`<option value="${o}">${o}</option>`).join('');
+  }
+  buildModularChart();
+}
+
+function buildModularChart(){
+  destroyChart(chartModularInstance);
+  const ctx=document.getElementById('chart-modular');
+  if(!ctx)return;
+  const axis=document.getElementById('mod-axis').value;
+  const metric=document.getElementById('mod-metric').value;
+  const periodSel=document.getElementById('mod-period-val');
+
+  let data=allData;
+  if(modPeriodMode!=='all'&&periodSel.value){
+    const pv=periodSel.value;
+    data=allData.filter(r=>{
+      const p=pp(r.period);if(!p)return false;
+      if(modPeriodMode==='year')return p.year===pv;
+      if(modPeriodMode==='quarter')return p.quarter===pv;
+      return false;
+    });
+  }
+
+  const map={};
+  data.forEach(r=>{
+    let key;
+    if(axis==='period'){const p=pp(r.period);key=p?p.label:'?';}
+    else if(axis==='installationType'){key=isInternal(r.installationInstaller||'')?'Interne':'Externe';}
+    else if(axis==='installationInstaller'){key=r.installationInstaller||'(non renseigné)';}
+    else if(axis==='projectType'){key=r.projectType||'(non renseigné)';}
+    else if(axis==='photovoltaicBillingType'){key=r.photovoltaicBillingType||'(non renseigné)';}
+    else if(axis==='batteryBillingType'){key=r.batteryBillingType||'(non renseigné)';}
+    else if(axis==='flagEnphase'){key=r.flagEnphaseUpsell||'(non renseigné)';}
+    else key='?';
+    if(!map[key])map[key]={count:0,rev_post:0,margin_val:0,cogs_total:0};
+    map[key].count++;
+    map[key].rev_post+=(r.rev_post||0);
+    map[key].margin_val+=(r.margin_val||0);
+    map[key].cogs_total+=(r.cogs_total||0);
+  });
+
+  let entries=Object.entries(map);
+  if(axis==='period'){
+    entries.sort((a,b)=>{const pa=pp(a[0]),pb=pp(b[0]);return(pa?pa.sort:0)-(pb?pb.sort:0);});
+  } else {
+    entries.sort((a,b)=>b[1][metric]-a[1][metric]);
+  }
+
+  const labels=entries.map(e=>e[0]);
+  const vals=entries.map(e=>e[1][metric]);
+  const isPct=false;
+  const {gc,tc}=chartDefaults();
+  const metricLabels={count:'Projets',rev_post:'CA post-discount',margin_val:'Marge brute',cogs_total:'COGS total'};
+
+  chartModularInstance=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[{
+      label:metricLabels[metric]||metric,
+      data:vals,
+      backgroundColor:labels.map((_,i)=>CHART_COLORS[i%CHART_COLORS.length]),
+      borderRadius:4
+    }]},
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          label:c=>{
+            if(metric==='count')return`${c.raw} projet${c.raw>1?'s':''}`;
+            return metricLabels[metric]+' : '+fmt(c.raw);
+          }
+        }}
+      },
+      scales:{
+        x:{grid:{color:gc},ticks:{color:tc,font:{size:11}}},
+        y:{grid:{color:gc},ticks:{color:tc,font:{size:11},callback:v=>metric==='count'?v:new Intl.NumberFormat('fr-FR',{notation:'compact',currency:'EUR',style:'currency'}).format(v)}}
+      }
+    }
+  });
+}
+
+function buildAllAnalyticsCharts(){
+  buildIntExtChart();
+  buildInstallerChart();
+  buildProjectTypeChart();
+  buildPvBillingChart();
+  buildModularChart();
 }
 
 /* ---- P&L ---- */
@@ -870,9 +1417,7 @@ function getProjFiltered(){
     const{pid}=parseId(r.id);
     const clientName=getClientName(r);
     const matchQ=!q||pid.toLowerCase().includes(q)||clientName.toLowerCase().includes(q);
-    const matchP=matchesPeriodFilter(r,projSelectedPeriods,projPeriodMode);
-    const matchM=matchesMarginFilter(r);
-    return matchQ&&matchP&&matchM;
+    return matchQ&&matchesAllFilters(r);
   });
   d.sort((a,b)=>{
     if(sort==='margin_pct_desc')return b.margin_pct-a.margin_pct;
@@ -883,6 +1428,7 @@ function getProjFiltered(){
   });
   return d;
 }
+
 function renderCards(){
   const data=getProjFiltered();
   const rev=data.reduce((s,r)=>s+(r.rev_post||0),0);
@@ -894,6 +1440,17 @@ function renderCards(){
   document.getElementById('ps-cogs').textContent=fmt(cogs);
   const pm=document.getElementById('ps-margin');pm.textContent=fmt(margin);pm.className='stat-value '+(margin>=0?'green':'red');
   document.getElementById('ps-avg').textContent=fmtPct(avg);
+
+  // FNP estimé sur résumé projets
+  const totalFNP=data.reduce((s,r)=>s+fnpTotal(r.id),0);
+  const showEst=totalFNP>0;
+  const psCE=document.getElementById('ps-cogs-est');
+  const psME=document.getElementById('ps-margin-est');
+  const psAE=document.getElementById('ps-avg-est');
+  if(psCE){psCE.style.display=showEst?'block':'none';psCE.textContent=showEst?'→ '+fmt(cogs+totalFNP)+' estimé':'';}
+  if(psME){psME.style.display=showEst?'block':'none';psME.textContent=showEst?'→ '+fmt(margin-totalFNP)+' estimé':'';}
+  if(psAE){const mEst=margin-totalFNP;psAE.style.display=showEst?'block':'none';psAE.textContent=showEst?'→ '+fmtPct(rev>0?mEst/rev:0)+' estimé':'';}
+
   const grid=document.getElementById('cards-grid');
   if(!data.length){grid.innerHTML='<div class="empty"><i class="ti ti-search-off"></i>Aucun projet trouvé.</div>';return;}
   grid.innerHTML=data.map(r=>cardHTML(r)).join('');
@@ -920,6 +1477,15 @@ function cardHTML(r){
   const chipReal=`<span class="chip ${chipClass(r.margin_pct)}">${fmtPct(r.margin_pct)}</span>`;
   const chipEst=fnpAmt>0?`<span class="chip fnp">${fmtPct(marginPctEst)} est.</span>`:'';
 
+  // Meta tags (installateur, type, flags)
+  const instVal=r.installationInstaller||'';
+  const instIsInt=isInternal(instVal);
+  const metaInstaller=instVal?`<span class="meta-tag ${instIsInt?'int':'ext'}"><i class="ti ti-${instIsInt?'home':'truck'}" style="font-size:9px"></i> ${instVal} <span style="opacity:.7">${instIsInt?'Interne':'Externe'}</span></span>`:'';
+  const metaType=r.projectType?`<span class="meta-tag"><i class="ti ti-category" style="font-size:9px"></i> ${r.projectType}</span>`:'';
+  const metaPvBill=r.photovoltaicBillingType?`<span class="meta-tag"><i class="ti ti-solar-panel" style="font-size:9px"></i> ${r.photovoltaicBillingType}</span>`:'';
+  const metaBattBill=r.batteryBillingType?`<span class="meta-tag"><i class="ti ti-battery" style="font-size:9px"></i> ${r.batteryBillingType}</span>`:'';
+  const metaEnphase=r.flagEnphaseUpsell&&r.flagEnphaseUpsell!=='FALSE'&&r.flagEnphaseUpsell!=='false'&&r.flagEnphaseUpsell!=='0'&&r.flagEnphaseUpsell!==''?`<span class="meta-tag flag"><i class="ti ti-bolt" style="font-size:9px"></i> Enphase</span>`:'';
+
   const kpiCols=fnpAmt>0?'1fr 1fr 1fr 1fr':'1fr 1fr 1fr';
   const kpiCOGSEst=fnpAmt>0?`<div class="kpi kpi-fnp"><div class="kpi-label">COGS estimé</div><div class="kpi-val">${fmt(cogsEst)}</div><div class="kpi-est">+${fmt(fnpAmt)} FNP</div></div>`:'';
   const kpiMargin=`<div class="kpi${fnpAmt>0?' kpi-fnp':''}"><div class="kpi-label">Marge${fnpAmt>0?' estimée':''}</div><div class="kpi-val" style="color:${dispMargin>=0?(fnpAmt>0?'var(--amber-text)':'var(--green)'):'var(--red)'}">${fmt(dispMargin)}</div>${fnpAmt>0?`<div class="kpi-est">${fmtPct(marginPctEst)}</div>`:''}</div>`;
@@ -934,14 +1500,8 @@ function cardHTML(r){
 
     const fnpListHTML=fnpEntries.map(e=>`
       <div class="fnp-item">
-        <div class="fnp-item-left">
-          <span class="fnp-item-cat">${e.cat.replace('COGS - ','')}</span>
-          <span class="fnp-item-sup">${e.supplier||'—'}</span>
-        </div>
-        <div class="fnp-item-right">
-          <span class="fnp-item-amount">${fmt(e.amount)}</span>
-          <span class="fnp-del" onclick="deleteFNP('${r.id}','${e.fnpId}',null);event.stopPropagation()">✕</span>
-        </div>
+        <div class="fnp-item-left"><span class="fnp-item-cat">${e.cat.replace('COGS - ','')}</span><span class="fnp-item-sup">${e.supplier||'—'}</span></div>
+        <div class="fnp-item-right"><span class="fnp-item-amount">${fmt(e.amount)}</span><span class="fnp-del" onclick="deleteFNP('${r.id}','${e.fnpId}',null);event.stopPropagation()">✕</span></div>
       </div>`).join('');
 
     const catOptions=FNP_CATS.map(c=>`<option value="${c}">${c.replace('COGS - ','')}</option>`).join('');
@@ -970,8 +1530,20 @@ function cardHTML(r){
       <tr><td>COGS total</td><td class="neg">- ${fmt(r.cogs_total)}</td></tr>
       <tr class="tot"><td>Marge brute</td><td style="color:${r.margin_val>=0?'var(--green)':'var(--red)'}">${fmt(r.margin_val)} (${fmtPct(r.margin_pct)})</td></tr>`;
 
+    // Détail installateur/type dans expanded
+    const detailMeta=`
+      <div class="detail-title">Informations projet</div>
+      <table class="dtable">
+        ${instVal?`<tr><td>Installateur</td><td style="text-align:right"><span class="meta-tag ${instIsInt?'int':'ext'}">${instVal} · ${instIsInt?'Interne':'Externe'}</span></td></tr>`:''}
+        ${r.projectType?`<tr><td>Type de projet</td><td style="text-align:right">${r.projectType}</td></tr>`:''}
+        ${r.photovoltaicBillingType?`<tr><td>Facturation PV</td><td style="text-align:right">${r.photovoltaicBillingType}</td></tr>`:''}
+        ${r.batteryBillingType?`<tr><td>Facturation Batterie</td><td style="text-align:right">${r.batteryBillingType}</td></tr>`:''}
+        ${r.flagEnphaseUpsell?`<tr><td>Flag Enphase Upsell</td><td style="text-align:right">${r.flagEnphaseUpsell}</td></tr>`:''}
+      </table>`;
+
     detail=`<div class="detail">
-      <div class="detail-title">Revenue par produit</div>
+      ${detailMeta}
+      <div class="detail-title" style="margin-top:12px">Revenue par produit</div>
       <table class="dtable" style="font-size:11px"><thead><tr><td>Produit</td><td style="text-align:right">Brut</td><td style="text-align:right">Remise</td><td style="text-align:right">Net</td></tr></thead>
       <tbody>${revRows}</tbody><tr class="tot"><td>Total</td><td style="text-align:right">${fmt(r.rev_pre)}</td><td></td><td style="text-align:right">${fmt(r.rev_post)}</td></tr></table>
       ${cogsRows?`<div class="detail-title" style="margin-top:12px">COGS détaillés (réel)</div><table class="dtable"><tbody>${cogsRows}</tbody><tr class="tot"><td>Total réel</td><td>${fmt(r.cogs_total)}</td></tr></table>`:''}
@@ -992,6 +1564,7 @@ function cardHTML(r){
         ${r.period?`<span class="period-tag"><i class="ti ti-calendar" style="font-size:10px"></i>${r.period}</span>`:''}
       </div>
     </div>
+    <div class="card-meta">${metaInstaller}${metaType}${metaPvBill}${metaBattBill}${metaEnphase}</div>
     <div class="card-actions" onclick="event.stopPropagation()">
       <a href="${ensolUrl}" target="_blank" class="ensol-link">${ensolLogo} Voir sur Entool</a>
       ${fnpAmt>0?`<span style="font-size:11px;color:var(--amber-text);display:inline-flex;align-items:center;gap:3px"><i class="ti ti-clock-exclamation" style="font-size:12px"></i> FNP ${fmt(fnpAmt)}</span>`:''}
@@ -1015,7 +1588,8 @@ function toggle(id){expandedId=expandedId===id?null:id;renderCards();}
 function renderAll(){
   updateOverviewStats();
   buildChart();
-  buildPills('proj-period-pills',projSelectedPeriods,projPeriodMode,'toggleProjPeriod');
+  buildAllAnalyticsCharts();
+  buildDynamicDDItems();
   buildPills('anom-period-pills',anomSelectedPeriods,anomPeriodMode,'toggleAnomPeriod');
   renderCards();
   renderAnomalies();
@@ -1023,11 +1597,12 @@ function renderAll(){
   renderFNPAlerts();
 }
 
+// ---- DEMO DATA (avec les nouveaux champs) ----
 const DEMO=[
-  {id:'Alain Anes - cmiotxrdr004ilt2n0q0r1rb4',name:'Alain Anes',period:'5-26',rev_pre:8138,rev_post:8138,rev_by_product:{'PV':{pre:8138,post:8138}},cogs_total:0,cogs_detail:{},margin_val:8138,margin_pct:1.0},
-  {id:'Martin Dupont - cm372bgj600ogw6v6mbgovmqh',name:'Martin Dupont',period:'4-25',rev_pre:42000,rev_post:38500,rev_by_product:{'PV':{pre:28000,post:25000},'Wallbox':{pre:8500,post:8000},'Additional works':{pre:5500,post:5500}},cogs_total:18200,cogs_detail:{'COGS - Material':12000,'COGS - Installation (external)':4800,'COGS - Small equipment':1400},margin_val:20300,margin_pct:0.527},
-  {id:'Sophie Bernard - cx8k1mz900abx2y3nbhpwrtuv',name:'Sophie Bernard',period:'3-25',rev_pre:15800,rev_post:14200,rev_by_product:{'PV':{pre:15800,post:14200}},cogs_total:9100,cogs_detail:{'COGS - Material':6500,'COGS - Installation (external)':2100,'COGS - Project consumables':500},margin_val:5100,margin_pct:0.359},
-  {id:'Famille Leclerc - bd2p4qr300cdl7k8mcxvnsyza',name:'Famille Leclerc',period:'5-25',rev_pre:67000,rev_post:61000,rev_by_product:{'PV':{pre:45000,post:40000},'Wallbox':{pre:12000,post:12000},'Batterie':{pre:6000,post:5500},'Additional works':{pre:4000,post:3500}},cogs_total:39500,cogs_detail:{'COGS - Material':24000,'COGS - Installation (external)':12000,'COGS - Small equipment':2000,'COGS - Project consumables':1500},margin_val:21500,margin_pct:0.352},
+  {id:'Alain Anes - cmiotxrdr004ilt2n0q0r1rb4',name:'Alain Anes',period:'5-26',rev_pre:8138,rev_post:8138,rev_by_product:{'PV':{pre:8138,post:8138}},cogs_total:0,cogs_detail:{},margin_val:8138,margin_pct:1.0,installationInstaller:'Ensol Occitanie',projectType:'Résidentiel',photovoltaicBillingType:'Vente directe',batteryBillingType:'',flagEnphaseUpsell:'TRUE'},
+  {id:'Martin Dupont - cm372bgj600ogw6v6mbgovmqh',name:'Martin Dupont',period:'4-25',rev_pre:42000,rev_post:38500,rev_by_product:{'PV':{pre:28000,post:25000},'Wallbox':{pre:8500,post:8000},'Additional works':{pre:5500,post:5500}},cogs_total:18200,cogs_detail:{'COGS - Material':12000,'COGS - Installation (external)':4800,'COGS - Small equipment':1400},margin_val:20300,margin_pct:0.527,installationInstaller:'SolarTech Pro',projectType:'Résidentiel',photovoltaicBillingType:'Autoconsommation',batteryBillingType:'Vente directe',flagEnphaseUpsell:'FALSE'},
+  {id:'Sophie Bernard - cx8k1mz900abx2y3nbhpwrtuv',name:'Sophie Bernard',period:'3-25',rev_pre:15800,rev_post:14200,rev_by_product:{'PV':{pre:15800,post:14200}},cogs_total:9100,cogs_detail:{'COGS - Material':6500,'COGS - Installation (external)':2100,'COGS - Project consumables':500},margin_val:5100,margin_pct:0.359,installationInstaller:'Ensol PACA',projectType:'Tertiaire',photovoltaicBillingType:'Vente en surplus',batteryBillingType:'',flagEnphaseUpsell:'TRUE'},
+  {id:'Famille Leclerc - bd2p4qr300cdl7k8mcxvnsyza',name:'Famille Leclerc',period:'5-25',rev_pre:67000,rev_post:61000,rev_by_product:{'PV':{pre:45000,post:40000},'Wallbox':{pre:12000,post:12000},'Batterie':{pre:6000,post:5500},'Additional works':{pre:4000,post:3500}},cogs_total:39500,cogs_detail:{'COGS - Material':24000,'COGS - Installation (external)':12000,'COGS - Small equipment':2000,'COGS - Project consumables':1500},margin_val:21500,margin_pct:0.352,installationInstaller:'InstallPro Sud',projectType:'Résidentiel',photovoltaicBillingType:'Autoconsommation',batteryBillingType:'Location',flagEnphaseUpsell:'FALSE'},
 ];
 
 function loadData(){
