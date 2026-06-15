@@ -276,6 +276,7 @@ canvas{max-height:220px}
         <button id="dd-period-year" onclick="setProjPeriodMode('year');event.stopPropagation()" style="font-size:11px;padding:3px 8px;border-radius:5px;border:.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer">Année</button>
       </div>
       <div class="dd-sep"></div>
+      <div class="dd-search"><input type="text" id="dd-search-period" placeholder="Rechercher une période…" oninput="filterDDItems('period','dd-search-period')" onclick="event.stopPropagation()"></div>
       <div id="dd-items-period"></div>
       <div class="dd-clear" onclick="clearDDFilter('period')">Effacer la sélection</div>
     </div>
