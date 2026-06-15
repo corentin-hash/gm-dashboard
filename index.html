@@ -256,7 +256,7 @@ canvas{max-height:220px}
   <div class="tab" onclick="switchTab('pl')" id="tab-pl"><i class="ti ti-table"></i> P&amp;L analytique</div>
   <div class="tab" onclick="switchTab('anomalies')" id="tab-anomalies"><i class="ti ti-alert-triangle"></i> Atypiques <span class="tab-badge" id="anomaly-count">0</span></div>
   <div class="tab" onclick="switchTab('fnp-alerts')" id="tab-fnp-alerts"><i class="ti ti-clock-exclamation"></i> Alertes FNP <span class="tab-badge amber" id="fnp-alert-count" style="display:none">0</span></div>
-  <div class="tab" onclick="switchTab('import')" id="tab-import"><i class="ti ti-upload"></i> Import</div>
+  <div class="tab" onclick="switchTab('import')" id="tab-import"><i class="ti ti-upload"></i> Import Staff Costs</div>
 </nav>
 
 <!-- BARRE DE FILTRES GLOBALE -->
@@ -594,16 +594,49 @@ canvas{max-height:220px}
 .imp-success.visible{display:block}
 .imp-success h3{font-size:16px;font-weight:700;color:var(--green);margin-bottom:6px}
 .imp-success p{font-size:12px;color:var(--text2)}
+.imp-tabs{display:flex;gap:0;border-bottom:.5px solid var(--border);margin-bottom:20px}
+.imp-tab{font-size:13px;padding:8px 16px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);display:flex;align-items:center;gap:6px}
+.imp-tab:hover{color:var(--text)}
+.imp-tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:500}
+.imp-section{display:none}.imp-section.active{display:block}
+.map-search-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:flex-end}
+.map-search-row .field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:180px}
+.map-search-row label{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.map-search-row input,.map-search-row select{font-size:13px;padding:7px 10px;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg);color:var(--text);outline:none;width:100%}
+.map-search-row input:focus,.map-search-row select:focus{border-color:var(--green)}
+.map-apply-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.map-apply-opts label{font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.map-apply-opts input[type=radio]{accent-color:var(--green)}
+.map-month-pick{display:flex;align-items:center;gap:8px;margin-left:22px}
+.map-month-pick input{width:90px}
+.map-table-wrap{border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.map-table{width:100%;border-collapse:collapse;font-size:12px}
+.map-table thead th{background:var(--bg2);padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);font-weight:600;border-bottom:.5px solid var(--border)}
+.map-table tbody tr{border-bottom:.5px solid var(--border)}
+.map-table tbody tr:last-child{border-bottom:none}
+.map-table tbody tr:hover{background:var(--bg2)}
+.map-table td{padding:7px 12px}
+.map-table .map-cat{color:var(--text2);font-size:11px}
+.map-badge-mod{display:inline-block;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;background:var(--amber-light);color:var(--amber-text)}
 </style>
 
 <div class="imp-wrap">
   <div class="imp-header">
     <div class="imp-icon">📥</div>
     <div>
-      <h2>Import OD de paie</h2>
+      <h2>Import Staff Costs</h2>
       <p>Payfit → Staff Costs - Data</p>
     </div>
   </div>
+
+  <!-- Sous-onglets -->
+  <div class="imp-tabs">
+    <div class="imp-tab active" id="imp-nav-import" onclick="impSwitchNav('import')"><i class="ti ti-upload"></i> Import OD de paie</div>
+    <div class="imp-tab" id="imp-nav-mapping" onclick="impSwitchNav('mapping')"><i class="ti ti-users"></i> Mapping employés</div>
+  </div>
+
+  <!-- SECTION : Import OD de paie -->
+  <div class="imp-section active" id="imp-sec-import">
 
   <div class="imp-steps">
     <div class="imp-step active" id="imp-step1-ind"><div class="sn">1</div> Upload fichier</div>
@@ -686,11 +719,76 @@ canvas{max-height:220px}
       <button class="btn" id="impBtnReset" style="margin:0 auto">Nouvel import</button>
     </div>
   </div>
+
+  </div><!-- /#imp-sec-import -->
+
+  <!-- SECTION : Mapping employés -->
+  <div class="imp-section" id="imp-sec-mapping">
+
+    <div class="imp-card">
+      <div class="imp-card-title">Modifier un mapping</div>
+      <div class="map-search-row">
+        <div class="field">
+          <label>Rechercher un employé</label>
+          <input type="text" id="mapSearchInput" placeholder="Tapez un nom…" oninput="mapFilterTable()">
+        </div>
+        <div class="field">
+          <label>Ou sélectionner</label>
+          <select id="mapSelectEmp" onchange="mapSelectFromDD()">
+            <option value="">— Tous les employés —</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="map-table-wrap">
+        <table class="map-table" id="mapTable">
+          <thead><tr><th>Employé</th><th>Équipe actuelle</th><th>Catégorie analytique</th><th>Modifier</th></tr></thead>
+          <tbody id="mapTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Formulaire de modification -->
+    <div class="imp-card" id="mapEditCard" style="display:none">
+      <div class="imp-card-title">Modifier le mapping de <span id="mapEditName" style="color:var(--text);text-transform:none;font-size:13px;font-weight:600"></span></div>
+
+      <div class="map-search-row" style="margin-bottom:16px">
+        <div class="field">
+          <label>Nouvelle catégorie analytique</label>
+          <select id="mapEditCat">
+            <option value="">— Choisir —</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Appliquer à</div>
+      <div class="map-apply-opts">
+        <label><input type="radio" name="mapApply" value="now" checked> À partir du prochain import (ne modifie pas l'historique)</label>
+        <label><input type="radio" name="mapApply" value="last"> Dernier mois importé seulement</label>
+        <label>
+          <input type="radio" name="mapApply" value="month"> Mois spécifique :
+          <div class="map-month-pick">
+            <input type="text" id="mapApplyMonth" placeholder="ex: 5-26" style="width:90px">
+            <span style="font-size:11px;color:var(--text2)">format M-AA</span>
+          </div>
+        </label>
+        <label><input type="radio" name="mapApply" value="all"> Tout l'historique (tous les mois)</label>
+      </div>
+
+      <div class="imp-actions">
+        <button class="btn" onclick="mapCancelEdit()">Annuler</button>
+        <button class="btn primary" id="mapSaveBtn" onclick="mapSaveEdit()"><i class="ti ti-check"></i> Enregistrer</button>
+      </div>
+      <div id="mapSaveStatus" style="font-size:12px;margin-top:10px;display:none"></div>
+    </div>
+
+  </div><!-- /#imp-sec-mapping -->
+
 </div><!-- /.imp-wrap -->
 </div><!-- /#panel-import -->
 
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbySD_MzGx9pRUeWNqqXIpy-BXVLXA4rzgnBSmxF9v_kusEJ85n_5GAHXR6RMDiXavYT/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzm57Ma1W_Uaew461ynSdOHgyf-U6HLoaT4__MFo0ghhBhvlXvkc9oIQ-lXsrIZHhvf/exec';
 const ENTOOL_BASE='https://entool.goensol.com/projects/';
 const INTERNAL_INSTALLERS=['Ensol Occitanie','Ensol PACA'];
 
@@ -1689,9 +1787,10 @@ loadData();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* ================================================================
-   IMPORT OD DE PAIE — logique complète
+   IMPORT STAFF COSTS — logique complète
    ================================================================ */
 
+// Mapping live (modifiable en session)
 const IMP_EMPLOYE_EQUIPE = {
   "albane renault-sablonière":"HR","alicia poilevilain":"Office ops - csm",
   "aliénor hamoir":"Energy - VPP engineer","antoine liorel":"Sales team lead",
@@ -1763,10 +1862,35 @@ const IMP_EQUIPE_CAT = {
 };
 const IMP_ALL_EQUIPES = Object.keys(IMP_EQUIPE_CAT).sort();
 
-let impFile=null, impRows=[], impUnknowns=[], impMois='';
+// Modifications de mapping en attente (appliquées côté Apps Script)
+const mapPendingChanges = {}; // key (nom lowercase) -> {equipe, cat, applyMode, applyMonth}
 
+let impFile=null, impRows=[], impUnknowns=[], impMois='';
+let lastImportedMois = '';
+
+/* ── Helpers ── */
 function impFmt(n){return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+' €';}
 
+function impNormKey(s){return s.toLowerCase().replace(/\s+/g,' ').trim();}
+
+function impGetEquipe(name){
+  const key=impNormKey(name);
+  if(mapPendingChanges[key]) return mapPendingChanges[key].equipe;
+  return IMP_EMPLOYE_EQUIPE[key]||null;
+}
+
+function impGetCat(equipe){return IMP_EQUIPE_CAT[equipe]||null;}
+
+/* ── Navigation sous-onglets ── */
+function impSwitchNav(tab){
+  ['import','mapping'].forEach(t=>{
+    document.getElementById('imp-nav-'+t).classList.toggle('active',t===tab);
+    document.getElementById('imp-sec-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='mapping') mapInitTable();
+}
+
+/* ── Steps ── */
 function impSetStep(n){
   document.getElementById('imp-s1').style.display=n===1?'block':'none';
   document.getElementById('imp-s2').style.display=n===2?'block':'none';
@@ -1783,6 +1907,7 @@ function impExcelDateToMois(serial){
   return `${d.getUTCMonth()+1}-${String(d.getUTCFullYear()).slice(2)}`;
 }
 
+/* ── Parse Payfit ── */
 function impParseFile(buf){
   const wb=XLSX.read(buf,{type:'array'});
   const ws=wb.Sheets[wb.SheetNames[0]];
@@ -1792,7 +1917,7 @@ function impParseFile(buf){
   if(hi===-1)throw new Error("Colonne 'EcritureDate' introuvable.");
   const h=rows[hi].map(c=>String(c).trim());
   const iD=h.indexOf('EcritureDate'),iC=h.indexOf('CompteNum'),iDb=h.indexOf('Debit'),iE=h.indexOf('EmployeLib');
-  if([iD,iC,iDb,iE].includes(-1))throw new Error("Colonnes manquantes : EcritureDate, CompteNum, Debit, EmployeLib.");
+  if([iD,iC,iDb,iE].includes(-1))throw new Error("Colonnes manquantes.");
   const tot={};let mois='';
   for(let i=hi+1;i<rows.length;i++){
     const r=rows[i];
@@ -1809,8 +1934,9 @@ function impParseFile(buf){
   return{tot,mois};
 }
 
+/* ── File handling ── */
 function impHandleFile(f){
-  if(!f.name.match(/\.(xlsx|xls)$/i)){alert('Format non supporté. Utilise un fichier .xlsx ou .xls');return;}
+  if(!f.name.match(/\.(xlsx|xls)$/i)){alert('Format non supporté.');return;}
   impFile=f;
   document.getElementById('impFileName').textContent=f.name;
   document.getElementById('impFileMeta').textContent=(f.size/1024).toFixed(0)+' Ko';
@@ -1818,15 +1944,14 @@ function impHandleFile(f){
   document.getElementById('impDropZone').classList.add('has-file');
   document.getElementById('impBtnAnalyse').disabled=false;
 }
-
 function impResetFile(){
-  impFile=null;
-  document.getElementById('impFileInput').value='';
+  impFile=null;document.getElementById('impFileInput').value='';
   document.getElementById('impFileInfo').style.display='none';
   document.getElementById('impDropZone').classList.remove('has-file');
   document.getElementById('impBtnAnalyse').disabled=true;
 }
 
+/* ── Preview ── */
 function impRenderPreview(){
   const all=[...impRows];
   impUnknowns.forEach((u,i)=>{
@@ -1865,10 +1990,9 @@ function impRenderStep2(){
   document.getElementById('impStatUnk').textContent=impUnknowns.length;
   if(impUnknowns.length>0){
     document.getElementById('impAlertUnk').style.display='flex';
-    document.getElementById('impAlertBody').textContent=impUnknowns.map(u=>u.name).join(', ')+` — absent${impUnknowns.length>1?'s':''} du mapping. Affecte-leur une équipe ci-dessous pour continuer.`;
+    document.getElementById('impAlertBody').textContent=impUnknowns.map(u=>u.name).join(', ')+` — absent${impUnknowns.length>1?'s':''} du mapping.`;
     document.getElementById('impCardUnk').style.display='block';
-    const list=document.getElementById('impUnkList');
-    list.innerHTML=impUnknowns.map((u,i)=>`
+    document.getElementById('impUnkList').innerHTML=impUnknowns.map((u,i)=>`
       <div class="imp-unknown-item">
         <div class="uin">${u.name}<div class="uim">${impFmt(u.total)}</div></div>
         <span style="color:var(--text2)">→</span>
@@ -1879,7 +2003,7 @@ function impRenderStep2(){
       </div>`).join('');
     document.getElementById('impBtnImport').disabled=true;
     document.getElementById('impBlockedMsg').style.display='inline';
-  } else {
+  }else{
     document.getElementById('impAlertUnk').style.display='none';
     document.getElementById('impCardUnk').style.display='none';
     document.getElementById('impBtnImport').disabled=false;
@@ -1888,7 +2012,7 @@ function impRenderStep2(){
   impRenderPreview();
 }
 
-// Drag & drop
+/* ── Drag & drop ── */
 document.getElementById('impDropZone').addEventListener('dragover',e=>{e.preventDefault();document.getElementById('impDropZone').classList.add('drag-over');});
 document.getElementById('impDropZone').addEventListener('dragleave',()=>document.getElementById('impDropZone').classList.remove('drag-over'));
 document.getElementById('impDropZone').addEventListener('drop',e=>{e.preventDefault();document.getElementById('impDropZone').classList.remove('drag-over');if(e.dataTransfer.files[0])impHandleFile(e.dataTransfer.files[0]);});
@@ -1903,12 +2027,11 @@ document.getElementById('impBtnAnalyse').addEventListener('click',()=>{
   reader.onload=e=>{
     try{
       const{tot,mois}=impParseFile(e.target.result);
-      impMois=mois; impRows=[]; impUnknowns=[];
+      impMois=mois;impRows=[];impUnknowns=[];
       for(const[emp,montant] of Object.entries(tot)){
-        const key=emp.toLowerCase().replace(/\s+/g,' ').trim();
-        const equipe=IMP_EMPLOYE_EQUIPE[key];
+        const equipe=impGetEquipe(emp);
         if(!equipe){impUnknowns.push({name:emp,total:Math.round(montant*100)/100});}
-        else{impRows.push({mois,employe:emp,equipe,categorie:IMP_EQUIPE_CAT[equipe],montant:Math.round(montant*100)/100});}
+        else{impRows.push({mois,employe:emp,equipe,categorie:impGetCat(equipe),montant:Math.round(montant*100)/100});}
       }
       impRows.sort((a,b)=>a.employe.localeCompare(b.employe));
       impUnknowns.sort((a,b)=>a.name.localeCompare(b.name));
@@ -1928,46 +2051,217 @@ document.getElementById('impBtnBack').addEventListener('click',()=>{
   document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser le fichier';
 });
 
+/* ── Import via form POST (contourne CORS) ── */
+function impPostToAppsScript(payload){
+  return new Promise((resolve,reject)=>{
+    const iframe=document.createElement('iframe');
+    iframe.name='imp_iframe_'+Date.now();
+    iframe.style.display='none';
+    document.body.appendChild(iframe);
+
+    const form=document.createElement('form');
+    form.method='POST';
+    form.action=APPS_SCRIPT_URL;
+    form.target=iframe.name;
+
+    const input=document.createElement('input');
+    input.type='hidden';input.name='payload';
+    input.value=JSON.stringify(payload);
+    form.appendChild(input);
+    document.body.appendChild(form);
+
+    const timeout=setTimeout(()=>{
+      cleanup();
+      // POST no-cors ne permet pas de lire la réponse — on considère succès après délai
+      resolve({success:true,assumed:true});
+    },8000);
+
+    function cleanup(){clearTimeout(timeout);document.body.removeChild(form);document.body.removeChild(iframe);}
+    iframe.onload=()=>{cleanup();resolve({success:true});};
+    form.submit();
+  });
+}
+
 document.getElementById('impBtnImport').addEventListener('click',async()=>{
   impSetStep(3);
   document.getElementById('impProgressFill').style.width='10%';
-  document.getElementById('impProgressLabel').textContent=`Envoi de ${impRows.length} lignes vers le GSheet…`;
+  document.getElementById('impProgressLabel').textContent=`Envoi de ${impRows.length} lignes…`;
   document.getElementById('impProgressStatus').textContent='Connexion à Apps Script…';
-  const payload={action:'importStaffCosts',mois:impMois,rows:impRows.map(r=>[r.mois,r.employe,r.equipe,r.categorie,r.montant])};
+
+  // Construction payload + éventuelles modifications de mapping
+  const mappingUpdates=Object.entries(mapPendingChanges).map(([k,v])=>({name:k,equipe:v.equipe,cat:v.cat,applyMode:v.applyMode,applyMonth:v.applyMonth||''}));
+
+  const payload={
+    action:'importStaffCosts',
+    mois:impMois,
+    rows:impRows.map(r=>[r.mois,r.employe,r.equipe,r.categorie,r.montant]),
+    mappingUpdates
+  };
+
   try{
     document.getElementById('impProgressFill').style.width='40%';
     document.getElementById('impProgressStatus').textContent='Écriture dans Staff Costs - Data…';
-    const url=APPS_SCRIPT_URL+'?action=importStaffCosts&data='+encodeURIComponent(JSON.stringify(payload));
-    const resp=await fetch(url,{redirect:'follow'});
-    const text=await resp.text();
-    let result;try{result=JSON.parse(text);}catch{result={success:false,error:text};}
+
+    // Tentative fetch d'abord (fonctionne si Apps Script accepte CORS)
+    let result;
+    try{
+      const resp=await fetch(APPS_SCRIPT_URL+'?action=importStaffCosts',{
+        method:'POST',
+        headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify(payload),
+        redirect:'follow'
+      });
+      const text=await resp.text();
+      result=JSON.parse(text);
+    }catch(fetchErr){
+      // Fallback form POST (no-cors — pas de réponse lisible, on assume succès)
+      await impPostToAppsScript(payload);
+      result={success:true,assumed:true,count:impRows.length};
+    }
+
     document.getElementById('impProgressFill').style.width='100%';
     if(result.success){
+      lastImportedMois=impMois;
       document.getElementById('impProgressLabel').textContent='Import terminé';
       document.getElementById('impProgressStatus').textContent='';
       document.getElementById('impSuccess').classList.add('visible');
       document.getElementById('impSuccessTitle').textContent=`${impRows.length} lignes importées`;
-      document.getElementById('impSuccessMsg').textContent=`Mois ${impMois} — onglet "Staff Costs - Data" mis à jour. Les données du mois précédent ont été remplacées.`;
+      document.getElementById('impSuccessMsg').textContent=
+        `Mois ${impMois} — onglet "Staff Costs - Data" mis à jour.`+
+        (result.assumed?' (réponse non disponible — vérifier dans le GSheet)':'');
     }else{throw new Error(result.error||'Erreur inconnue');}
   }catch(err){
-    document.getElementById('impProgressLabel').textContent='Erreur lors de l\'import';
+    document.getElementById('impProgressLabel').textContent="Erreur lors de l'import";
     document.getElementById('impProgressStatus').textContent=err.message;
     document.getElementById('impProgressFill').style.background='var(--red)';
   }
 });
 
 document.getElementById('impBtnReset').addEventListener('click',()=>{
-  impFile=null; impRows=[]; impUnknowns=[]; impMois='';
+  impFile=null;impRows=[];impUnknowns=[];impMois='';
   document.getElementById('impFileInput').value='';
   document.getElementById('impFileInfo').style.display='none';
   document.getElementById('impDropZone').classList.remove('has-file');
-  document.getElementById('impBtnAnalyse').disabled=true;
+  document.getElementById('impBtnAnalyse').disabled=false;
   document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser le fichier';
   document.getElementById('impSuccess').classList.remove('visible');
   document.getElementById('impProgressFill').style.width='0%';
   document.getElementById('impProgressFill').style.background='var(--blue)';
   impSetStep(1);
 });
+
+/* ================================================================
+   MAPPING EMPLOYÉS
+   ================================================================ */
+let mapCurrentEdit=null; // nom lowercase
+
+function mapInitTable(){
+  // Peupler le select dropdown
+  const sel=document.getElementById('mapSelectEmp');
+  const keys=Object.keys(IMP_EMPLOYE_EQUIPE).sort();
+  sel.innerHTML='<option value="">— Tous les employés —</option>'+
+    keys.map(k=>`<option value="${k}">${k.replace(/\b\w/g,c=>c.toUpperCase())}</option>`).join('');
+
+  // Peupler le select de catégorie dans le form d'édition
+  const catSel=document.getElementById('mapEditCat');
+  catSel.innerHTML='<option value="">— Choisir —</option>'+
+    IMP_ALL_EQUIPES.map(e=>`<option value="${e}">${IMP_EQUIPE_CAT[e]}</option>`).join('');
+
+  mapRenderTable(keys);
+}
+
+function mapRenderTable(keys){
+  document.getElementById('mapTableBody').innerHTML=keys.map(k=>{
+    const displayName=k.replace(/\b\w/g,c=>c.toUpperCase());
+    const equipe=mapPendingChanges[k]?mapPendingChanges[k].equipe:(IMP_EMPLOYE_EQUIPE[k]||'—');
+    const cat=IMP_EQUIPE_CAT[equipe]||'—';
+    const modified=!!mapPendingChanges[k];
+    return `<tr>
+      <td>${displayName}${modified?` <span class="map-badge-mod">modifié</span>`:''}</td>
+      <td class="map-cat">${equipe}</td>
+      <td class="map-cat">${cat}</td>
+      <td><button class="btn" style="font-size:11px;padding:3px 10px" onclick="mapOpenEdit('${k}')"><i class="ti ti-edit"></i> Modifier</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function mapFilterTable(){
+  const q=document.getElementById('mapSearchInput').value.toLowerCase().trim();
+  const keys=Object.keys(IMP_EMPLOYE_EQUIPE).filter(k=>!q||k.includes(q)).sort();
+  mapRenderTable(keys);
+}
+
+function mapSelectFromDD(){
+  const v=document.getElementById('mapSelectEmp').value;
+  if(v){
+    document.getElementById('mapSearchInput').value=v;
+    mapFilterTable();
+    mapOpenEdit(v);
+  }
+}
+
+function mapOpenEdit(key){
+  mapCurrentEdit=key;
+  const displayName=key.replace(/\b\w/g,c=>c.toUpperCase());
+  document.getElementById('mapEditName').textContent=displayName;
+  const currentEquipe=mapPendingChanges[key]?mapPendingChanges[key].equipe:IMP_EMPLOYE_EQUIPE[key];
+  document.getElementById('mapEditCat').value=currentEquipe||'';
+  document.querySelector('input[name=mapApply][value=now]').checked=true;
+  document.getElementById('mapApplyMonth').value='';
+  document.getElementById('mapSaveStatus').style.display='none';
+  document.getElementById('mapEditCard').style.display='block';
+  document.getElementById('mapEditCard').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function mapCancelEdit(){
+  mapCurrentEdit=null;
+  document.getElementById('mapEditCard').style.display='none';
+}
+
+function mapSaveEdit(){
+  if(!mapCurrentEdit)return;
+  const equipe=document.getElementById('mapEditCat').value;
+  if(!equipe){alert('Sélectionne une catégorie.');return;}
+  const applyMode=document.querySelector('input[name=mapApply]:checked').value;
+  const applyMonth=applyMode==='month'?document.getElementById('mapApplyMonth').value.trim():'';
+  if(applyMode==='month'&&!applyMonth){alert('Saisis un mois au format M-AA (ex: 5-26).');return;}
+
+  const cat=IMP_EQUIPE_CAT[equipe];
+
+  // Mettre à jour le mapping en mémoire
+  IMP_EMPLOYE_EQUIPE[mapCurrentEdit]=equipe;
+  mapPendingChanges[mapCurrentEdit]={equipe,cat,applyMode,applyMonth};
+
+  // Statut
+  const applyLabels={now:'à partir du prochain import',last:'sur le dernier mois importé',month:`sur le mois ${applyMonth}`,all:'sur tout l\'historique'};
+  const statusEl=document.getElementById('mapSaveStatus');
+  statusEl.style.display='block';
+  statusEl.style.color='var(--green)';
+  statusEl.textContent=`✓ Mapping mis à jour — sera appliqué ${applyLabels[applyMode]}.`+
+    (applyMode!=='now'?' La modification sera envoyée au GSheet lors du prochain import.':'');
+
+  // Si la modification s'applique à des données existantes → envoyer immédiatement à Apps Script
+  if(applyMode!=='now'){
+    const payload={action:'updateStaffCostsMapping',key:mapCurrentEdit,equipe,cat,applyMode,applyMonth,lastMois:lastImportedMois};
+    fetch(APPS_SCRIPT_URL+'?action=updateStaffCostsMapping',{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(payload),
+      redirect:'follow'
+    }).then(r=>r.json()).then(res=>{
+      if(res.success){statusEl.textContent=`✓ Mapping mis à jour et appliqué dans le GSheet (${res.count||'?'} lignes modifiées).`;}
+      else{statusEl.style.color='var(--amber-text)';statusEl.textContent='Mapping mis à jour localement. Erreur GSheet : '+(res.error||'inconnue');}
+    }).catch(()=>{
+      statusEl.style.color='var(--amber-text)';
+      statusEl.textContent='Mapping mis à jour localement. Vérifier manuellement dans le GSheet.';
+    });
+  }
+
+  mapRenderTable(Object.keys(IMP_EMPLOYE_EQUIPE).filter(k=>{
+    const q=document.getElementById('mapSearchInput').value.toLowerCase().trim();
+    return !q||k.includes(q);
+  }).sort());
+}
 </script>
 </body>
 </html>
