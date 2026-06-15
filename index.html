@@ -188,6 +188,12 @@ canvas{max-height:220px}
 .fnp-add-btn{width:100%;font-size:12px;padding:7px 10px;border-radius:5px;border:none;background:var(--amber);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
 .fnp-add-btn:hover{opacity:.85}
 .fnp-add-btn:disabled{opacity:.5;cursor:wait}
+.dd-search{padding:4px 10px 6px;border-bottom:.5px solid var(--border)}
+.dd-search input{width:100%;font-size:12px;padding:4px 8px;border-radius:5px;border:.5px solid var(--border2);background:var(--bg2);color:var(--text);outline:none}
+.dd-search input:focus{border-color:var(--green)}
+.fnp-only-btn{font-size:12px;padding:5px 10px;border-radius:var(--r);border:.5px solid var(--amber);background:transparent;color:var(--amber-text);cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;user-select:none}
+.fnp-only-btn:hover{background:var(--amber-light)}
+.fnp-only-btn.active{background:var(--amber);color:#fff;border-color:var(--amber)}
 .fnp-toggle-btn{font-size:11px;padding:4px 10px;border-radius:20px;border:.5px solid var(--amber);background:transparent;color:var(--amber-text);cursor:pointer;display:inline-flex;align-items:center;gap:5px;margin-top:6px}
 .fnp-toggle-btn:hover{background:var(--amber-light)}
 .fnp-toggle-btn.open{background:var(--amber);color:#fff;border-color:var(--amber)}
@@ -360,6 +366,11 @@ canvas{max-height:220px}
       <div class="dd-clear" onclick="clearDDFilter('enphase')">Effacer la sélection</div>
     </div>
   </div>
+
+  <!-- Filtre FNP uniquement -->
+  <button class="fnp-only-btn" id="btn-fnp-only" onclick="toggleFNPOnly()">
+    <i class="ti ti-clock-exclamation" style="font-size:12px"></i> Avec FNP
+  </button>
 
   <!-- Indicateur + Effacer tout -->
   <span class="filter-active-indicator" id="filter-active-indicator">
@@ -544,6 +555,7 @@ const ddState={
   battBilling:new Set(),
   enphase:new Set(),
 };
+let fnpOnly=false;
 
 const PRODUCTS=['PV','Wallbox','Batterie','Control equipment','Air-to-water heatpump','Air-to-air heatpump','Water heater','Additional works','Order validation','À taguer'];
 const COGS_CATS=['COGS - Small equipment','COGS - Material','COGS - Car rental & leasing','COGS - Warehouse rental','COGS - Warehouse running costs','COGS - Customer support service','COGS - Technical visits (external)','COGS - Installation (external)','COGS - Material inventory out','COGS - Restaurant','COGS - Admin services','COGS - Project consumables','COGS - Car maintenance','COGS - Temp Tech','COGS - Other installation costs','COGS - Fuel','COGS - Hotel','COGS - Travel','COGS - Tolls'];
@@ -558,7 +570,15 @@ function getFilteredData(){
 }
 
 function hasActiveFilters(){
-  return Object.values(ddState).some(s=>s.size>0);
+  return fnpOnly||Object.values(ddState).some(s=>s.size>0);
+}
+
+function toggleFNPOnly(){
+  fnpOnly=!fnpOnly;
+  const btn=document.getElementById('btn-fnp-only');
+  if(btn)btn.classList.toggle('active',fnpOnly);
+  updateFilterIndicator();
+  renderAll();
 }
 
 function updateFilterIndicator(){
@@ -579,6 +599,8 @@ function isInternal(installer){
 
 function matchesAllFilters(r){
   const s=ddState;
+  // FNP uniquement
+  if(fnpOnly&&!getFNP(r.id).length)return false;
   // Période
   if(s.period.size>0){
     const p=pp(r.period);if(!p)return false;
@@ -649,6 +671,9 @@ function clearDDFilter(filter){
 function clearAllFilters(){
   Object.keys(ddState).forEach(k=>ddState[k].clear());
   Object.keys(ddState).forEach(k=>refreshDDUI(k));
+  fnpOnly=false;
+  const fnpBtn=document.getElementById('btn-fnp-only');
+  if(fnpBtn)fnpBtn.classList.remove('active');
   updateFilterIndicator();
   renderAll();
 }
@@ -697,8 +722,9 @@ function buildDynamicDDItems(){
   const installers=[...new Set(allData.map(r=>r.installationInstaller||'').filter(Boolean))].sort();
   const instContainer=document.getElementById('dd-items-installer');
   if(instContainer){
-    instContainer.innerHTML=installers.map(v=>`
-      <div class="dd-item" onclick="toggleDDItem('installer','${v.replace(/'/g,"\\'")}');event.stopPropagation()">
+    instContainer.innerHTML=`<div class="dd-search"><input type="text" id="dd-search-installer" placeholder="Rechercher…" oninput="filterDDItems('installer','dd-search-installer')" onclick="event.stopPropagation()"></div>`
+      +installers.map(v=>`
+      <div class="dd-item" data-val="${v.replace(/"/g,'&quot;')}" onclick="toggleDDItem('installer','${v.replace(/'/g,"\\'")}');event.stopPropagation()">
         <input type="checkbox" data-val="${v.replace(/"/g,'&quot;')}" ${ddState.installer.has(v)?'checked':''}> 
         <span>${v} <span style="font-size:10px;color:${isInternal(v)?'var(--green-text)':'var(--amber-text)'}">${isInternal(v)?'Int.':'Ext.'}</span></span>
       </div>`).join('');
@@ -713,8 +739,10 @@ function buildSimpleDDItems(filterKey,containerId,getter){
   const vals=[...new Set(allData.map(getter).filter(Boolean))].sort();
   const el=document.getElementById(containerId);
   if(!el)return;
-  el.innerHTML=vals.map(v=>`
-    <div class="dd-item" onclick="toggleDDItem('${filterKey}','${v.replace(/'/g,"\\'")}');event.stopPropagation()">
+  const searchId=`dd-search-${filterKey}`;
+  el.innerHTML=`<div class="dd-search"><input type="text" id="${searchId}" placeholder="Rechercher…" oninput="filterDDItems('${filterKey}','${searchId}')" onclick="event.stopPropagation()"></div>`
+    +vals.map(v=>`
+    <div class="dd-item" data-val="${v.replace(/"/g,'&quot;')}" onclick="toggleDDItem('${filterKey}','${v.replace(/'/g,"\\'")}');event.stopPropagation()">
       <input type="checkbox" data-val="${v.replace(/"/g,'&quot;')}" ${ddState[filterKey].has(v)?'checked':''}> ${v||'(vide)'}
     </div>`).join('');
 }
@@ -724,9 +752,19 @@ function buildPeriodDDItems(){
   const el=document.getElementById('dd-items-period');
   if(!el)return;
   el.innerHTML=opts.map(o=>`
-    <div class="dd-item" onclick="toggleDDItem('period','${o}');event.stopPropagation()">
+    <div class="dd-item" data-val="${o}" onclick="toggleDDItem('period','${o}');event.stopPropagation()">
       <input type="checkbox" data-val="${o}" ${ddState.period.has(o)?'checked':''}> ${o}
     </div>`).join('');
+}
+
+function filterDDItems(filterKey,searchId){
+  const q=(document.getElementById(searchId)?.value||'').toLowerCase();
+  const container=document.getElementById('dd-items-'+filterKey);
+  if(!container)return;
+  container.querySelectorAll('.dd-item[data-val]').forEach(item=>{
+    const val=(item.dataset.val||'').toLowerCase();
+    item.style.display=!q||val.includes(q)?'':'none';
+  });
 }
 
 function setProjPeriodMode(mode){
@@ -1065,7 +1103,7 @@ function buildPL(){
     const v=D[k]?D[k][f]:null;if(!v)return'<td></td>';
     if(isPct)return`<td class="${v>=0?'pos-v':'neg'}">${fmtPct(v)}</td>`;
     const cls=isNeg&&v>0?'neg':(!isNeg&&v<0?'neg':'');
-    return`<td${cls?` class="${cls}"`:''}">${fmt(isNeg?-Math.abs(v):v)}</td>`;
+    return`<td${cls?` class="${cls}"`:''}>${fmt(isNeg?-Math.abs(v):v)}</td>`;
   }
   function row(label,f,o={}){
     const{isNeg=false,isPct=false,ind=false,empty=false,sub=false,tot=false,sec=false}=o;
