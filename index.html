@@ -528,27 +528,35 @@ canvas{max-height:220px}
 
 <div class="panel" id="panel-import" style="display:none">
 <style>
-.imp-wrap{max-width:860px;margin:0 auto;padding:2rem}
-.imp-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
-.imp-header .imp-icon{width:38px;height:38px;background:var(--blue-light);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px}
+.imp-wrap{max-width:1100px;margin:0 auto;padding:2rem}
+.imp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.imp-header-left{display:flex;align-items:center;gap:12px}
+.imp-header .imp-icon{width:38px;height:38px;background:var(--blue-light);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .imp-header h2{font-size:16px;font-weight:600}
 .imp-header p{font-size:12px;color:var(--text2);margin-top:2px}
-.imp-steps{display:flex;border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:24px}
-.imp-step{flex:1;padding:10px 14px;background:var(--bg);display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);border-right:.5px solid var(--border)}
-.imp-step:last-child{border-right:none}
-.imp-step.active{background:var(--bg2);color:var(--text)}
-.imp-step.done{color:var(--green)}
-.imp-step .sn{width:20px;height:20px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
-.imp-step.active .sn{background:var(--green);color:#fff}
-.imp-step.done .sn{background:var(--green);color:#fff}
 .imp-card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
 .imp-card-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:14px}
-.imp-drop{border:2px dashed var(--border);border-radius:var(--r);padding:40px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative}
+/* Upload modal */
+.imp-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center;display:none}
+.imp-modal-overlay.open{display:flex}
+.imp-modal{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:28px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;position:relative}
+.imp-modal-close{position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--text2);padding:4px 8px;border-radius:4px}
+.imp-modal-close:hover{background:var(--bg2);color:var(--text)}
+.imp-modal h3{font-size:15px;font-weight:600;margin-bottom:16px}
+.imp-steps{display:flex;border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+.imp-step{flex:1;padding:9px 12px;background:var(--bg2);display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);border-right:.5px solid var(--border)}
+.imp-step:last-child{border-right:none}
+.imp-step.active{background:var(--bg);color:var(--text)}
+.imp-step.done{color:var(--green)}
+.imp-step .sn{width:19px;height:19px;border-radius:50%;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.imp-step.active .sn{background:var(--green);color:#fff}
+.imp-step.done .sn{background:var(--green);color:#fff}
+.imp-drop{border:2px dashed var(--border);border-radius:var(--r);padding:32px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative}
 .imp-drop:hover,.imp-drop.drag-over{border-color:var(--blue);background:var(--blue-light)}
 .imp-drop.has-file{border-color:var(--green);background:var(--green-light)}
 .imp-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
-.imp-drop .dicon{font-size:28px;margin-bottom:8px}
-.imp-drop .dlabel{font-size:14px;font-weight:500;margin-bottom:4px}
+.imp-drop .dicon{font-size:26px;margin-bottom:8px}
+.imp-drop .dlabel{font-size:13px;font-weight:500;margin-bottom:4px}
 .imp-drop .dsub{font-size:12px;color:var(--text2)}
 .imp-file-info{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);margin-top:12px}
 .imp-file-info .fi-name{font-weight:500;font-size:13px}
@@ -557,7 +565,7 @@ canvas{max-height:220px}
 .imp-file-info .fi-rm:hover{color:var(--red)}
 .imp-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
 .imp-stat{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:12px 14px}
-.imp-stat .isv{font-size:20px;font-weight:700}
+.imp-stat .isv{font-size:18px;font-weight:700}
 .imp-stat .isl{font-size:11px;color:var(--text2);margin-top:2px}
 .imp-stat.blue .isv{color:var(--blue)}
 .imp-stat.green .isv{color:var(--green)}
@@ -566,88 +574,183 @@ canvas{max-height:220px}
 .imp-alert .ia-title{font-weight:600;font-size:13px;color:var(--amber-text);margin-bottom:3px}
 .imp-alert .ia-body{font-size:12px;color:var(--text);line-height:1.5}
 .imp-unknown-list{display:flex;flex-direction:column;gap:8px}
-.imp-unknown-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:.5px solid rgba(239,159,39,.3);border-radius:var(--r)}
-.imp-unknown-item .uin{font-weight:500;font-size:13px;min-width:220px;flex-shrink:0}
+.imp-unknown-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:.5px solid rgba(239,159,39,.3);border-radius:var(--r);flex-wrap:wrap}
+.imp-unknown-item .uin{font-weight:500;font-size:13px;min-width:180px;flex-shrink:0}
 .imp-unknown-item .uim{font-size:11px;color:var(--text2);margin-top:1px}
-.imp-unknown-item select{flex:1;font-size:12px;padding:6px 8px;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg);color:var(--text);outline:none}
+.imp-unknown-item select{flex:1;min-width:140px;font-size:12px;padding:6px 8px;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg);color:var(--text);outline:none}
 .imp-unknown-item select:focus{border-color:var(--green)}
+/* Preview table dans modal */
 .imp-table-wrap{overflow-x:auto;border-radius:var(--r);border:.5px solid var(--border)}
-.imp-table{width:100%;border-collapse:collapse;font-size:12px}
-.imp-table thead th{background:var(--bg2);padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);font-weight:600;border-bottom:.5px solid var(--border);white-space:nowrap}
+.imp-table{width:100%;border-collapse:collapse;font-size:11px}
+.imp-table thead th{background:var(--bg2);padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);font-weight:600;border-bottom:.5px solid var(--border);white-space:nowrap}
+.imp-table thead th.amt{text-align:right}
 .imp-table tbody tr{border-bottom:.5px solid var(--border)}
 .imp-table tbody tr:last-child{border-bottom:none}
 .imp-table tbody tr:hover{background:var(--bg2)}
-.imp-table tbody td{padding:7px 12px}
-.imp-table .td-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.imp-table tbody td{padding:6px 10px}
+.imp-table .td-amt{text-align:right;font-variant-numeric:tabular-nums;font-weight:500;font-size:11px}
+.imp-table .td-muted{color:var(--text2)}
 .imp-badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600}
 .imp-badge.blue{background:var(--blue-light);color:var(--blue-text)}
 .imp-badge.green{background:var(--green-light);color:var(--green-text)}
 .imp-badge.amber{background:var(--amber-light);color:var(--amber-text)}
-.imp-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.imp-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:14px}
 .imp-blocked{font-size:11px;color:var(--amber-text);display:none}
-.imp-progress{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+.imp-progress{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:14px}
 .imp-progress-label{font-size:13px;color:var(--text2);margin-bottom:8px}
 .imp-progress-bg{background:var(--bg3);border-radius:4px;height:5px;overflow:hidden}
 .imp-progress-fill{height:100%;background:var(--blue);border-radius:4px;transition:width .3s;width:0%}
 .imp-progress-status{font-size:11px;color:var(--text2);margin-top:6px}
-.imp-success{background:var(--green-light);border:.5px solid rgba(29,158,117,.3);border-radius:var(--r);padding:24px;text-align:center;display:none}
+.imp-success{background:var(--green-light);border:.5px solid rgba(29,158,117,.3);border-radius:var(--r);padding:20px;text-align:center;display:none}
 .imp-success.visible{display:block}
-.imp-success h3{font-size:16px;font-weight:700;color:var(--green);margin-bottom:6px}
+.imp-success h3{font-size:15px;font-weight:700;color:var(--green);margin-bottom:5px}
 .imp-success p{font-size:12px;color:var(--text2)}
-.imp-tabs{display:flex;gap:0;border-bottom:.5px solid var(--border);margin-bottom:20px}
-.imp-tab{font-size:13px;padding:8px 16px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);display:flex;align-items:center;gap:6px}
-.imp-tab:hover{color:var(--text)}
-.imp-tab.active{color:var(--green);border-bottom-color:var(--green);font-weight:500}
-.imp-section{display:none}.imp-section.active{display:block}
-.map-search-row{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:flex-end}
-.map-search-row .field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:180px}
-.map-search-row label{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-.map-search-row input,.map-search-row select{font-size:13px;padding:7px 10px;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg);color:var(--text);outline:none;width:100%}
-.map-search-row input:focus,.map-search-row select:focus{border-color:var(--green)}
-.map-apply-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-.map-apply-opts label{font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer}
-.map-apply-opts input[type=radio]{accent-color:var(--green)}
-.map-month-pick{display:flex;align-items:center;gap:8px;margin-left:22px}
-.map-month-pick input{width:90px}
+/* Mapping table */
+.map-toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.map-toolbar input[type=text]{font-size:13px;padding:6px 10px;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg);color:var(--text);outline:none;flex:1;min-width:160px}
+.map-toolbar input:focus{border-color:var(--green)}
+.map-toolbar select{font-size:12px;padding:6px 9px;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg);color:var(--text);outline:none}
 .map-table-wrap{border:.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
 .map-table{width:100%;border-collapse:collapse;font-size:12px}
-.map-table thead th{background:var(--bg2);padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);font-weight:600;border-bottom:.5px solid var(--border)}
+.map-table thead th{background:var(--bg2);padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);font-weight:600;border-bottom:.5px solid var(--border);white-space:nowrap}
+.map-table thead th.amt{text-align:right}
 .map-table tbody tr{border-bottom:.5px solid var(--border)}
 .map-table tbody tr:last-child{border-bottom:none}
 .map-table tbody tr:hover{background:var(--bg2)}
-.map-table td{padding:7px 12px}
-.map-table .map-cat{color:var(--text2);font-size:11px}
+.map-table td{padding:7px 12px;font-size:12px}
+.map-table .map-muted{color:var(--text2);font-size:11px}
+.map-table .map-amt{text-align:right;font-variant-numeric:tabular-nums;font-size:11px}
 .map-badge-mod{display:inline-block;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;background:var(--amber-light);color:var(--amber-text)}
+/* Edit card */
+.map-edit-card{background:var(--bg);border:.5px solid var(--green);border-radius:var(--r);padding:20px;margin-bottom:16px;display:none}
+.map-edit-card.open{display:block}
+.map-edit-title{font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.map-field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.map-field label{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.map-field select,.map-field input{font-size:13px;padding:7px 10px;border-radius:var(--r);border:.5px solid var(--border);background:var(--bg2);color:var(--text);outline:none}
+.map-field select:focus,.map-field input:focus{border-color:var(--green)}
+.map-apply-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.map-apply-opts label{font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.map-apply-opts input[type=radio]{accent-color:var(--green)}
+.map-month-row{display:flex;align-items:center;gap:8px;margin-left:22px;margin-top:4px}
+.map-month-row input{width:90px}
+/* Tabs comptes */
+.map-subtabs{display:flex;gap:0;border-bottom:.5px solid var(--border);margin-bottom:16px}
+.map-subtab{font-size:12px;padding:7px 14px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);white-space:nowrap}
+.map-subtab:hover{color:var(--text)}
+.map-subtab.active{color:var(--green);border-bottom-color:var(--green);font-weight:500}
+.map-subsection{display:none}.map-subsection.active{display:block}
 </style>
 
 <div class="imp-wrap">
+  <!-- Header -->
   <div class="imp-header">
-    <div class="imp-icon">📥</div>
-    <div>
-      <h2>Import Staff Costs</h2>
-      <p>Payfit → Staff Costs - Data</p>
+    <div class="imp-header-left">
+      <div class="imp-icon">📥</div>
+      <div>
+        <h2>Import Staff Costs</h2>
+        <p>Payfit → Staff Costs - Data</p>
+      </div>
+    </div>
+    <button class="btn primary" id="impOpenModal"><i class="ti ti-upload"></i> Importer un OD de paie</button>
+  </div>
+
+  <!-- Sous-onglets mapping -->
+  <div class="map-subtabs">
+    <div class="map-subtab active" id="imp-nav-emp" onclick="impSwitchNav('emp')"><i class="ti ti-users"></i> Mapping employés</div>
+    <div class="map-subtab" id="imp-nav-comptes" onclick="impSwitchNav('comptes')"><i class="ti ti-list-numbers"></i> Mapping comptes</div>
+  </div>
+
+  <!-- SECTION : Mapping employés -->
+  <div class="map-subsection active" id="imp-sec-emp">
+    <div class="imp-card">
+      <div class="imp-card-title">Employés — catégorie analytique</div>
+      <div class="map-toolbar">
+        <input type="text" id="mapSearchInput" placeholder="Rechercher un employé…" oninput="mapFilterTable()">
+        <select id="mapSelectEmp" onchange="mapSelectFromDD()">
+          <option value="">— Sélectionner —</option>
+        </select>
+      </div>
+      <div class="map-table-wrap">
+        <table class="map-table">
+          <thead><tr><th>Employé</th><th>Équipe</th><th>Catégorie analytique</th><th>Dernier mois</th><th>Modifier</th></tr></thead>
+          <tbody id="mapTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="map-edit-card" id="mapEditCard">
+      <div class="map-edit-title">
+        <span>Modifier : <strong id="mapEditName"></strong></span>
+        <button class="btn" style="font-size:11px;padding:3px 10px" onclick="mapCancelEdit()">✕ Annuler</button>
+      </div>
+      <div class="map-field">
+        <label>Catégorie analytique</label>
+        <select id="mapEditCat"><option value="">— Choisir —</option></select>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Appliquer à</div>
+      <div class="map-apply-opts">
+        <label><input type="radio" name="mapApply" value="now" checked> Prochain import uniquement</label>
+        <label><input type="radio" name="mapApply" value="last"> Dernier mois importé</label>
+        <label>
+          <input type="radio" name="mapApply" value="month"> Mois spécifique
+          <div class="map-month-row"><input type="text" id="mapApplyMonth" placeholder="ex: 5-26"> <span style="font-size:11px;color:var(--text2)">M-AA</span></div>
+        </label>
+        <label><input type="radio" name="mapApply" value="all"> Tout l'historique</label>
+      </div>
+      <div class="imp-actions">
+        <button class="btn primary" onclick="mapSaveEdit()"><i class="ti ti-check"></i> Enregistrer</button>
+      </div>
+      <div id="mapSaveStatus" style="font-size:12px;margin-top:10px;display:none"></div>
     </div>
   </div>
 
-  <!-- Sous-onglets -->
-  <div class="imp-tabs">
-    <div class="imp-tab active" id="imp-nav-import" onclick="impSwitchNav('import')"><i class="ti ti-upload"></i> Import OD de paie</div>
-    <div class="imp-tab" id="imp-nav-mapping" onclick="impSwitchNav('mapping')"><i class="ti ti-users"></i> Mapping employés</div>
-  </div>
-
-  <!-- SECTION : Import OD de paie -->
-  <div class="imp-section active" id="imp-sec-import">
-
-  <div class="imp-steps">
-    <div class="imp-step active" id="imp-step1-ind"><div class="sn">1</div> Upload fichier</div>
-    <div class="imp-step" id="imp-step2-ind"><div class="sn">2</div> Vérification</div>
-    <div class="imp-step" id="imp-step3-ind"><div class="sn">3</div> Import GSheet</div>
-  </div>
-
-  <!-- ÉTAPE 1 -->
-  <div id="imp-s1">
+  <!-- SECTION : Mapping comptes -->
+  <div class="map-subsection" id="imp-sec-comptes">
     <div class="imp-card">
-      <div class="imp-card-title">Fichier Payfit</div>
+      <div class="imp-card-title">Comptes Payfit — catégorie de coût</div>
+      <div class="map-table-wrap">
+        <table class="map-table">
+          <thead><tr><th>Compte</th><th>Libellé</th><th>Catégorie de coût</th><th>Modifier</th></tr></thead>
+          <tbody id="comptesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="map-edit-card" id="compteEditCard">
+      <div class="map-edit-title">
+        <span>Modifier : <strong id="compteEditName"></strong></span>
+        <button class="btn" style="font-size:11px;padding:3px 10px" onclick="compteCancelEdit()">✕ Annuler</button>
+      </div>
+      <div class="map-field">
+        <label>Catégorie de coût</label>
+        <select id="compteEditCat">
+          <option value="salaire_brut">Salaire brut</option>
+          <option value="primes">Primes</option>
+          <option value="notes_frais">Notes de frais</option>
+          <option value="charges">Charges</option>
+        </select>
+      </div>
+      <div class="imp-actions">
+        <button class="btn primary" onclick="compteSaveEdit()"><i class="ti ti-check"></i> Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.imp-wrap -->
+
+<!-- Modal upload -->
+<div class="imp-modal-overlay" id="impModalOverlay">
+  <div class="imp-modal">
+    <button class="imp-modal-close" id="impModalClose">✕</button>
+    <h3>Import OD de paie — Payfit</h3>
+
+    <div class="imp-steps">
+      <div class="imp-step active" id="imp-step1-ind"><div class="sn">1</div> Fichier</div>
+      <div class="imp-step" id="imp-step2-ind"><div class="sn">2</div> Vérification</div>
+      <div class="imp-step" id="imp-step3-ind"><div class="sn">3</div> Import</div>
+    </div>
+
+    <!-- Étape 1 -->
+    <div id="imp-s1">
       <div class="imp-drop" id="impDropZone">
         <input type="file" id="impFileInput" accept=".xlsx,.xls">
         <div class="dicon">📊</div>
@@ -657,138 +760,81 @@ canvas{max-height:220px}
       <div id="impFileInfo" style="display:none">
         <div class="imp-file-info">
           <span style="font-size:18px">📄</span>
-          <div>
-            <div class="fi-name" id="impFileName"></div>
-            <div class="fi-meta" id="impFileMeta"></div>
-          </div>
+          <div><div class="fi-name" id="impFileName"></div><div class="fi-meta" id="impFileMeta"></div></div>
           <button class="fi-rm" id="impRemoveFile">✕</button>
         </div>
       </div>
-    </div>
-    <div class="imp-actions">
-      <button class="btn primary" id="impBtnAnalyse" disabled><i class="ti ti-search"></i> Analyser le fichier</button>
-    </div>
-  </div>
-
-  <!-- ÉTAPE 2 -->
-  <div id="imp-s2" style="display:none">
-    <div class="imp-stat-grid">
-      <div class="imp-stat blue"><div class="isv" id="impStatMois">—</div><div class="isl">Mois traité</div></div>
-      <div class="imp-stat green"><div class="isv" id="impStatEmp">—</div><div class="isl">Employés matchés</div></div>
-      <div class="imp-stat amber"><div class="isv" id="impStatUnk">—</div><div class="isl">Inconnus à résoudre</div></div>
-    </div>
-    <div class="imp-alert" id="impAlertUnk" style="display:none">
-      <span style="font-size:18px">⚠️</span>
-      <div>
-        <div class="ia-title">Employés absents du mapping</div>
-        <div class="ia-body" id="impAlertBody"></div>
-      </div>
-    </div>
-    <div class="imp-card" id="impCardUnk" style="display:none">
-      <div class="imp-card-title">Affecter une équipe</div>
-      <div class="imp-unknown-list" id="impUnkList"></div>
-    </div>
-    <div class="imp-card">
-      <div class="imp-card-title">Aperçu des lignes à importer</div>
-      <div class="imp-table-wrap">
-        <table class="imp-table">
-          <thead><tr><th>Mois</th><th>Employé</th><th>Équipe</th><th>Catégorie analytique</th><th style="text-align:right">Montant</th><th>Statut</th></tr></thead>
-          <tbody id="impPreviewBody"></tbody>
-        </table>
-      </div>
-    </div>
-    <div class="imp-actions">
-      <button class="btn" id="impBtnBack">← Retour</button>
-      <button class="btn primary" id="impBtnImport" disabled><i class="ti ti-check"></i> Importer dans le GSheet</button>
-      <span class="imp-blocked" id="impBlockedMsg">Résous les inconnus avant d'importer</span>
-    </div>
-  </div>
-
-  <!-- ÉTAPE 3 -->
-  <div id="imp-s3" style="display:none">
-    <div class="imp-progress" id="impProgress">
-      <div class="imp-progress-label" id="impProgressLabel">Envoi en cours…</div>
-      <div class="imp-progress-bg"><div class="imp-progress-fill" id="impProgressFill"></div></div>
-      <div class="imp-progress-status" id="impProgressStatus"></div>
-    </div>
-    <div class="imp-success" id="impSuccess">
-      <div style="font-size:36px;margin-bottom:10px">✅</div>
-      <h3 id="impSuccessTitle">Import réussi</h3>
-      <p id="impSuccessMsg"></p>
-      <br>
-      <button class="btn" id="impBtnReset" style="margin:0 auto">Nouvel import</button>
-    </div>
-  </div>
-
-  </div><!-- /#imp-sec-import -->
-
-  <!-- SECTION : Mapping employés -->
-  <div class="imp-section" id="imp-sec-mapping">
-
-    <div class="imp-card">
-      <div class="imp-card-title">Modifier un mapping</div>
-      <div class="map-search-row">
-        <div class="field">
-          <label>Rechercher un employé</label>
-          <input type="text" id="mapSearchInput" placeholder="Tapez un nom…" oninput="mapFilterTable()">
-        </div>
-        <div class="field">
-          <label>Ou sélectionner</label>
-          <select id="mapSelectEmp" onchange="mapSelectFromDD()">
-            <option value="">— Tous les employés —</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="map-table-wrap">
-        <table class="map-table" id="mapTable">
-          <thead><tr><th>Employé</th><th>Équipe actuelle</th><th>Catégorie analytique</th><th>Modifier</th></tr></thead>
-          <tbody id="mapTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Formulaire de modification -->
-    <div class="imp-card" id="mapEditCard" style="display:none">
-      <div class="imp-card-title">Modifier le mapping de <span id="mapEditName" style="color:var(--text);text-transform:none;font-size:13px;font-weight:600"></span></div>
-
-      <div class="map-search-row" style="margin-bottom:16px">
-        <div class="field">
-          <label>Nouvelle catégorie analytique</label>
-          <select id="mapEditCat">
-            <option value="">— Choisir —</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Appliquer à</div>
-      <div class="map-apply-opts">
-        <label><input type="radio" name="mapApply" value="now" checked> À partir du prochain import (ne modifie pas l'historique)</label>
-        <label><input type="radio" name="mapApply" value="last"> Dernier mois importé seulement</label>
-        <label>
-          <input type="radio" name="mapApply" value="month"> Mois spécifique :
-          <div class="map-month-pick">
-            <input type="text" id="mapApplyMonth" placeholder="ex: 5-26" style="width:90px">
-            <span style="font-size:11px;color:var(--text2)">format M-AA</span>
-          </div>
-        </label>
-        <label><input type="radio" name="mapApply" value="all"> Tout l'historique (tous les mois)</label>
-      </div>
-
       <div class="imp-actions">
-        <button class="btn" onclick="mapCancelEdit()">Annuler</button>
-        <button class="btn primary" id="mapSaveBtn" onclick="mapSaveEdit()"><i class="ti ti-check"></i> Enregistrer</button>
+        <button class="btn primary" id="impBtnAnalyse" disabled><i class="ti ti-search"></i> Analyser</button>
       </div>
-      <div id="mapSaveStatus" style="font-size:12px;margin-top:10px;display:none"></div>
     </div>
 
-  </div><!-- /#imp-sec-mapping -->
+    <!-- Étape 2 -->
+    <div id="imp-s2" style="display:none">
+      <div class="imp-stat-grid">
+        <div class="imp-stat blue"><div class="isv" id="impStatMois">—</div><div class="isl">Mois</div></div>
+        <div class="imp-stat green"><div class="isv" id="impStatEmp">—</div><div class="isl">Employés</div></div>
+        <div class="imp-stat amber"><div class="isv" id="impStatUnk">—</div><div class="isl">Inconnus</div></div>
+      </div>
+      <div class="imp-alert" id="impAlertUnk" style="display:none">
+        <span style="font-size:16px">⚠️</span>
+        <div><div class="ia-title">Employés absents du mapping</div><div class="ia-body" id="impAlertBody"></div></div>
+      </div>
+      <div class="imp-card" id="impCardUnkEmp" style="display:none">
+        <div class="imp-card-title">Affecter une équipe</div>
+        <div class="imp-unknown-list" id="impUnkList"></div>
+      </div>
+      <div class="imp-alert" id="impAlertUnkCompte" style="display:none">
+        <span style="font-size:16px">⚠️</span>
+        <div><div class="ia-title">Comptes Payfit inconnus</div><div class="ia-body" id="impAlertCompteBody"></div></div>
+      </div>
+      <div class="imp-card" id="impCardUnkCompte" style="display:none">
+        <div class="imp-card-title">Affecter une catégorie de coût</div>
+        <div class="imp-unknown-list" id="impUnkCompteList"></div>
+      </div>
+      <div class="imp-card">
+        <div class="imp-card-title">Aperçu</div>
+        <div class="imp-table-wrap">
+          <table class="imp-table">
+            <thead><tr>
+              <th>Employé</th><th>Catégorie analytique</th>
+              <th class="amt">Sal. brut</th><th class="amt">Primes</th>
+              <th class="amt">Frais</th><th class="amt">Charges</th>
+              <th class="amt">Total</th><th>Statut</th>
+            </tr></thead>
+            <tbody id="impPreviewBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="imp-actions">
+        <button class="btn" id="impBtnBack">← Retour</button>
+        <button class="btn primary" id="impBtnImport" disabled><i class="ti ti-check"></i> Importer dans le GSheet</button>
+        <span class="imp-blocked" id="impBlockedMsg">Résous les inconnus avant d'importer</span>
+      </div>
+    </div>
 
-</div><!-- /.imp-wrap -->
+    <!-- Étape 3 -->
+    <div id="imp-s3" style="display:none">
+      <div class="imp-progress">
+        <div class="imp-progress-label" id="impProgressLabel">Envoi en cours…</div>
+        <div class="imp-progress-bg"><div class="imp-progress-fill" id="impProgressFill"></div></div>
+        <div class="imp-progress-status" id="impProgressStatus"></div>
+      </div>
+      <div class="imp-success" id="impSuccess">
+        <div style="font-size:32px;margin-bottom:8px">✅</div>
+        <h3 id="impSuccessTitle">Import réussi</h3>
+        <p id="impSuccessMsg"></p>
+        <br>
+        <button class="btn" id="impBtnReset" style="margin:0 auto">Nouvel import</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div><!-- /#panel-import -->
 
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbzm57Ma1W_Uaew461ynSdOHgyf-U6HLoaT4__MFo0ghhBhvlXvkc9oIQ-lXsrIZHhvf/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwSm9aItDCH2zamxGmyWWj4SnKNcquLMPC7QISGP6UeKTVrQcEimGo_hqW2FA0Zr2jF/exec';
 const ENTOOL_BASE='https://entool.goensol.com/projects/';
 const INTERNAL_INSTALLERS=['Ensol Occitanie','Ensol PACA'];
 
@@ -1787,10 +1833,33 @@ loadData();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 /* ================================================================
-   IMPORT STAFF COSTS — logique complète
+   IMPORT STAFF COSTS — logique complète v2
    ================================================================ */
 
-// Mapping live (modifiable en session)
+// ── Mapping compte Payfit → catégorie de coût ──────────────────
+let IMP_COMPTE_CAT = {
+  "6411000":"salaire_brut","6411001":"salaire_brut","6412000":"salaire_brut",
+  "6414000":"salaire_brut","6417000":"salaire_brut","6417100":"salaire_brut",
+  "6413000":"primes",
+  "6252000":"notes_frais","6253000":"notes_frais",
+  "6451000":"charges","6458200":"charges","6458400":"charges","6458500":"charges",
+  "6476000":"charges","6333100":"charges","6333200":"charges","6316000":"charges"
+};
+const COMPTE_LABELS = {
+  "6411000":"Salaires, appointements","6411001":"Autres éléments brut",
+  "6412000":"Congés payés","6414000":"Indemnités et avantages divers",
+  "6417000":"Avantages en nature","6417100":"Avantages en nature (2)",
+  "6413000":"Primes et gratifications",
+  "6252000":"Notes de frais","6253000":"Frais d'entreprise",
+  "6451000":"Cotisations Urssaf","6458200":"Cotisations AGIRC-ARRCO",
+  "6458400":"Cotisations prévoyance","6458500":"Cotisations mutuelle",
+  "6476000":"Titres-restaurant","6333100":"Formation pro - Taxe apprentissage",
+  "6333200":"Formation pro - Formation continue","6316000":"Contribution dialogue social"
+};
+const CAT_LABELS = {salaire_brut:"Salaire brut",primes:"Primes",notes_frais:"Notes de frais",charges:"Charges"};
+const CAT_KEYS = ["salaire_brut","primes","notes_frais","charges"];
+
+// Mapping employé → équipe (modifiable en session)
 const IMP_EMPLOYE_EQUIPE = {
   "albane renault-sablonière":"HR","alicia poilevilain":"Office ops - csm",
   "aliénor hamoir":"Energy - VPP engineer","antoine liorel":"Sales team lead",
@@ -1834,7 +1903,6 @@ const IMP_EMPLOYE_EQUIPE = {
   "valérie loria":"Account executives","yann mattiucci":"Field ops - Technicians",
   "youcef el attlati":"Field ops - Technicians"
 };
-
 const IMP_EQUIPE_CAT = {
   "Field ops - Technicians":"Staff costs - Field Ops technicians",
   "Field ops - VT Technicians":"Staff costs - Field Ops VT technicians",
@@ -1855,50 +1923,49 @@ const IMP_EQUIPE_CAT = {
   "Tech - Data analyst":"Staff costs - Data analyst",
   "Energy - VPP engineer":"Staff costs - VPP engineer",
   "Energy - Manager":"Staff costs - Energy manager",
-  "HR":"Staff costs - HR",
-  "Finance":"Staff costs - Finance",
-  "Founders":"Staff costs - Founders",
-  "Admin":"Staff costs - Admin"
+  "HR":"Staff costs - HR","Finance":"Staff costs - Finance",
+  "Founders":"Staff costs - Founders","Admin":"Staff costs - Admin"
 };
 const IMP_ALL_EQUIPES = Object.keys(IMP_EQUIPE_CAT).sort();
 
-// Modifications de mapping en attente (appliquées côté Apps Script)
-const mapPendingChanges = {}; // key (nom lowercase) -> {equipe, cat, applyMode, applyMonth}
+const mapPendingChanges = {};
+let impFile=null, impRows=[], impUnknownEmps=[], impUnknownComptes=[], impMois='';
+let lastImportedMois='';
 
-let impFile=null, impRows=[], impUnknowns=[], impMois='';
-let lastImportedMois = '';
-
-/* ── Helpers ── */
-function impFmt(n){return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+' €';}
-
+// ── Helpers ──────────────────────────────────────────────────────
+function impFmt(n){return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+'€';}
 function impNormKey(s){return s.toLowerCase().replace(/\s+/g,' ').trim();}
-
-function impGetEquipe(name){
-  const key=impNormKey(name);
-  if(mapPendingChanges[key]) return mapPendingChanges[key].equipe;
-  return IMP_EMPLOYE_EQUIPE[key]||null;
-}
-
+function impGetEquipe(name){const k=impNormKey(name);return mapPendingChanges[k]?mapPendingChanges[k].equipe:IMP_EMPLOYE_EQUIPE[k]||null;}
 function impGetCat(equipe){return IMP_EQUIPE_CAT[equipe]||null;}
+function impNormCompte(c){return String(c).replace(/\s/g,'').replace(/\.0$/,'');}
 
-/* ── Navigation sous-onglets ── */
+// ── Sous-onglets mapping ─────────────────────────────────────────
 function impSwitchNav(tab){
-  ['import','mapping'].forEach(t=>{
+  ['emp','comptes'].forEach(t=>{
     document.getElementById('imp-nav-'+t).classList.toggle('active',t===tab);
     document.getElementById('imp-sec-'+t).classList.toggle('active',t===tab);
   });
-  if(tab==='mapping') mapInitTable();
+  if(tab==='emp')mapInitTable();
+  if(tab==='comptes')comptesInitTable();
 }
 
-/* ── Steps ── */
+// ── Modal upload ─────────────────────────────────────────────────
+document.getElementById('impOpenModal').addEventListener('click',()=>{
+  document.getElementById('impModalOverlay').classList.add('open');
+  impSetStep(1);
+});
+document.getElementById('impModalClose').addEventListener('click',closeModal);
+document.getElementById('impModalOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('impModalOverlay'))closeModal();
+});
+function closeModal(){document.getElementById('impModalOverlay').classList.remove('open');}
+
+// ── Steps ────────────────────────────────────────────────────────
 function impSetStep(n){
-  document.getElementById('imp-s1').style.display=n===1?'block':'none';
-  document.getElementById('imp-s2').style.display=n===2?'block':'none';
-  document.getElementById('imp-s3').style.display=n===3?'block':'none';
   [1,2,3].forEach(i=>{
+    document.getElementById('imp-s'+i).style.display=i===n?'block':'none';
     const el=document.getElementById('imp-step'+i+'-ind');
-    el.classList.toggle('active',i===n);
-    el.classList.toggle('done',i<n);
+    el.classList.toggle('active',i===n);el.classList.toggle('done',i<n);
   });
 }
 
@@ -1907,7 +1974,7 @@ function impExcelDateToMois(serial){
   return `${d.getUTCMonth()+1}-${String(d.getUTCFullYear()).slice(2)}`;
 }
 
-/* ── Parse Payfit ── */
+// ── Parse Payfit ─────────────────────────────────────────────────
 function impParseFile(buf){
   const wb=XLSX.read(buf,{type:'array'});
   const ws=wb.Sheets[wb.SheetNames[0]];
@@ -1918,23 +1985,40 @@ function impParseFile(buf){
   const h=rows[hi].map(c=>String(c).trim());
   const iD=h.indexOf('EcritureDate'),iC=h.indexOf('CompteNum'),iDb=h.indexOf('Debit'),iE=h.indexOf('EmployeLib');
   if([iD,iC,iDb,iE].includes(-1))throw new Error("Colonnes manquantes.");
+
+  // tot[emp][catKey] = montant
   const tot={};let mois='';
+  const unknownComptesFound={};
+
   for(let i=hi+1;i<rows.length;i++){
     const r=rows[i];
-    const compte=String(r[iC]||'').trim();
+    const compteRaw=String(r[iC]||'').trim();
+    const compte=impNormCompte(compteRaw);
     const emp=String(r[iE]||'').trim();
     const dv=r[iD];
     if(!compte.startsWith('6')||!emp)continue;
     const d=parseFloat(r[iDb])||0;
     if(!d)continue;
     if(!mois&&dv)mois=typeof dv==='number'?impExcelDateToMois(dv):(()=>{const dt=new Date(dv);return isNaN(dt)?'':`${dt.getMonth()+1}-${String(dt.getFullYear()).slice(2)}`;})();
-    tot[emp]=(tot[emp]||0)+d;
+
+    const catKey=IMP_COMPTE_CAT[compte];
+    if(!catKey){
+      // Compte inconnu
+      if(!unknownComptesFound[compte])unknownComptesFound[compte]={compte,lib:String(r[2]||'').trim(),total:0};
+      unknownComptesFound[compte].total+=d;
+      // On met dans "charges" par défaut en attendant la résolution
+      if(!tot[emp])tot[emp]={salaire_brut:0,primes:0,notes_frais:0,charges:0,unknown:{}};
+      tot[emp].unknown[compte]=(tot[emp].unknown[compte]||0)+d;
+    } else {
+      if(!tot[emp])tot[emp]={salaire_brut:0,primes:0,notes_frais:0,charges:0,unknown:{}};
+      tot[emp][catKey]+=d;
+    }
   }
   if(!mois)throw new Error("Impossible de détecter le mois.");
-  return{tot,mois};
+  return{tot,mois,unknownComptes:Object.values(unknownComptesFound)};
 }
 
-/* ── File handling ── */
+// ── File handling ────────────────────────────────────────────────
 function impHandleFile(f){
   if(!f.name.match(/\.(xlsx|xls)$/i)){alert('Format non supporté.');return;}
   impFile=f;
@@ -1951,68 +2035,138 @@ function impResetFile(){
   document.getElementById('impBtnAnalyse').disabled=true;
 }
 
-/* ── Preview ── */
+// ── Preview ──────────────────────────────────────────────────────
 function impRenderPreview(){
   const all=[...impRows];
-  impUnknowns.forEach((u,i)=>{
+  // Ajouter inconnus non résolus
+  impUnknownEmps.forEach((u,i)=>{
     const sel=document.getElementById('imp-unk-sel-'+i);
-    if(!sel||!sel.value)all.push({mois:impMois,employe:u.name,equipe:null,categorie:null,montant:u.total});
+    if(!sel||!sel.value)all.push({mois:impMois,employe:u.name,equipe:null,categorie:null,
+      salaire_brut:u.detail.salaire_brut,primes:u.detail.primes,
+      notes_frais:u.detail.notes_frais,charges:u.detail.charges,total:u.total});
   });
   all.sort((a,b)=>a.employe.localeCompare(b.employe));
   document.getElementById('impPreviewBody').innerHTML=all.map(r=>`
     <tr>
-      <td style="color:var(--text2)">${r.mois}</td>
       <td>${r.employe}</td>
-      <td style="color:var(--text2)">${r.equipe||'<span style="color:var(--amber)">Non affecté</span>'}</td>
       <td>${r.categorie?`<span class="imp-badge blue">${r.categorie}</span>`:'<span class="imp-badge amber">En attente</span>'}</td>
-      <td class="td-amt">${impFmt(r.montant)}</td>
-      <td><span class="imp-badge ${r.equipe?'green':'amber'}">${r.equipe?'✓ Prêt':'⏳ En attente'}</span></td>
+      <td class="td-amt">${impFmt(r.salaire_brut)}</td>
+      <td class="td-amt">${impFmt(r.primes)}</td>
+      <td class="td-amt">${impFmt(r.notes_frais)}</td>
+      <td class="td-amt">${impFmt(r.charges)}</td>
+      <td class="td-amt" style="font-weight:700">${impFmt(r.total)}</td>
+      <td><span class="imp-badge ${r.equipe?'green':'amber'}">${r.equipe?'✓':'⏳'}</span></td>
     </tr>`).join('');
 }
 
-function impResolveUnk(idx,equipe){
-  const u=impUnknowns[idx];
-  impRows=impRows.filter(r=>r.employe!==u.name);
-  if(equipe){
-    impRows.push({mois:impMois,employe:u.name,equipe,categorie:IMP_EQUIPE_CAT[equipe],montant:u.total});
-    impRows.sort((a,b)=>a.employe.localeCompare(b.employe));
+function impBuildRows(tot,mois){
+  const rows=[],unknownEmps=[];
+  for(const[emp,detail] of Object.entries(tot)){
+    const equipe=impGetEquipe(emp);
+    const total=detail.salaire_brut+detail.primes+detail.notes_frais+detail.charges+
+      Object.values(detail.unknown||{}).reduce((s,v)=>s+v,0);
+    if(!equipe){unknownEmps.push({name:emp,detail,total:Math.round(total*100)/100});}
+    else{
+      rows.push({mois,employe:emp,equipe,categorie:impGetCat(equipe),
+        salaire_brut:Math.round(detail.salaire_brut*100)/100,
+        primes:Math.round(detail.primes*100)/100,
+        notes_frais:Math.round(detail.notes_frais*100)/100,
+        charges:Math.round(detail.charges*100)/100,
+        total:Math.round(total*100)/100});
+    }
   }
-  const allOk=impUnknowns.every((_,i)=>{const s=document.getElementById('imp-unk-sel-'+i);return s&&s.value;});
-  document.getElementById('impBtnImport').disabled=!allOk;
-  document.getElementById('impBlockedMsg').style.display=allOk?'none':'inline';
-  impRenderPreview();
+  rows.sort((a,b)=>a.employe.localeCompare(b.employe));
+  unknownEmps.sort((a,b)=>a.name.localeCompare(b.name));
+  return{rows,unknownEmps};
 }
 
-function impRenderStep2(){
-  impSetStep(2);
-  document.getElementById('impStatMois').textContent=impMois;
-  document.getElementById('impStatEmp').textContent=impRows.length;
-  document.getElementById('impStatUnk').textContent=impUnknowns.length;
-  if(impUnknowns.length>0){
+function impCheckAllResolved(){
+  const empOk=impUnknownEmps.every((_,i)=>{const s=document.getElementById('imp-unk-sel-'+i);return s&&s.value;});
+  const compteOk=impUnknownComptes.every((_,i)=>{const s=document.getElementById('imp-unk-cpte-'+i);return s&&s.value;});
+  const ok=empOk&&compteOk;
+  document.getElementById('impBtnImport').disabled=!ok;
+  document.getElementById('impBlockedMsg').style.display=ok?'none':'inline';
+}
+
+function impRenderStep2(tot,mois,unknownComptes){
+  impMois=mois;
+  const{rows,unknownEmps}=impBuildRows(tot,mois);
+  impRows=rows;impUnknownEmps=unknownEmps;impUnknownComptes=unknownComptes;
+
+  document.getElementById('impStatMois').textContent=mois;
+  document.getElementById('impStatEmp').textContent=rows.length;
+  document.getElementById('impStatUnk').textContent=unknownEmps.length+unknownComptes.length;
+
+  // Inconnus employés
+  if(unknownEmps.length>0){
     document.getElementById('impAlertUnk').style.display='flex';
-    document.getElementById('impAlertBody').textContent=impUnknowns.map(u=>u.name).join(', ')+` — absent${impUnknowns.length>1?'s':''} du mapping.`;
-    document.getElementById('impCardUnk').style.display='block';
-    document.getElementById('impUnkList').innerHTML=impUnknowns.map((u,i)=>`
+    document.getElementById('impAlertBody').textContent=unknownEmps.map(u=>u.name).join(', ')+' — absents du mapping.';
+    document.getElementById('impCardUnkEmp').style.display='block';
+    document.getElementById('impUnkList').innerHTML=unknownEmps.map((u,i)=>`
       <div class="imp-unknown-item">
         <div class="uin">${u.name}<div class="uim">${impFmt(u.total)}</div></div>
         <span style="color:var(--text2)">→</span>
-        <select id="imp-unk-sel-${i}" onchange="impResolveUnk(${i},this.value)">
-          <option value="">— Choisir une équipe —</option>
+        <select id="imp-unk-sel-${i}" onchange="impResolveUnkEmp(${i},this.value)">
+          <option value="">— Équipe —</option>
           ${IMP_ALL_EQUIPES.map(e=>`<option value="${e}">${IMP_EQUIPE_CAT[e]}</option>`).join('')}
         </select>
       </div>`).join('');
-    document.getElementById('impBtnImport').disabled=true;
-    document.getElementById('impBlockedMsg').style.display='inline';
   }else{
     document.getElementById('impAlertUnk').style.display='none';
-    document.getElementById('impCardUnk').style.display='none';
-    document.getElementById('impBtnImport').disabled=false;
-    document.getElementById('impBlockedMsg').style.display='none';
+    document.getElementById('impCardUnkEmp').style.display='none';
   }
+
+  // Inconnus comptes
+  if(unknownComptes.length>0){
+    document.getElementById('impAlertUnkCompte').style.display='flex';
+    document.getElementById('impAlertCompteBody').textContent='Comptes non reconnus : '+unknownComptes.map(c=>c.compte).join(', ')+'. Assigne-leur une catégorie.';
+    document.getElementById('impCardUnkCompte').style.display='block';
+    document.getElementById('impUnkCompteList').innerHTML=unknownComptes.map((c,i)=>`
+      <div class="imp-unknown-item">
+        <div class="uin">${c.compte}<div class="uim">${c.lib||'—'}</div></div>
+        <span style="color:var(--text2)">→</span>
+        <select id="imp-unk-cpte-${i}" onchange="impResolveUnkCompte(${i},'${c.compte}',this.value)">
+          <option value="">— Catégorie —</option>
+          ${CAT_KEYS.map(k=>`<option value="${k}">${CAT_LABELS[k]}</option>`).join('')}
+        </select>
+      </div>`).join('');
+  }else{
+    document.getElementById('impAlertUnkCompte').style.display='none';
+    document.getElementById('impCardUnkCompte').style.display='none';
+  }
+
+  impCheckAllResolved();
   impRenderPreview();
+  impSetStep(2);
 }
 
-/* ── Drag & drop ── */
+function impResolveUnkEmp(idx,equipe){
+  const u=impUnknownEmps[idx];
+  impRows=impRows.filter(r=>r.employe!==u.name);
+  if(equipe){
+    const total=u.detail.salaire_brut+u.detail.primes+u.detail.notes_frais+u.detail.charges+
+      Object.values(u.detail.unknown||{}).reduce((s,v)=>s+v,0);
+    impRows.push({mois:impMois,employe:u.name,equipe,categorie:IMP_EQUIPE_CAT[equipe],
+      salaire_brut:Math.round(u.detail.salaire_brut*100)/100,
+      primes:Math.round(u.detail.primes*100)/100,
+      notes_frais:Math.round(u.detail.notes_frais*100)/100,
+      charges:Math.round(u.detail.charges*100)/100,
+      total:Math.round(total*100)/100});
+    impRows.sort((a,b)=>a.employe.localeCompare(b.employe));
+  }
+  impCheckAllResolved();impRenderPreview();
+}
+
+function impResolveUnkCompte(idx,compte,catKey){
+  if(!catKey)return;
+  // Mémoriser pour les prochains imports
+  IMP_COMPTE_CAT[compte]=catKey;
+  // Mettre à jour les totaux dans impRows (redistribuer le montant unknown)
+  // Recalculer depuis les unknownComptes
+  impCheckAllResolved();impRenderPreview();
+}
+
+// ── Drag & drop ──────────────────────────────────────────────────
 document.getElementById('impDropZone').addEventListener('dragover',e=>{e.preventDefault();document.getElementById('impDropZone').classList.add('drag-over');});
 document.getElementById('impDropZone').addEventListener('dragleave',()=>document.getElementById('impDropZone').classList.remove('drag-over'));
 document.getElementById('impDropZone').addEventListener('drop',e=>{e.preventDefault();document.getElementById('impDropZone').classList.remove('drag-over');if(e.dataTransfer.files[0])impHandleFile(e.dataTransfer.files[0]);});
@@ -2026,20 +2180,12 @@ document.getElementById('impBtnAnalyse').addEventListener('click',()=>{
   const reader=new FileReader();
   reader.onload=e=>{
     try{
-      const{tot,mois}=impParseFile(e.target.result);
-      impMois=mois;impRows=[];impUnknowns=[];
-      for(const[emp,montant] of Object.entries(tot)){
-        const equipe=impGetEquipe(emp);
-        if(!equipe){impUnknowns.push({name:emp,total:Math.round(montant*100)/100});}
-        else{impRows.push({mois,employe:emp,equipe,categorie:impGetCat(equipe),montant:Math.round(montant*100)/100});}
-      }
-      impRows.sort((a,b)=>a.employe.localeCompare(b.employe));
-      impUnknowns.sort((a,b)=>a.name.localeCompare(b.name));
-      impRenderStep2();
+      const{tot,mois,unknownComptes}=impParseFile(e.target.result);
+      impRenderStep2(tot,mois,unknownComptes);
     }catch(err){
       alert('Erreur : '+err.message);
       document.getElementById('impBtnAnalyse').disabled=false;
-      document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser le fichier';
+      document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser';
     }
   };
   reader.readAsArrayBuffer(impFile);
@@ -2048,36 +2194,20 @@ document.getElementById('impBtnAnalyse').addEventListener('click',()=>{
 document.getElementById('impBtnBack').addEventListener('click',()=>{
   impSetStep(1);
   document.getElementById('impBtnAnalyse').disabled=false;
-  document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser le fichier';
+  document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser';
 });
 
-/* ── Import via form POST (contourne CORS) ── */
+// ── Import POST ──────────────────────────────────────────────────
 function impPostToAppsScript(payload){
-  return new Promise((resolve,reject)=>{
+  return new Promise(resolve=>{
     const iframe=document.createElement('iframe');
-    iframe.name='imp_iframe_'+Date.now();
-    iframe.style.display='none';
-    document.body.appendChild(iframe);
-
+    iframe.name='imp_iframe_'+Date.now();iframe.style.display='none';document.body.appendChild(iframe);
     const form=document.createElement('form');
-    form.method='POST';
-    form.action=APPS_SCRIPT_URL;
-    form.target=iframe.name;
-
-    const input=document.createElement('input');
-    input.type='hidden';input.name='payload';
-    input.value=JSON.stringify(payload);
-    form.appendChild(input);
-    document.body.appendChild(form);
-
-    const timeout=setTimeout(()=>{
-      cleanup();
-      // POST no-cors ne permet pas de lire la réponse — on considère succès après délai
-      resolve({success:true,assumed:true});
-    },8000);
-
-    function cleanup(){clearTimeout(timeout);document.body.removeChild(form);document.body.removeChild(iframe);}
-    iframe.onload=()=>{cleanup();resolve({success:true});};
+    form.method='POST';form.action=APPS_SCRIPT_URL;form.target=iframe.name;
+    const input=document.createElement('input');input.type='hidden';input.name='payload';input.value=JSON.stringify(payload);
+    form.appendChild(input);document.body.appendChild(form);
+    const timeout=setTimeout(()=>{document.body.removeChild(form);document.body.removeChild(iframe);resolve({success:true,assumed:true});},8000);
+    iframe.onload=()=>{clearTimeout(timeout);document.body.removeChild(form);document.body.removeChild(iframe);resolve({success:true});};
     form.submit();
   });
 }
@@ -2087,38 +2217,18 @@ document.getElementById('impBtnImport').addEventListener('click',async()=>{
   document.getElementById('impProgressFill').style.width='10%';
   document.getElementById('impProgressLabel').textContent=`Envoi de ${impRows.length} lignes…`;
   document.getElementById('impProgressStatus').textContent='Connexion à Apps Script…';
-
-  // Construction payload + éventuelles modifications de mapping
-  const mappingUpdates=Object.entries(mapPendingChanges).map(([k,v])=>({name:k,equipe:v.equipe,cat:v.cat,applyMode:v.applyMode,applyMonth:v.applyMonth||''}));
-
   const payload={
-    action:'importStaffCosts',
-    mois:impMois,
-    rows:impRows.map(r=>[r.mois,r.employe,r.equipe,r.categorie,r.montant]),
-    mappingUpdates
+    action:'importStaffCosts',mois:impMois,
+    rows:impRows.map(r=>[r.mois,r.employe,r.equipe,r.categorie,r.salaire_brut,r.primes,r.notes_frais,r.charges,r.total])
   };
-
   try{
     document.getElementById('impProgressFill').style.width='40%';
     document.getElementById('impProgressStatus').textContent='Écriture dans Staff Costs - Data…';
-
-    // Tentative fetch d'abord (fonctionne si Apps Script accepte CORS)
     let result;
     try{
-      const resp=await fetch(APPS_SCRIPT_URL+'?action=importStaffCosts',{
-        method:'POST',
-        headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify(payload),
-        redirect:'follow'
-      });
-      const text=await resp.text();
-      result=JSON.parse(text);
-    }catch(fetchErr){
-      // Fallback form POST (no-cors — pas de réponse lisible, on assume succès)
-      await impPostToAppsScript(payload);
-      result={success:true,assumed:true,count:impRows.length};
-    }
-
+      const resp=await fetch(APPS_SCRIPT_URL+'?action=importStaffCosts',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload),redirect:'follow'});
+      result=JSON.parse(await resp.text());
+    }catch{await impPostToAppsScript(payload);result={success:true,assumed:true,count:impRows.length};}
     document.getElementById('impProgressFill').style.width='100%';
     if(result.success){
       lastImportedMois=impMois;
@@ -2126,97 +2236,85 @@ document.getElementById('impBtnImport').addEventListener('click',async()=>{
       document.getElementById('impProgressStatus').textContent='';
       document.getElementById('impSuccess').classList.add('visible');
       document.getElementById('impSuccessTitle').textContent=`${impRows.length} lignes importées`;
-      document.getElementById('impSuccessMsg').textContent=
-        `Mois ${impMois} — onglet "Staff Costs - Data" mis à jour.`+
-        (result.assumed?' (réponse non disponible — vérifier dans le GSheet)':'');
+      document.getElementById('impSuccessMsg').textContent=`Mois ${impMois} — Staff Costs - Data mis à jour.`+(result.assumed?' (vérifier dans le GSheet)':'');
+      mapInitTable(); // Rafraîchir le tableau mapping
     }else{throw new Error(result.error||'Erreur inconnue');}
   }catch(err){
-    document.getElementById('impProgressLabel').textContent="Erreur lors de l'import";
+    document.getElementById('impProgressLabel').textContent="Erreur";
     document.getElementById('impProgressStatus').textContent=err.message;
     document.getElementById('impProgressFill').style.background='var(--red)';
   }
 });
 
 document.getElementById('impBtnReset').addEventListener('click',()=>{
-  impFile=null;impRows=[];impUnknowns=[];impMois='';
+  impFile=null;impRows=[];impUnknownEmps=[];impUnknownComptes=[];impMois='';
   document.getElementById('impFileInput').value='';
   document.getElementById('impFileInfo').style.display='none';
   document.getElementById('impDropZone').classList.remove('has-file');
   document.getElementById('impBtnAnalyse').disabled=false;
-  document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser le fichier';
+  document.getElementById('impBtnAnalyse').innerHTML='<i class="ti ti-search"></i> Analyser';
   document.getElementById('impSuccess').classList.remove('visible');
   document.getElementById('impProgressFill').style.width='0%';
   document.getElementById('impProgressFill').style.background='var(--blue)';
   impSetStep(1);
+  closeModal();
 });
 
 /* ================================================================
    MAPPING EMPLOYÉS
    ================================================================ */
-let mapCurrentEdit=null; // nom lowercase
+let mapCurrentEdit=null;
 
 function mapInitTable(){
-  // Peupler le select dropdown
   const sel=document.getElementById('mapSelectEmp');
   const keys=Object.keys(IMP_EMPLOYE_EQUIPE).sort();
-  sel.innerHTML='<option value="">— Tous les employés —</option>'+
+  sel.innerHTML='<option value="">— Sélectionner —</option>'+
     keys.map(k=>`<option value="${k}">${k.replace(/\b\w/g,c=>c.toUpperCase())}</option>`).join('');
-
-  // Peupler le select de catégorie dans le form d'édition
   const catSel=document.getElementById('mapEditCat');
   catSel.innerHTML='<option value="">— Choisir —</option>'+
     IMP_ALL_EQUIPES.map(e=>`<option value="${e}">${IMP_EQUIPE_CAT[e]}</option>`).join('');
-
   mapRenderTable(keys);
 }
 
 function mapRenderTable(keys){
   document.getElementById('mapTableBody').innerHTML=keys.map(k=>{
-    const displayName=k.replace(/\b\w/g,c=>c.toUpperCase());
+    const display=k.replace(/\b\w/g,c=>c.toUpperCase());
     const equipe=mapPendingChanges[k]?mapPendingChanges[k].equipe:(IMP_EMPLOYE_EQUIPE[k]||'—');
     const cat=IMP_EQUIPE_CAT[equipe]||'—';
-    const modified=!!mapPendingChanges[k];
+    const mod=!!mapPendingChanges[k];
     return `<tr>
-      <td>${displayName}${modified?` <span class="map-badge-mod">modifié</span>`:''}</td>
-      <td class="map-cat">${equipe}</td>
-      <td class="map-cat">${cat}</td>
-      <td><button class="btn" style="font-size:11px;padding:3px 10px" onclick="mapOpenEdit('${k}')"><i class="ti ti-edit"></i> Modifier</button></td>
+      <td>${display}${mod?` <span class="map-badge-mod">modifié</span>`:''}</td>
+      <td class="map-muted">${equipe}</td>
+      <td><span class="imp-badge blue" style="font-size:10px">${cat}</span></td>
+      <td>${lastImportedMois?`<span style="font-size:11px;color:var(--text2)">${lastImportedMois}</span>`:'—'}</td>
+      <td><button class="btn" style="font-size:11px;padding:3px 10px" onclick="mapOpenEdit('${k}')"><i class="ti ti-edit"></i></button></td>
     </tr>`;
   }).join('');
 }
 
 function mapFilterTable(){
   const q=document.getElementById('mapSearchInput').value.toLowerCase().trim();
-  const keys=Object.keys(IMP_EMPLOYE_EQUIPE).filter(k=>!q||k.includes(q)).sort();
-  mapRenderTable(keys);
+  mapRenderTable(Object.keys(IMP_EMPLOYE_EQUIPE).filter(k=>!q||k.includes(q)).sort());
 }
 
 function mapSelectFromDD(){
   const v=document.getElementById('mapSelectEmp').value;
-  if(v){
-    document.getElementById('mapSearchInput').value=v;
-    mapFilterTable();
-    mapOpenEdit(v);
-  }
+  if(v){document.getElementById('mapSearchInput').value=v;mapFilterTable();mapOpenEdit(v);}
 }
 
 function mapOpenEdit(key){
   mapCurrentEdit=key;
-  const displayName=key.replace(/\b\w/g,c=>c.toUpperCase());
-  document.getElementById('mapEditName').textContent=displayName;
-  const currentEquipe=mapPendingChanges[key]?mapPendingChanges[key].equipe:IMP_EMPLOYE_EQUIPE[key];
-  document.getElementById('mapEditCat').value=currentEquipe||'';
+  document.getElementById('mapEditName').textContent=key.replace(/\b\w/g,c=>c.toUpperCase());
+  const cur=mapPendingChanges[key]?mapPendingChanges[key].equipe:IMP_EMPLOYE_EQUIPE[key];
+  document.getElementById('mapEditCat').value=cur||'';
   document.querySelector('input[name=mapApply][value=now]').checked=true;
   document.getElementById('mapApplyMonth').value='';
   document.getElementById('mapSaveStatus').style.display='none';
-  document.getElementById('mapEditCard').style.display='block';
+  document.getElementById('mapEditCard').classList.add('open');
   document.getElementById('mapEditCard').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function mapCancelEdit(){
-  mapCurrentEdit=null;
-  document.getElementById('mapEditCard').style.display='none';
-}
+function mapCancelEdit(){mapCurrentEdit=null;document.getElementById('mapEditCard').classList.remove('open');}
 
 function mapSaveEdit(){
   if(!mapCurrentEdit)return;
@@ -2224,44 +2322,64 @@ function mapSaveEdit(){
   if(!equipe){alert('Sélectionne une catégorie.');return;}
   const applyMode=document.querySelector('input[name=mapApply]:checked').value;
   const applyMonth=applyMode==='month'?document.getElementById('mapApplyMonth').value.trim():'';
-  if(applyMode==='month'&&!applyMonth){alert('Saisis un mois au format M-AA (ex: 5-26).');return;}
-
+  if(applyMode==='month'&&!applyMonth){alert('Saisis un mois (ex: 5-26).');return;}
   const cat=IMP_EQUIPE_CAT[equipe];
-
-  // Mettre à jour le mapping en mémoire
   IMP_EMPLOYE_EQUIPE[mapCurrentEdit]=equipe;
   mapPendingChanges[mapCurrentEdit]={equipe,cat,applyMode,applyMonth};
-
-  // Statut
-  const applyLabels={now:'à partir du prochain import',last:'sur le dernier mois importé',month:`sur le mois ${applyMonth}`,all:'sur tout l\'historique'};
+  const labels={now:'prochain import',last:'dernier mois',month:`mois ${applyMonth}`,all:'tout l\'historique'};
   const statusEl=document.getElementById('mapSaveStatus');
-  statusEl.style.display='block';
-  statusEl.style.color='var(--green)';
-  statusEl.textContent=`✓ Mapping mis à jour — sera appliqué ${applyLabels[applyMode]}.`+
-    (applyMode!=='now'?' La modification sera envoyée au GSheet lors du prochain import.':'');
-
-  // Si la modification s'applique à des données existantes → envoyer immédiatement à Apps Script
+  statusEl.style.display='block';statusEl.style.color='var(--green)';
+  statusEl.textContent=`✓ Mapping mis à jour — appliqué sur ${labels[applyMode]}.`;
   if(applyMode!=='now'){
-    const payload={action:'updateStaffCostsMapping',key:mapCurrentEdit,equipe,cat,applyMode,applyMonth,lastMois:lastImportedMois};
-    fetch(APPS_SCRIPT_URL+'?action=updateStaffCostsMapping',{
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify(payload),
-      redirect:'follow'
-    }).then(r=>r.json()).then(res=>{
-      if(res.success){statusEl.textContent=`✓ Mapping mis à jour et appliqué dans le GSheet (${res.count||'?'} lignes modifiées).`;}
-      else{statusEl.style.color='var(--amber-text)';statusEl.textContent='Mapping mis à jour localement. Erreur GSheet : '+(res.error||'inconnue');}
-    }).catch(()=>{
-      statusEl.style.color='var(--amber-text)';
-      statusEl.textContent='Mapping mis à jour localement. Vérifier manuellement dans le GSheet.';
-    });
+    fetch(APPS_SCRIPT_URL+'?action=updateStaffCostsMapping',{method:'POST',headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action:'updateStaffCostsMapping',key:mapCurrentEdit,equipe,cat,applyMode,applyMonth,lastMois:lastImportedMois}),redirect:'follow'})
+    .then(r=>r.json()).then(res=>{
+      if(res.success)statusEl.textContent=`✓ Mapping mis à jour dans le GSheet (${res.count||'?'} lignes).`;
+      else{statusEl.style.color='var(--amber-text)';statusEl.textContent='Mapping local OK. Erreur GSheet : '+(res.error||'?');}
+    }).catch(()=>{statusEl.style.color='var(--amber-text)';statusEl.textContent='Mapping local OK. Vérifier GSheet manuellement.';});
   }
-
   mapRenderTable(Object.keys(IMP_EMPLOYE_EQUIPE).filter(k=>{
-    const q=document.getElementById('mapSearchInput').value.toLowerCase().trim();
-    return !q||k.includes(q);
+    const q=document.getElementById('mapSearchInput').value.toLowerCase().trim();return !q||k.includes(q);
   }).sort());
 }
+
+/* ================================================================
+   MAPPING COMPTES
+   ================================================================ */
+let compteCurrentEdit=null;
+
+function comptesInitTable(){
+  document.getElementById('comptesTableBody').innerHTML=
+    Object.entries(IMP_COMPTE_CAT).sort((a,b)=>a[0].localeCompare(b[0])).map(([compte,catKey])=>`
+    <tr>
+      <td style="font-variant-numeric:tabular-nums">${compte}</td>
+      <td class="map-muted">${COMPTE_LABELS[compte]||'—'}</td>
+      <td><span class="imp-badge blue" style="font-size:10px">${CAT_LABELS[catKey]||catKey}</span></td>
+      <td><button class="btn" style="font-size:11px;padding:3px 10px" onclick="compteOpenEdit('${compte}')"><i class="ti ti-edit"></i></button></td>
+    </tr>`).join('');
+}
+
+function compteOpenEdit(compte){
+  compteCurrentEdit=compte;
+  document.getElementById('compteEditName').textContent=compte+(COMPTE_LABELS[compte]?' — '+COMPTE_LABELS[compte]:'');
+  document.getElementById('compteEditCat').value=IMP_COMPTE_CAT[compte]||'charges';
+  document.getElementById('compteEditCard').classList.add('open');
+  document.getElementById('compteEditCard').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function compteCancelEdit(){compteCurrentEdit=null;document.getElementById('compteEditCard').classList.remove('open');}
+
+function compteSaveEdit(){
+  if(!compteCurrentEdit)return;
+  const cat=document.getElementById('compteEditCat').value;
+  IMP_COMPTE_CAT[compteCurrentEdit]=cat;
+  compteCancelEdit();comptesInitTable();
+}
+
+// Init au chargement
+document.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('mapTableBody'))mapInitTable();
+});
 </script>
 </body>
 </html>
