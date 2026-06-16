@@ -108,6 +108,27 @@ canvas{max-height:220px}
 @media(max-width:800px){.charts-grid{grid-template-columns:1fr}}
 .charts-grid canvas{max-height:200px}
 .grid{padding:1.25rem 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+.grid.list-view{display:block;padding:0}
+.list-table{width:100%;border-collapse:collapse;font-size:12px}
+.list-table thead th{background:var(--bg2);padding:9px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--text2);border-bottom:.5px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+.list-table thead th:hover{color:var(--text)}
+.list-table thead th.sort-active{color:var(--accent-from)}
+.list-table thead th .sort-arrow{font-size:9px;margin-left:3px;opacity:.5}
+.list-table thead th.sort-active .sort-arrow{opacity:1;color:var(--accent-from)}
+.list-table thead th.num{text-align:right}
+.list-table tbody tr{border-bottom:.5px solid var(--border);cursor:pointer;transition:background .1s}
+.list-table tbody tr:hover{background:var(--bg2)}
+.list-table tbody tr.expanded-row{background:var(--bg2);border-bottom:none}
+.list-table tbody tr.detail-row td{padding:0;border-bottom:.5px solid var(--border)}
+.list-table td{padding:8px 14px;vertical-align:middle}
+.list-table td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.list-table td.muted{color:var(--text2);font-size:11px}
+.list-table .expand-cell{width:28px;text-align:center;color:var(--text2);font-size:11px}
+.list-detail{padding:16px 20px;background:var(--bg3);border-top:.5px solid var(--border)}
+.view-toggle{display:flex;gap:4px;background:var(--bg2);border-radius:50px;padding:3px;border:.5px solid var(--border)}
+.view-btn{font-size:12px;padding:4px 12px;border-radius:50px;border:none;background:transparent;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s}
+.view-btn:hover{color:var(--text)}
+.view-btn.active{background:var(--bg3);color:var(--text)}
 .card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--rl);padding:1.1rem;cursor:pointer;transition:border-color .15s}
 .card:hover{border-color:var(--border2)}
 .card.expanded{border-color:var(--accent-from);border-width:1px}
@@ -272,6 +293,7 @@ canvas{max-height:220px}
 <nav class="tabs" id="nav-pl" style="display:none">
   <div class="tab active" onclick="switchTab('pl')" id="tab-pl"><i class="ti ti-table"></i> P&amp;L analytique</div>
   <div class="tab" onclick="switchTab('import')" id="tab-import"><i class="ti ti-upload"></i> Import Staff Costs</div>
+  <div class="tab" onclick="switchTab('piana')" id="tab-piana"><i class="ti ti-gas-station"></i> Import Piana</div>
 </nav>
 
 <!-- BARRE DE FILTRES GLOBALE -->
@@ -484,6 +506,10 @@ canvas{max-height:220px}
       <option value="period">Mois analytique</option>
       <option value="id">ID projet</option>
     </select>
+    <div class="view-toggle">
+      <button class="view-btn active" id="view-btn-list" onclick="setProjectView('list')"><i class="ti ti-list"></i> Lignes</button>
+      <button class="view-btn" id="view-btn-card" onclick="setProjectView('card')"><i class="ti ti-layout-grid"></i> Cartes</button>
+    </div>
   </div>
   <div class="stats-bar">
     <div class="stat"><div class="stat-label">Projets filtrés</div><div class="stat-value" id="ps-count">—</div></div>
@@ -667,6 +693,7 @@ canvas{max-height:220px}
   <div class="map-subtabs">
     <div class="map-subtab active" id="imp-nav-emp" onclick="impSwitchNav('emp')"><i class="ti ti-users"></i> Mapping employés</div>
     <div class="map-subtab" id="imp-nav-comptes" onclick="impSwitchNav('comptes')"><i class="ti ti-list-numbers"></i> Mapping comptes</div>
+    <div class="map-subtab" id="imp-nav-history" onclick="impSwitchNav('history')"><i class="ti ti-history"></i> Historique imports</div>
   </div>
 
   <!-- SECTION : Mapping employés -->
@@ -686,31 +713,7 @@ canvas{max-height:220px}
         </table>
       </div>
     </div>
-    <div class="map-edit-card" id="mapEditCard">
-      <div class="map-edit-title">
-        <span>Modifier : <strong id="mapEditName"></strong></span>
-        <button class="btn" style="font-size:11px;padding:3px 10px" onclick="mapCancelEdit()">✕ Annuler</button>
-      </div>
-      <div class="map-field">
-        <label>Catégorie analytique</label>
-        <select id="mapEditCat"><option value="">— Choisir —</option></select>
-      </div>
-      <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Appliquer à</div>
-      <div class="map-apply-opts">
-        <label><input type="radio" name="mapApply" value="now" checked> Prochain import uniquement</label>
-        <label><input type="radio" name="mapApply" value="last"> Dernier mois importé</label>
-        <label>
-          <input type="radio" name="mapApply" value="month"> Mois spécifique
-          <div class="map-month-row"><input type="text" id="mapApplyMonth" placeholder="ex: 5-26"> <span style="font-size:11px;color:var(--text2)">M-AA</span></div>
-        </label>
-        <label><input type="radio" name="mapApply" value="all"> Tout l'historique</label>
-      </div>
-      <div class="imp-actions">
-        <button class="btn primary" onclick="mapSaveEdit()"><i class="ti ti-check"></i> Enregistrer</button>
-      </div>
-      <div id="mapSaveStatus" style="font-size:12px;margin-top:10px;display:none"></div>
-    </div>
-  </div>
+  </div><!-- /#imp-sec-emp -->
 
   <!-- SECTION : Mapping comptes -->
   <div class="map-subsection" id="imp-sec-comptes">
@@ -741,9 +744,46 @@ canvas{max-height:220px}
         <button class="btn primary" onclick="compteSaveEdit()"><i class="ti ti-check"></i> Enregistrer</button>
       </div>
     </div>
-  </div>
+  </div><!-- /#imp-sec-comptes -->
+
+  <!-- SECTION : Historique imports -->
+  <div class="map-subsection" id="imp-sec-history">
+    <div class="imp-card">
+      <div class="imp-card-title">Derniers imports</div>
+      <div id="impHistoryContent" style="font-size:13px;color:var(--text2);text-align:center;padding:24px">
+        Aucun import effectué dans cette session.
+      </div>
+    </div>
+  </div><!-- /#imp-sec-history -->
 
 </div><!-- /.imp-wrap -->
+
+<!-- Modal édition mapping employé -->
+<div class="imp-modal-overlay" id="mapEditModal">
+  <div class="imp-modal" style="max-width:460px">
+    <button class="imp-modal-close" id="mapEditModalClose">✕</button>
+    <h3>Modifier : <strong id="mapEditModalName"></strong></h3>
+    <div class="map-field" style="margin-top:16px">
+      <label>Catégorie analytique</label>
+      <select id="mapEditCat"><option value="">— Choisir —</option></select>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Appliquer à</div>
+    <div class="map-apply-opts">
+      <label><input type="radio" name="mapApply" value="now" checked> Prochain import uniquement</label>
+      <label><input type="radio" name="mapApply" value="last"> Dernier mois importé</label>
+      <label>
+        <input type="radio" name="mapApply" value="month"> Mois spécifique
+        <div class="map-month-row"><input type="text" id="mapApplyMonth" placeholder="ex: 5-26"> <span style="font-size:11px;color:var(--text2)">M-AA</span></div>
+      </label>
+      <label><input type="radio" name="mapApply" value="all"> Tout l'historique</label>
+    </div>
+    <div class="imp-actions" style="margin-top:16px">
+      <button class="btn" onclick="mapCancelEdit()">Annuler</button>
+      <button class="btn primary" onclick="mapSaveEdit()"><i class="ti ti-check"></i> Enregistrer</button>
+    </div>
+    <div id="mapSaveStatus" style="font-size:12px;margin-top:10px;display:none"></div>
+  </div>
+</div>
 
 <!-- Modal upload -->
 <div class="imp-modal-overlay" id="impModalOverlay">
@@ -841,8 +881,89 @@ canvas{max-height:220px}
 
 </div><!-- /#panel-import -->
 
+<!-- ═══════════════ PANEL PIANA ═══════════════ -->
+<div class="panel" id="panel-piana" style="display:none">
+<div class="imp-wrap">
+
+  <!-- Header -->
+  <div class="imp-header">
+    <div class="imp-header-left">
+      <div class="imp-icon">⛽</div>
+      <div>
+        <h2>Import Piana</h2>
+        <p>Transactions cartes → Fuel - Data</p>
+      </div>
+    </div>
+    <button class="btn primary" id="pianaOpenModal"><i class="ti ti-upload"></i> Importer un relevé Piana</button>
+  </div>
+
+  <!-- Note explicative -->
+  <div class="imp-alert" style="display:flex;margin-bottom:20px;background:var(--blue-light);border:.5px solid rgba(123,111,240,.3)">
+    <span style="font-size:18px;flex-shrink:0">ℹ️</span>
+    <div>
+      <div style="font-weight:600;font-size:13px;color:var(--blue-text);margin-bottom:4px">Règles de traitement</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.7">
+        <b>Source :</b> onglet "Transactions" de l'export Piana — statut <b>Réglée uniquement</b>.<br>
+        <b>Montant retenu :</b> HT si TVA connue (justificatif présent), TTC sinon (approximation HT selon note Piana).<br>
+        <b>Catégorie analytique :</b> DAC + Stations essence → Fuel · Péages → Tolls · Lavage → Car maintenance.<br>
+        <b>Préfixe :</b> Field ops → COGS · Sales → Sales · Autres → General.<br>
+        <b>Alimentation :</b> remontée en alerte — à affecter manuellement.
+      </div>
+    </div>
+  </div>
+
+  <!-- Sous-onglets -->
+  <div class="map-subtabs">
+    <div class="map-subtab active" id="piana-nav-mapping" onclick="pianaSwitchNav('mapping')"><i class="ti ti-list-numbers"></i> Mapping catégories</div>
+    <div class="map-subtab" id="piana-nav-history" onclick="pianaSwitchNav('history')"><i class="ti ti-history"></i> Historique imports</div>
+  </div>
+
+  <!-- SECTION : Mapping catégories Piana -->
+  <div class="map-subsection active" id="piana-sec-mapping">
+    <div class="imp-card">
+      <div class="imp-card-title">Catégories Piana → Catégorie analytique</div>
+      <div class="map-table-wrap">
+        <table class="map-table">
+          <thead><tr><th>Catégorie Piana</th><th>Suffixe analytique</th><th>Exemple COGS</th><th>Modifier</th></tr></thead>
+          <tbody id="pianaCatTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="map-edit-card" id="pianaCatEditCard">
+      <div class="map-edit-title">
+        <span>Modifier : <strong id="pianaCatEditName"></strong></span>
+        <button class="btn" style="font-size:11px;padding:3px 10px" onclick="pianaCatCancelEdit()">✕ Annuler</button>
+      </div>
+      <div class="map-field">
+        <label>Suffixe analytique</label>
+        <select id="pianaCatEditVal">
+          <option value="Fuel">Fuel → COGS - Fuel / Sales - Fuel / General - Fuel</option>
+          <option value="Tolls">Tolls → COGS - Tolls / Sales - Tolls / General - Tolls</option>
+          <option value="Car maintenance">Car maintenance → COGS - Car maintenance / …</option>
+          <option value="ALERTE">⚠️ Alerte — non mappé (remonter dans l'UI)</option>
+        </select>
+      </div>
+      <div class="imp-actions">
+        <button class="btn primary" onclick="pianaCatSaveEdit()"><i class="ti ti-check"></i> Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION : Historique imports -->
+  <div class="map-subsection" id="piana-sec-history">
+    <div class="imp-card">
+      <div class="imp-card-title">Derniers imports</div>
+      <div id="pianaHistoryContent" style="font-size:13px;color:var(--text2);text-align:center;padding:24px">
+        Aucun import effectué dans cette session.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.imp-wrap -->
+</div><!-- /#panel-piana -->
+
 <script>
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwSm9aItDCH2zamxGmyWWj4SnKNcquLMPC7QISGP6UeKTVrQcEimGo_hqW2FA0Zr2jF/exec';
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbxj_vTpwwMAq_GYzL-exJVHJDuSlnHLpNk_2B_h6prRAKEdfdre4njVNdIKeM0tHZU/exec';
 const ENTOOL_BASE='https://entool.goensol.com/projects/';
 const INTERNAL_INSTALLERS=['Ensol Occitanie','Ensol PACA'];
 
@@ -1186,7 +1307,7 @@ function getPeriodOptions(mode){
    ================================================================ */
 // Tabs actifs par module
 const GM_TABS = ['overview','projects','anomalies','fnp-alerts'];
-const PL_TABS = ['pl','import'];
+const PL_TABS = ['pl','import','piana'];
 let currentModule = 'gm';
 
 function switchModule(mod){
@@ -1211,7 +1332,7 @@ function switchTab(tab){
   });
   // Filtres globaux : visibles sur tous les onglets sauf fnp-alerts et import
   const filterBar=document.getElementById('global-filter-bar');
-  if(filterBar) filterBar.style.display=(tab==='fnp-alerts'||tab==='import')?'none':'flex';
+  if(filterBar) filterBar.style.display=(tab==='fnp-alerts'||tab==='import'||tab==='piana')?'none':'flex';
 }
 
 /* ================================================================
@@ -1579,6 +1700,18 @@ function renderAnomalies(){
 /* ================================================================
    CARDS (Projets)
    ================================================================ */
+// Vue par défaut : liste
+let projectView = 'list';
+let listExpandedId = null;
+
+function setProjectView(v) {
+  projectView = v;
+  document.getElementById('view-btn-list').classList.toggle('active', v==='list');
+  document.getElementById('view-btn-card').classList.toggle('active', v==='card');
+  expandedId = null; listExpandedId = null;
+  renderCards();
+}
+
 function renderCards(){
   const q=(document.getElementById('proj-search').value||'').toLowerCase();
   const sort=document.getElementById('proj-sort').value;
@@ -1609,9 +1742,103 @@ function renderCards(){
   if(psME){psME.style.display=showEst?'block':'none';psME.textContent=showEst?'→ '+fmt(margin-totalFNP)+' estimé':'';}
   if(psAE){const mEst=margin-totalFNP;psAE.style.display=showEst?'block':'none';psAE.textContent=showEst?'→ '+fmtPct(rev>0?mEst/rev:0)+' estimé':'';}
   const grid=document.getElementById('cards-grid');
-  if(!data.length){grid.innerHTML='<div class="empty"><i class="ti ti-search-off"></i>Aucun projet trouvé.</div>';return;}
-  grid.innerHTML=data.map(r=>cardHTML(r)).join('');
+  if(!data.length){grid.className='grid';grid.innerHTML='<div class="empty"><i class="ti ti-search-off"></i>Aucun projet trouvé.</div>';return;}
+  if(projectView==='card'){
+    grid.className='grid';
+    grid.innerHTML=data.map(r=>cardHTML(r)).join('');
+  } else {
+    grid.className='grid list-view';
+    grid.innerHTML=renderListView(data);
+  }
 }
+
+/* ── VUE LISTE ─────────────────────────────────────────────────── */
+function renderListView(data){
+  const rows = data.map(r => {
+    const{pid}=parseId(r.id);const clientName=getClientName(r);
+    const fnpEntries=getFNP(r.id);
+    const fnpAmt=fnpEntries.reduce((s,e)=>s+(e.amount||0),0);
+    const dispMargin=fnpAmt>0?r.margin_val-fnpAmt:r.margin_val;
+    const dispPct=fnpAmt>0?(r.rev_post>0?(r.margin_val-fnpAmt)/r.rev_post:0):r.margin_pct;
+    const isExp=listExpandedId===r.id;
+    const chipCls=chipClass(r.margin_pct);
+    const pctColor=dispPct>=0.3?'var(--accent-from)':dispPct>=0.1?'var(--amber)':'var(--red)';
+    const instVal=r.installationInstaller||'';
+    const instIsInt=isInternal(instVal);
+
+    let detailRow='';
+    if(isExp){
+      const revRows=PRODUCTS.filter(p=>r.rev_by_product&&(r.rev_by_product[p]?.post||0)!==0).map(p=>{
+        const bp=r.rev_by_product[p];const disc=(bp.pre||0)-(bp.post||0);
+        return`<tr><td>${p}</td><td style="text-align:right">${fmt(bp.pre||0)}</td><td style="text-align:right;color:var(--red);font-size:11px">${disc>0?'-'+fmt(disc):''}</td><td style="text-align:right">${fmt(bp.post||0)}</td></tr>`;
+      }).join('');
+      const cogsRows=COGS_CATS.filter(c=>r.cogs_detail&&(r.cogs_detail[c]||0)!==0).map(c=>`<tr><td>${c.replace('COGS - ','')}</td><td style="text-align:right">${fmt(r.cogs_detail[c])}</td></tr>`).join('');
+      const fnpListHTML=fnpEntries.map(e=>`
+        <div class="fnp-item"><div class="fnp-item-left"><span class="fnp-item-cat">${e.cat.replace('COGS - ','')}</span><span class="fnp-item-sup">${e.supplier||'—'}</span></div>
+        <div class="fnp-item-right"><span class="fnp-item-amount">${fmt(e.amount)}</span><span class="fnp-del" onclick="deleteFNP('${r.id}','${e.fnpId}','list');event.stopPropagation()">✕</span></div></div>`).join('');
+      const catOptions=FNP_CATS.map(c=>`<option value="${c}">${c.replace('COGS - ','')}</option>`).join('');
+      const ensolUrl=ENTOOL_BASE+pid+'?tab=overview';
+      detailRow=`<tr class="detail-row"><td colspan="9">
+        <div class="list-detail">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+            <div>
+              <div class="detail-title">Revenue par produit</div>
+              <table class="dtable" style="font-size:11px"><thead><tr><td>Produit</td><td style="text-align:right">Brut</td><td style="text-align:right">Remise</td><td style="text-align:right">Net</td></tr></thead>
+              <tbody>${revRows}</tbody><tr class="tot"><td>Total</td><td style="text-align:right">${fmt(r.rev_pre)}</td><td></td><td style="text-align:right">${fmt(r.rev_post)}</td></tr></table>
+            </div>
+            <div>
+              ${cogsRows?`<div class="detail-title">COGS détaillés</div><table class="dtable"><tbody>${cogsRows}</tbody><tr class="tot"><td>Total</td><td style="text-align:right">${fmt(r.cogs_total)}</td></tr></table>`:'<div class="detail-title">COGS détaillés</div><div style="font-size:11px;color:var(--text3)">Aucun COGS.</div>'}
+            </div>
+            <div>
+              <div class="detail-title">FNP — Factures non parvenues</div>
+              ${fnpEntries.length>0?`<div class="fnp-list">${fnpListHTML}</div>`:'<div style="font-size:11px;color:var(--text3);margin-bottom:6px">Aucune FNP.</div>'}
+              <button class="fnp-toggle-btn" id="fnp-toggle-${pid}" onclick="toggleFNPForm('${pid}');event.stopPropagation()"><i class="ti ti-plus" style="font-size:11px"></i> Ajouter une FNP</button>
+              <div class="fnp-form" id="fnp-form-${pid}" style="display:none" onclick="event.stopPropagation()">
+                <div class="fnp-form-grid">
+                  <div class="fnp-form-field fnp-form-full"><label>Catégorie COGS</label><select id="fnp-cat-${pid}">${catOptions}</select></div>
+                  <div class="fnp-form-field"><label>Fournisseur</label><input type="text" id="fnp-sup-${pid}" placeholder="Nom fournisseur"></div>
+                  <div class="fnp-form-field"><label>Montant (€)</label><input type="number" id="fnp-amt-${pid}" placeholder="0" min="0"></div>
+                </div>
+                <button class="fnp-add-btn" id="fnp-add-btn-${pid}" onclick="addFNP('${r.id}','${pid}');event.stopPropagation()"><i class="ti ti-plus" style="font-size:12px"></i> Ajouter</button>
+              </div>
+              <div style="margin-top:10px"><a href="${ensolUrl}" target="_blank" class="ensol-link" onclick="event.stopPropagation()">↗ Voir sur Entool</a></div>
+            </div>
+          </div>
+        </div>
+      </td></tr>`;
+    }
+
+    return`<tr class="${isExp?'expanded-row':''}" onclick="toggleList('${r.id}')">
+      <td class="expand-cell">${isExp?'▲':'▼'}</td>
+      <td><div style="font-size:10px;color:var(--text3);font-family:monospace">${pid}</div><div style="font-weight:500">${clientName}</div></td>
+      <td class="muted">${r.period||'—'}</td>
+      <td class="muted">${instVal?`<span class="meta-tag ${instIsInt?'int':'ext'}" style="font-size:10px">${instVal}</span>`:'—'}</td>
+      <td class="num">${fmt(r.rev_post)}</td>
+      <td class="num">${fmt(r.cogs_total)}</td>
+      <td class="num" style="color:${r.margin_val>=0?'var(--accent-from)':'var(--red)'}">${fmt(r.margin_val)}</td>
+      <td class="num"><span style="color:${pctColor};font-weight:600">${fmtPct(dispPct)}</span>${fnpAmt>0?`<span style="font-size:10px;color:var(--amber-text);margin-left:4px">~est.</span>`:''}</td>
+      <td>${r.projectType?`<span class="meta-tag" style="font-size:10px">${r.projectType}</span>`:'—'}</td>
+    </tr>${detailRow}`;
+  }).join('');
+
+  return`<table class="list-table">
+    <thead><tr>
+      <th style="width:28px"></th>
+      <th>Projet</th>
+      <th>Mois</th>
+      <th>Installateur</th>
+      <th class="num">Revenue</th>
+      <th class="num">COGS</th>
+      <th class="num">Marge €</th>
+      <th class="num">Marge %</th>
+      <th>Type</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function toggleList(id){listExpandedId=listExpandedId===id?null:id;renderCards();}
+function toggle(id){expandedId=expandedId===id?null:id;renderCards();}
 
 function cardHTML(r){
   const isExp=expandedId===r.id;
@@ -1961,6 +2188,18 @@ const IMP_ALL_EQUIPES = Object.keys(IMP_EQUIPE_CAT).sort();
 const mapPendingChanges = {};
 let impFile=null, impRows=[], impUnknownEmps=[], impUnknownComptes=[], impMois='';
 let lastImportedMois='';
+const impImportHistory = [];
+
+function impRenderHistory(){
+  const el=document.getElementById('impHistoryContent');
+  if(!el)return;
+  if(impImportHistory.length===0){el.innerHTML='<div style="text-align:center;padding:24px;color:var(--text2)">Aucun import effectué dans cette session.</div>';return;}
+  const rows=impImportHistory.map(h=>{
+    const badge=h.inconnus>0?'<span class="imp-badge amber">'+h.inconnus+'</span>':'—';
+    return'<tr><td>'+h.mois+'</td><td class="td-muted">'+h.date+'</td><td>'+h.lignes+'</td><td>'+badge+'</td></tr>';
+  }).join('');
+  el.innerHTML='<div class="imp-table-wrap"><table class="imp-table"><thead><tr><th>Mois</th><th>Date import</th><th>Lignes</th><th>Inconnus résolus</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
 
 // ── Helpers ──────────────────────────────────────────────────────
 function impFmt(n){return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+'€';}
@@ -1971,12 +2210,13 @@ function impNormCompte(c){return String(c).replace(/\s/g,'').replace(/\.0$/,'');
 
 // ── Sous-onglets mapping ─────────────────────────────────────────
 function impSwitchNav(tab){
-  ['emp','comptes'].forEach(t=>{
+  ['emp','comptes','history'].forEach(t=>{
     document.getElementById('imp-nav-'+t).classList.toggle('active',t===tab);
     document.getElementById('imp-sec-'+t).classList.toggle('active',t===tab);
   });
   if(tab==='emp')mapInitTable();
   if(tab==='comptes')comptesInitTable();
+  if(tab==='history')impRenderHistory();
 }
 
 // ── Modal upload ─────────────────────────────────────────────────
@@ -2262,6 +2502,12 @@ document.getElementById('impBtnImport').addEventListener('click',async()=>{
     document.getElementById('impProgressFill').style.width='100%';
     if(result.success){
       lastImportedMois=impMois;
+      impImportHistory.unshift({
+        mois:impMois,
+        date:new Date().toLocaleString('fr-FR'),
+        lignes:impRows.length,
+        inconnus:impUnknownEmps.length
+      });
       document.getElementById('impProgressLabel').textContent='Import terminé';
       document.getElementById('impProgressStatus').textContent='';
       document.getElementById('impSuccess').classList.add('visible');
@@ -2334,17 +2580,16 @@ function mapSelectFromDD(){
 
 function mapOpenEdit(key){
   mapCurrentEdit=key;
-  document.getElementById('mapEditName').textContent=key.replace(/\b\w/g,c=>c.toUpperCase());
+  document.getElementById('mapEditModalName').textContent=key.replace(/\b\w/g,c=>c.toUpperCase());
   const cur=mapPendingChanges[key]?mapPendingChanges[key].equipe:IMP_EMPLOYE_EQUIPE[key];
   document.getElementById('mapEditCat').value=cur||'';
   document.querySelector('input[name=mapApply][value=now]').checked=true;
   document.getElementById('mapApplyMonth').value='';
   document.getElementById('mapSaveStatus').style.display='none';
-  document.getElementById('mapEditCard').classList.add('open');
-  document.getElementById('mapEditCard').scrollIntoView({behavior:'smooth',block:'nearest'});
+  document.getElementById('mapEditModal').classList.add('open');
 }
 
-function mapCancelEdit(){mapCurrentEdit=null;document.getElementById('mapEditCard').classList.remove('open');}
+function mapCancelEdit(){mapCurrentEdit=null;document.getElementById('mapEditModal').classList.remove('open');}
 
 function mapSaveEdit(){
   if(!mapCurrentEdit)return;
@@ -2409,6 +2654,633 @@ function compteSaveEdit(){
 // Init au chargement
 document.addEventListener('DOMContentLoaded',()=>{
   if(document.getElementById('mapTableBody'))mapInitTable();
+  const closeBtn=document.getElementById('mapEditModalClose');
+  if(closeBtn)closeBtn.addEventListener('click',mapCancelEdit);
+  const overlay=document.getElementById('mapEditModal');
+  if(overlay)overlay.addEventListener('click',e=>{if(e.target===overlay)mapCancelEdit();});
+});
+</script>
+
+<!-- Modal Piana -->
+<div class="imp-modal-overlay" id="pianaModalOverlay">
+  <div class="imp-modal">
+    <button class="imp-modal-close" id="pianaModalClose">✕</button>
+    <h3>Import Piana — Relevé mensuel</h3>
+
+    <div class="imp-steps">
+      <div class="imp-step active" id="piana-step1-ind"><div class="sn">1</div> Fichier</div>
+      <div class="imp-step" id="piana-step2-ind"><div class="sn">2</div> Vérification</div>
+      <div class="imp-step" id="piana-step3-ind"><div class="sn">3</div> Import</div>
+    </div>
+
+    <!-- Étape 1 -->
+    <div id="piana-s1">
+      <div class="imp-drop" id="pianaDropZone">
+        <input type="file" id="pianaFileInput" accept=".xlsx,.xls">
+        <div class="dicon">⛽</div>
+        <div class="dlabel">Dépose ton export Piana ici</div>
+        <div class="dsub">ou clique pour sélectionner — .xlsx ou .xls</div>
+      </div>
+      <div id="pianaFileInfo" style="display:none">
+        <div class="imp-file-info">
+          <span style="font-size:18px">📄</span>
+          <div><div class="fi-name" id="pianaFileName"></div><div class="fi-meta" id="pianaFileMeta"></div></div>
+          <button class="fi-rm" id="pianaRemoveFile">✕</button>
+        </div>
+      </div>
+      <div class="imp-actions">
+        <button class="btn primary" id="pianaBtnAnalyse" disabled><i class="ti ti-search"></i> Analyser</button>
+      </div>
+    </div>
+
+    <!-- Étape 2 -->
+    <div id="piana-s2" style="display:none">
+      <div class="imp-stat-grid">
+        <div class="imp-stat blue"><div class="isv" id="pianaStatMois">—</div><div class="isl">Mois</div></div>
+        <div class="imp-stat green"><div class="isv" id="pianaStatLignes">—</div><div class="isl">Lignes</div></div>
+        <div class="imp-stat amber"><div class="isv" id="pianaStatAlerts">—</div><div class="isl">À résoudre</div></div>
+      </div>
+
+      <!-- Inconnus catégories -->
+      <div class="imp-alert" id="pianaAlertUnkCat" style="display:none">
+        <span style="font-size:16px">⚠️</span>
+        <div><div class="ia-title">Catégories Piana inconnues</div><div class="ia-body" id="pianaAlertCatBody"></div></div>
+      </div>
+      <div class="imp-card" id="pianaCardUnkCat" style="display:none">
+        <div class="imp-card-title">Affecter un suffixe analytique</div>
+        <div class="imp-unknown-list" id="pianaUnkCatList"></div>
+      </div>
+
+      <!-- Inconnus employés -->
+      <div class="imp-alert" id="pianaAlertUnkEmp" style="display:none">
+        <span style="font-size:16px">⚠️</span>
+        <div><div class="ia-title">Employés absents du mapping</div><div class="ia-body" id="pianaAlertEmpBody"></div></div>
+      </div>
+      <div class="imp-card" id="pianaCardUnkEmp" style="display:none">
+        <div class="imp-card-title">Affecter une équipe</div>
+        <div class="imp-unknown-list" id="pianaUnkEmpList"></div>
+      </div>
+
+      <!-- Alertes Alimentation -->
+      <div class="imp-card" id="pianaCardAlertes" style="display:none;border-color:var(--amber)">
+        <div class="imp-card-title" style="color:var(--amber-text)">⚠️ Transactions Alimentation — à traiter manuellement</div>
+        <div id="pianaAlertesBody"></div>
+      </div>
+
+      <!-- Preview -->
+      <div class="imp-card">
+        <div class="imp-card-title">Aperçu</div>
+        <div class="imp-table-wrap">
+          <table class="imp-table">
+            <thead><tr>
+              <th>Carte</th><th>Équipe</th><th>Catégorie analytique</th>
+              <th class="amt">Montant HT</th><th class="amt">Montant TTC</th>
+              <th>TVA</th><th>Statut</th>
+            </tr></thead>
+            <tbody id="pianaPreviewBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="imp-actions">
+        <button class="btn" id="pianaBtnBack">← Retour</button>
+        <button class="btn primary" id="pianaBtnImport" disabled><i class="ti ti-check"></i> Importer dans le GSheet</button>
+        <span class="imp-blocked" id="pianaBlockedMsg">Résous les inconnus avant d'importer</span>
+      </div>
+    </div>
+
+    <!-- Étape 3 -->
+    <div id="piana-s3" style="display:none">
+      <div class="imp-progress">
+        <div class="imp-progress-label" id="pianaProgressLabel">Envoi en cours…</div>
+        <div class="imp-progress-bg"><div class="imp-progress-fill" id="pianaProgressFill"></div></div>
+        <div class="imp-progress-status" id="pianaProgressStatus"></div>
+      </div>
+      <div class="imp-success" id="pianaSuccess">
+        <div style="font-size:32px;margin-bottom:8px">✅</div>
+        <h3 id="pianaSuccessTitle">Import réussi</h3>
+        <p id="pianaSuccessMsg"></p>
+        <br>
+        <button class="btn" id="pianaBtnReset" style="margin:0 auto">Nouvel import</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================================
+   IMPORT PIANA — logique complète
+   ================================================================ */
+
+// ── Mapping Catégorie Piana → suffixe analytique ─────────────────
+let PIANA_CAT_MAP = {
+  'Distributeur automatique de carburant': 'Fuel',
+  'Stations essence':                      'Fuel',
+  'Péages & tunnels':                      'Tolls',
+  'Lavage':                                'Car maintenance',
+  'Alimentation':                          'ALERTE',
+};
+
+// Préfixe selon équipe (basé sur IMP_EMPLOYE_EQUIPE + IMP_EQUIPE_CAT)
+function pianaGetPrefix(equipe) {
+  if (!equipe) return 'General';
+  const e = equipe.toLowerCase();
+  if (e.includes('field ops')) return 'COGS';
+  if (e.includes('account exec') || e.includes('inside sales') ||
+      e.includes('sales team') || e.includes('sales manager') ||
+      e.includes('sales ops')) return 'Sales';
+  return 'General';
+}
+
+function pianaGetCategorie(equipe, suffixe) {
+  if (suffixe === 'ALERTE') return null;
+  const prefix = pianaGetPrefix(equipe);
+  return `${prefix} - ${suffixe}`;
+}
+
+// ── Historique imports session ────────────────────────────────────
+const pianaImportHistory = [];
+
+// ── Navigation sous-onglets ───────────────────────────────────────
+function pianaSwitchNav(tab) {
+  ['mapping','history'].forEach(t => {
+    document.getElementById('piana-nav-'+t).classList.toggle('active', t===tab);
+    document.getElementById('piana-sec-'+t).classList.toggle('active', t===tab);
+  });
+  if (tab === 'mapping') pianaCatInitTable();
+  if (tab === 'history') pianaRenderHistory();
+}
+
+// ── Mapping catégories table ──────────────────────────────────────
+const PIANA_SUFFIXE_LABELS = {
+  'Fuel': 'Fuel',
+  'Tolls': 'Tolls',
+  'Car maintenance': 'Car maintenance',
+  'ALERTE': '⚠️ Alerte'
+};
+
+let pianaCatCurrentEdit = null;
+
+function pianaCatInitTable() {
+  document.getElementById('pianaCatTableBody').innerHTML =
+    Object.entries(PIANA_CAT_MAP).map(([cat, suffixe]) => `
+      <tr>
+        <td>${cat}</td>
+        <td><span class="imp-badge ${suffixe==='ALERTE'?'amber':'blue'}">${PIANA_SUFFIXE_LABELS[suffixe]||suffixe}</span></td>
+        <td class="map-muted" style="font-size:11px">COGS - ${suffixe==='ALERTE'?'—':suffixe}</td>
+        <td><button class="btn" style="font-size:11px;padding:3px 10px" onclick="pianaCatOpenEdit('${cat}')"><i class="ti ti-edit"></i></button></td>
+      </tr>`).join('');
+}
+
+function pianaCatOpenEdit(cat) {
+  pianaCatCurrentEdit = cat;
+  document.getElementById('pianaCatEditName').textContent = cat;
+  document.getElementById('pianaCatEditVal').value = PIANA_CAT_MAP[cat] || 'ALERTE';
+  document.getElementById('pianaCatEditCard').classList.add('open');
+}
+function pianaCatCancelEdit() {
+  pianaCatCurrentEdit = null;
+  document.getElementById('pianaCatEditCard').classList.remove('open');
+}
+function pianaCatSaveEdit() {
+  if (!pianaCatCurrentEdit) return;
+  PIANA_CAT_MAP[pianaCatCurrentEdit] = document.getElementById('pianaCatEditVal').value;
+  pianaCatCancelEdit();
+  pianaCatInitTable();
+}
+
+// ── Parse Piana XLSX ─────────────────────────────────────────────
+function pianaParseFile(buf) {
+  const wb = XLSX.read(buf, {type:'array'});
+  // Chercher l'onglet Transactions
+  const sheetName = wb.SheetNames.find(n => n.toLowerCase().includes('transaction'));
+  if (!sheetName) throw new Error("Onglet 'Transactions' introuvable dans le fichier.");
+  const ws = wb.Sheets[sheetName];
+  const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+
+  // Trouver la ligne d'en-têtes
+  let hi = -1;
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i].some(c => String(c).trim() === 'Carte')) { hi = i; break; }
+  }
+  if (hi === -1) throw new Error("Colonne 'Carte' introuvable.");
+
+  const h = rows[hi].map(c => String(c).trim());
+  const iCarte    = h.indexOf('Carte');
+  const iDate     = h.indexOf('Date de paiement');
+  const iStatus   = h.indexOf("Status de l'opération");
+  const iCat      = h.indexOf('Catégorie');
+  const iMontant  = h.indexOf('Montant TTC');
+  const iHT20     = h.indexOf('Montant HT (20%)');
+  const iHTSans   = h.indexOf('Montant HT (document justificatif non communiqué)');
+  const iCarb     = h.indexOf('Carburant');
+  const iMarchand = h.indexOf('Marchand');
+  const iVille    = h.indexOf('Ville');
+
+  if ([iCarte, iDate, iStatus, iCat, iMontant].includes(-1))
+    throw new Error("Colonnes manquantes dans Transactions.");
+
+  const transactions = [];
+  const unknownCats  = {};
+  const alertes      = [];
+  let mois = '';
+
+  for (let i = hi + 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r[iCarte] && !r[iDate]) continue;
+    const status = String(r[iStatus] || '').trim();
+    if (status !== 'Réglée') continue;
+
+    const carte    = String(r[iCarte] || '').trim();
+    const dateRaw  = String(r[iDate]  || '').trim();
+    const catPiana = String(r[iCat]   || '').trim();
+    const ttc      = Math.abs(parseFloat(r[iMontant]) || 0);
+    const ht20     = Math.abs(parseFloat(r[iHT20])   || 0);
+    const htSans   = Math.abs(parseFloat(r[iHTSans]) || 0);
+    const carb     = String(r[iCarb]     || '').trim();
+    const marchand = String(r[iMarchand] || '').trim();
+    const ville    = String(r[iVille]    || '').trim();
+
+    // Détecter le mois depuis la date (format "DD/MM/YYYY HH:MM")
+    if (!mois && dateRaw) {
+      const parts = dateRaw.split('/');
+      if (parts.length >= 3) {
+        const m = parseInt(parts[1]);
+        const y = parts[2].substring(2, 4);
+        mois = `${m}-${y}`;
+      }
+    }
+
+    // Montant HT : si HT20 > 0 → TVA connue, sinon TTC = approx HT
+    const montantHT = ht20 > 0 ? ht20 : (htSans > 0 ? htSans : ttc);
+    const tvaRenseignee = ht20 > 0 ? 'Oui' : 'Non';
+
+    // Mapping catégorie
+    const suffixe = PIANA_CAT_MAP[catPiana];
+    if (suffixe === undefined) {
+      // Catégorie inconnue → à résoudre
+      if (!unknownCats[catPiana]) unknownCats[catPiana] = {cat: catPiana, total: 0, count: 0};
+      unknownCats[catPiana].total += montantHT;
+      unknownCats[catPiana].count++;
+    } else if (suffixe === 'ALERTE') {
+      alertes.push({carte, dateRaw, catPiana, montantHT, ttc, marchand, ville});
+    } else {
+      // Mapping employé → équipe
+      const key = carte.toLowerCase().replace(/\s+/g,' ').trim();
+      const equipe = IMP_EMPLOYE_EQUIPE[key] || null;
+      const categorie = pianaGetCategorie(equipe, suffixe);
+      transactions.push({
+        mois, carte, equipe: equipe || 'N/C', categorie: categorie || `? - ${suffixe}`,
+        catPiana, marchand, ville, carburant: carb,
+        montantHT: Math.round(montantHT * 100) / 100,
+        montantTTC: Math.round(ttc * 100) / 100,
+        tvaRenseignee
+      });
+    }
+  }
+
+  if (!mois) throw new Error("Impossible de détecter le mois depuis les dates.");
+
+  // Grouper par carte+catégorie pour une ligne par personne/catégorie
+  const grouped = {};
+  for (const t of transactions) {
+    const key = `${t.carte}||${t.categorie}`;
+    if (!grouped[key]) grouped[key] = {...t, montantHT: 0, montantTTC: 0, lignes: 0};
+    grouped[key].montantHT  += t.montantHT;
+    grouped[key].montantTTC += t.montantTTC;
+    grouped[key].lignes++;
+  }
+  const rows_out = Object.values(grouped).map(r => ({
+    ...r,
+    montantHT:  Math.round(r.montantHT  * 100) / 100,
+    montantTTC: Math.round(r.montantTTC * 100) / 100,
+  })).sort((a,b) => a.carte.localeCompare(b.carte));
+
+  // Inconnus employés (dans les transactions mappées mais employé absent)
+  const unknownEmps = [...new Set(
+    rows_out.filter(r => r.equipe === 'N/C').map(r => r.carte)
+  )];
+
+  return { rows: rows_out, mois, unknownCats: Object.values(unknownCats), alertes, unknownEmps };
+}
+
+// ── État modal ────────────────────────────────────────────────────
+let pianaFile = null, pianaRows = [], pianaMois = '';
+let pianaUnknownCats = [], pianaAlertes = [], pianaUnknownEmps = [];
+
+function pianaFmt(n) {
+  return new Intl.NumberFormat('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n)+'€';
+}
+
+function pianaSetStep(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById('piana-s'+i).style.display = i===n?'block':'none';
+    const el = document.getElementById('piana-step'+i+'-ind');
+    el.classList.toggle('active', i===n);
+    el.classList.toggle('done', i<n);
+  });
+}
+
+function pianaHandleFile(f) {
+  if (!f.name.match(/\.(xlsx|xls)$/i)) { alert('Format non supporté.'); return; }
+  pianaFile = f;
+  document.getElementById('pianaFileName').textContent = f.name;
+  document.getElementById('pianaFileMeta').textContent = (f.size/1024).toFixed(0)+' Ko';
+  document.getElementById('pianaFileInfo').style.display = 'flex';
+  document.getElementById('pianaDropZone').classList.add('has-file');
+  document.getElementById('pianaBtnAnalyse').disabled = false;
+}
+function pianaResetFile() {
+  pianaFile = null;
+  document.getElementById('pianaFileInput').value = '';
+  document.getElementById('pianaFileInfo').style.display = 'none';
+  document.getElementById('pianaDropZone').classList.remove('has-file');
+  document.getElementById('pianaBtnAnalyse').disabled = true;
+}
+
+function pianaCheckAllResolved() {
+  const empOk  = pianaUnknownEmps.every((_,i) => { const s=document.getElementById('piana-unk-emp-'+i); return s&&s.value; });
+  const catOk  = pianaUnknownCats.every((_,i) => { const s=document.getElementById('piana-unk-cat-'+i); return s&&s.value; });
+  const ok = empOk && catOk;
+  document.getElementById('pianaBtnImport').disabled = !ok;
+  document.getElementById('pianaBlockedMsg').style.display = ok?'none':'inline';
+}
+
+function pianaRenderPreview() {
+  const tbody = document.getElementById('pianaPreviewBody');
+  if (!tbody) return;
+  tbody.innerHTML = pianaRows.map(r => `
+    <tr>
+      <td>${r.carte}</td>
+      <td class="td-muted">${r.equipe}</td>
+      <td>${r.categorie ? `<span class="imp-badge blue" style="font-size:10px">${r.categorie}</span>` : '<span class="imp-badge amber">?</span>'}</td>
+      <td class="td-amt">${pianaFmt(r.montantHT)}</td>
+      <td class="td-amt">${pianaFmt(r.montantTTC)}</td>
+      <td class="td-muted" style="font-size:11px">${r.tvaRenseignee==='Oui'?'✓ HT':'~ TTC'}</td>
+      <td><span class="imp-badge ${r.equipe!=='N/C'?'green':'amber'}">${r.equipe!=='N/C'?'✓':'⏳'}</span></td>
+    </tr>`).join('');
+}
+
+function pianaRenderStep2(result) {
+  pianaRows        = result.rows;
+  pianaMois        = result.mois;
+  pianaUnknownCats = result.unknownCats;
+  pianaAlertes     = result.alertes;
+  pianaUnknownEmps = result.unknownEmps;
+
+  document.getElementById('pianaStatMois').textContent  = pianaMois;
+  document.getElementById('pianaStatLignes').textContent = pianaRows.length;
+  const totalAlerts = pianaUnknownCats.length + pianaUnknownEmps.length + (pianaAlertes.length > 0 ? 1 : 0);
+  document.getElementById('pianaStatAlerts').textContent = totalAlerts;
+
+  // Inconnus catégories
+  const cardCat = document.getElementById('pianaCardUnkCat');
+  if (pianaUnknownCats.length > 0) {
+    document.getElementById('pianaAlertUnkCat').style.display = 'flex';
+    document.getElementById('pianaAlertCatBody').textContent =
+      pianaUnknownCats.map(c => c.cat).join(', ') + ' — catégories inconnues. Affecte-leur un suffixe.';
+    cardCat.style.display = 'block';
+    document.getElementById('pianaUnkCatList').innerHTML = pianaUnknownCats.map((c,i) => `
+      <div class="imp-unknown-item">
+        <div class="uin">${c.cat}<div class="uim">${c.count} transaction(s) · ${pianaFmt(c.total)}</div></div>
+        <span style="color:var(--text2)">→</span>
+        <select id="piana-unk-cat-${i}" data-cat="${c.cat.replace(/"/g,'&quot;')}" data-idx="${i}" onchange="pianaResolveUnkCat(parseInt(this.dataset.idx),this.dataset.cat,this.value)">
+          <option value="">— Suffixe —</option>
+          <option value="Fuel">Fuel</option>
+          <option value="Tolls">Tolls</option>
+          <option value="Car maintenance">Car maintenance</option>
+          <option value="ALERTE">⚠️ Alerte</option>
+        </select>
+      </div>`).join('');
+  } else {
+    document.getElementById('pianaAlertUnkCat').style.display = 'none';
+    cardCat.style.display = 'none';
+  }
+
+  // Inconnus employés
+  const cardEmp = document.getElementById('pianaCardUnkEmp');
+  if (pianaUnknownEmps.length > 0) {
+    document.getElementById('pianaAlertUnkEmp').style.display = 'flex';
+    document.getElementById('pianaAlertEmpBody').textContent =
+      pianaUnknownEmps.join(', ') + ' — absents du mapping employés.';
+    cardEmp.style.display = 'block';
+    document.getElementById('pianaUnkEmpList').innerHTML = pianaUnknownEmps.map((emp,i) => `
+      <div class="imp-unknown-item">
+        <div class="uin">${emp}</div>
+        <span style="color:var(--text2)">→</span>
+        <select id="piana-unk-emp-${i}" data-emp="${emp.replace(/"/g,'&quot;')}" data-idx="${i}" onchange="pianaResolveUnkEmp(parseInt(this.dataset.idx),this.dataset.emp,this.value)">
+          <option value="">— Équipe —</option>
+          ${IMP_ALL_EQUIPES.map(e => `<option value="${e}">${IMP_EQUIPE_CAT[e]}</option>`).join('')}
+        </select>
+      </div>`).join('');
+  } else {
+    document.getElementById('pianaAlertUnkEmp').style.display = 'none';
+    cardEmp.style.display = 'none';
+  }
+
+  // Alertes alimentation
+  const cardAl = document.getElementById('pianaCardAlertes');
+  if (pianaAlertes.length > 0) {
+    cardAl.style.display = 'block';
+    document.getElementById('pianaAlertesBody').innerHTML = `
+      <div style="font-size:12px;color:var(--amber-text);margin-bottom:8px">
+        ${pianaAlertes.length} transaction(s) en catégorie "Alimentation" — à traiter manuellement après import.
+      </div>
+      <div class="imp-table-wrap">
+        <table class="imp-table">
+          <thead><tr><th>Carte</th><th>Date</th><th>Marchand</th><th>Ville</th><th style="text-align:right">Montant HT</th></tr></thead>
+          <tbody>${pianaAlertes.map(a => `
+            <tr>
+              <td>${a.carte}</td>
+              <td class="td-muted" style="font-size:11px">${a.dateRaw}</td>
+              <td class="td-muted">${a.marchand}</td>
+              <td class="td-muted">${a.ville}</td>
+              <td class="td-amt">${pianaFmt(a.montantHT)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } else {
+    cardAl.style.display = 'none';
+  }
+
+  pianaCheckAllResolved();
+  pianaRenderPreview();
+  pianaSetStep(2);
+}
+
+function pianaResolveUnkCat(idx, cat, suffixe) {
+  if (!suffixe) return;
+  PIANA_CAT_MAP[cat] = suffixe;
+  pianaUnknownCats.splice(idx, 1);
+  // Recalculer les lignes avec la nouvelle catégorie
+  // (simple : relancer depuis l'état actuel n'est pas possible sans le buffer,
+  // on met à jour les lignes N/C de cette catégorie)
+  pianaRows = pianaRows.map(r => {
+    if (r.catPiana === cat) {
+      const equipe = r.equipe !== 'N/C' ? r.equipe : null;
+      const categorie = pianaGetCategorie(equipe, suffixe);
+      return {...r, categorie: categorie || `? - ${suffixe}`};
+    }
+    return r;
+  });
+  pianaCheckAllResolved();
+  pianaRenderPreview();
+}
+
+function pianaResolveUnkEmp(idx, carte, equipe) {
+  if (!equipe) return;
+  IMP_EMPLOYE_EQUIPE[carte.toLowerCase().replace(/\s+/g,' ').trim()] = equipe;
+  pianaRows = pianaRows.map(r => {
+    if (r.carte === carte) {
+      const categorie = pianaGetCategorie(equipe, PIANA_CAT_MAP[r.catPiana] || 'Fuel');
+      return {...r, equipe, categorie};
+    }
+    return r;
+  });
+  pianaCheckAllResolved();
+  pianaRenderPreview();
+}
+
+// ── Historique ───────────────────────────────────────────────────
+function pianaRenderHistory() {
+  const el = document.getElementById('pianaHistoryContent');
+  if (pianaImportHistory.length === 0) {
+    el.textContent = 'Aucun import effectué dans cette session.';
+    return;
+  }
+  el.innerHTML = `<div class="imp-table-wrap"><table class="imp-table">
+    <thead><tr><th>Mois</th><th>Date import</th><th>Lignes</th><th>Alertes Alimentation</th></tr></thead>
+    <tbody>${pianaImportHistory.map(h => `
+      <tr>
+        <td>${h.mois}</td>
+        <td class="td-muted">${h.date}</td>
+        <td>${h.lignes}</td>
+        <td>${h.alertes > 0 ? `<span class="imp-badge amber">${h.alertes}</span>` : '—'}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+// ── Modal Piana ──────────────────────────────────────────────────
+document.getElementById('pianaOpenModal').addEventListener('click', () => {
+  document.getElementById('pianaModalOverlay').classList.add('open');
+  pianaSetStep(1);
+});
+document.getElementById('pianaModalClose').addEventListener('click', () => {
+  document.getElementById('pianaModalOverlay').classList.remove('open');
+});
+document.getElementById('pianaModalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('pianaModalOverlay'))
+    document.getElementById('pianaModalOverlay').classList.remove('open');
+});
+
+document.getElementById('pianaDropZone').addEventListener('dragover', e => { e.preventDefault(); document.getElementById('pianaDropZone').classList.add('drag-over'); });
+document.getElementById('pianaDropZone').addEventListener('dragleave', () => document.getElementById('pianaDropZone').classList.remove('drag-over'));
+document.getElementById('pianaDropZone').addEventListener('drop', e => { e.preventDefault(); document.getElementById('pianaDropZone').classList.remove('drag-over'); if (e.dataTransfer.files[0]) pianaHandleFile(e.dataTransfer.files[0]); });
+document.getElementById('pianaFileInput').addEventListener('change', function() { if (this.files[0]) pianaHandleFile(this.files[0]); });
+document.getElementById('pianaRemoveFile').addEventListener('click', pianaResetFile);
+
+document.getElementById('pianaBtnAnalyse').addEventListener('click', () => {
+  if (!pianaFile) return;
+  document.getElementById('pianaBtnAnalyse').disabled = true;
+  document.getElementById('pianaBtnAnalyse').innerHTML = '<i class="ti ti-loader"></i> Analyse…';
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const result = pianaParseFile(e.target.result);
+      pianaRenderStep2(result);
+    } catch(err) {
+      alert('Erreur : ' + err.message);
+      document.getElementById('pianaBtnAnalyse').disabled = false;
+      document.getElementById('pianaBtnAnalyse').innerHTML = '<i class="ti ti-search"></i> Analyser';
+    }
+  };
+  reader.readAsArrayBuffer(pianaFile);
+});
+
+document.getElementById('pianaBtnBack').addEventListener('click', () => {
+  pianaSetStep(1);
+  document.getElementById('pianaBtnAnalyse').disabled = false;
+  document.getElementById('pianaBtnAnalyse').innerHTML = '<i class="ti ti-search"></i> Analyser';
+});
+
+document.getElementById('pianaBtnImport').addEventListener('click', async () => {
+  pianaSetStep(3);
+  document.getElementById('pianaProgressFill').style.width = '10%';
+  document.getElementById('pianaProgressLabel').textContent = `Envoi de ${pianaRows.length} lignes…`;
+  document.getElementById('pianaProgressStatus').textContent = 'Connexion à Apps Script…';
+
+  const payload = {
+    action: 'importFuelData',
+    mois: pianaMois,
+    rows: pianaRows.map(r => [
+      r.mois, r.carte, r.equipe, r.categorie, r.catPiana,
+      r.montantHT, r.montantTTC, r.tvaRenseignee
+    ])
+  };
+
+  try {
+    document.getElementById('pianaProgressFill').style.width = '40%';
+    document.getElementById('pianaProgressStatus').textContent = 'Écriture dans Fuel - Data…';
+    let result;
+    try {
+      const resp = await fetch(APPS_SCRIPT_URL + '?action=importFuelData', {
+        method: 'POST', headers: {'Content-Type':'text/plain'},
+        body: JSON.stringify(payload), redirect: 'follow'
+      });
+      result = JSON.parse(await resp.text());
+    } catch {
+      // Fallback form POST
+      await impPostToAppsScript(payload);
+      result = {success: true, assumed: true, count: pianaRows.length};
+    }
+
+    document.getElementById('pianaProgressFill').style.width = '100%';
+    if (result.success) {
+      pianaImportHistory.unshift({
+        mois: pianaMois,
+        date: new Date().toLocaleString('fr-FR'),
+        lignes: pianaRows.length,
+        alertes: pianaAlertes.length
+      });
+      document.getElementById('pianaProgressLabel').textContent = 'Import terminé';
+      document.getElementById('pianaProgressStatus').textContent = '';
+      document.getElementById('pianaSuccess').classList.add('visible');
+      document.getElementById('pianaSuccessTitle').textContent = `${pianaRows.length} lignes importées`;
+      document.getElementById('pianaSuccessMsg').textContent =
+        `Mois ${pianaMois} — Fuel - Data mis à jour.` +
+        (pianaAlertes.length > 0 ? ` ⚠️ ${pianaAlertes.length} transaction(s) Alimentation à traiter.` : '') +
+        (result.assumed ? ' (vérifier dans le GSheet)' : '');
+      pianaCatInitTable();
+    } else {
+      throw new Error(result.error || 'Erreur inconnue');
+    }
+  } catch(err) {
+    document.getElementById('pianaProgressLabel').textContent = "Erreur";
+    document.getElementById('pianaProgressStatus').textContent = err.message;
+    document.getElementById('pianaProgressFill').style.background = 'var(--red)';
+  }
+});
+
+document.getElementById('pianaBtnReset').addEventListener('click', () => {
+  pianaFile = null; pianaRows = []; pianaMois = '';
+  pianaUnknownCats = []; pianaAlertes = []; pianaUnknownEmps = [];
+  document.getElementById('pianaFileInput').value = '';
+  document.getElementById('pianaFileInfo').style.display = 'none';
+  document.getElementById('pianaDropZone').classList.remove('has-file');
+  document.getElementById('pianaBtnAnalyse').disabled = false;
+  document.getElementById('pianaBtnAnalyse').innerHTML = '<i class="ti ti-search"></i> Analyser';
+  document.getElementById('pianaSuccess').classList.remove('visible');
+  document.getElementById('pianaProgressFill').style.width = '0%';
+  document.getElementById('pianaProgressFill').style.background = 'var(--gradient)';
+  pianaSetStep(1);
+  document.getElementById('pianaModalOverlay').classList.remove('open');
+});
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  if (document.getElementById('pianaCatTableBody')) pianaCatInitTable();
 });
 </script>
 </body>
