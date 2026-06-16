@@ -46,7 +46,7 @@ select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--r);bo
 .btn.primary:hover{opacity:.88}
 .btn.clear-all{background:var(--red-light);color:var(--red-text);border-color:transparent;font-size:12px;padding:5px 14px}
 .btn.clear-all:hover{background:var(--red);color:#fff}
-.tabs{display:flex;background:var(--bg);border-bottom:.5px solid var(--border);padding:0 2rem;overflow-x:auto}
+.tabs{display:flex;background:var(--bg);border-bottom:.5px solid var(--border);padding:0 2rem;overflow-x:auto;position:sticky;top:56px;z-index:95}
 .tab{font-size:13px;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;color:var(--text2);display:flex;align-items:center;gap:6px;white-space:nowrap;transition:color .15s}
 .tab:hover{color:var(--text)}
 .tab.active{color:var(--accent-from);border-image:var(--gradient) 1;font-weight:500}
@@ -54,7 +54,7 @@ select,input[type=text]{font-size:13px;padding:5px 9px;border-radius:var(--r);bo
 .tab-badge.amber{background:var(--amber-light);color:var(--amber-text)}
 
 /* ---- GLOBAL FILTER BAR ---- */
-.global-filter-bar{padding:.6rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border);display:flex;gap:6px;align-items:center;flex-wrap:wrap;position:sticky;top:88px;z-index:90}
+.global-filter-bar{padding:.6rem 2rem;background:var(--bg);border-bottom:.5px solid var(--border);display:flex;gap:6px;align-items:center;flex-wrap:wrap;position:sticky;top:93px;z-index:90}
 .filter-active-indicator{font-size:11px;color:var(--amber-text);background:var(--amber-light);padding:2px 8px;border-radius:10px;font-weight:600;display:none;align-items:center;gap:4px}
 .filter-active-indicator.visible{display:inline-flex}
 
